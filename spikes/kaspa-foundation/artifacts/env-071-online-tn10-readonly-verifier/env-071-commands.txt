@@ -1,0 +1,24 @@
+ENV-071C commands run
+
+Preflight/context:
+- git status --short --untracked-files=all && git branch --show-current
+- inspect crates/kaspa-foundation/src/transcript/online_verifier.rs
+- inspect crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs
+- inspect crates/kaspa-foundation/Cargo.toml
+- inspect kaspa-rpc-core / kaspa-wrpc-client read-only RPC methods
+- curl public TN10 transaction-detail API with User-Agent to confirm response shape
+
+Implementation:
+- extend ignored live test to query public TN10 transaction-detail API:
+  https://api-tn10.kaspa.org/transactions/<txid>?inputs=true&outputs=true&resolve_previous_outpoints=light
+- keep wRPC resolver/default TN10 node check and UTXO visibility check
+- parse accepted transaction detail fields for is_accepted, accepting_block_hash, previous_outpoint_hash/index, output 0 amount, and covenant_id
+- feed supported observations into existing online verifier model so the live report passes only when canonical fields match and fails on contradictions
+- update docs and artifacts
+
+Required verification:
+- cargo fmt --check
+- cargo test -p kaspa-foundation --test env071_online_tn10_readonly_verifier
+- KASPA_FOUNDATION_RUN_LIVE_TN10=1 cargo test -p kaspa-foundation --test env071_online_tn10_readonly_verifier -- --ignored --nocapture live_tn10_readonly_verification_is_optional_and_gated
+- cargo check -p kaspa-foundation
+- git diff --check

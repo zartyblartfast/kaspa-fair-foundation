@@ -696,6 +696,8 @@ It verifies:
 - local state transition consistency
 - expected transaction ids if raw transaction data is included
 
+ENV-070 implements the first version of this layer as a scaffold and sanity check over the canonical ENV-063/064/065 transcript and committed fixture paths. It is useful, but it is not the final developer value by itself.
+
 ### 13.2 Online Verifier
 
 The online verifier adds chain/RPC checks:
@@ -707,6 +709,25 @@ The online verifier adds chain/RPC checks:
 - transaction visibility
 - original UTXO spent/absent status
 - continuing output UTXO visibility
+
+ENV-071 starts this layer for TN10/testnet-10 only. It first requires the offline transcript verifier to pass, then compares normalized read-only live-chain observations against the canonical transcript facts. The read-only TN10 API approach follows the already-proven reference spike path using public rusty-kaspa wRPC resolver defaults for testnet-10; endpoint override can be added later without requiring secrets.
+
+ENV-071B proved the wRPC path with an explicitly gated live read-only test. Public rusty-kaspa wRPC confirmed the ENV-064 continuing output outpoint and value from the live UTXO set, but left accepted transaction input details and covenant id unsupported through that model alone.
+
+ENV-071C closes that gap with the public TN10 transaction-detail API at `https://api-tn10.kaspa.org/transactions/<txid>?inputs=true&outputs=true&resolve_previous_outpoints=light`. That read-only response exposes mined/accepted ENV-064 transaction structure, including `is_accepted`, accepting block hash, previous outpoint hash/index, output 0 value, and covenant id. The live verifier now reaches `Pass` when those fields match the canonical transcript and still fails closed on contradictions.
+
+The initial online verifier must stay narrow:
+
+- read-only TN10 queries only
+- no signing
+- no transaction creation
+- no transaction submission or broadcast
+- no wallet or private-key access
+- no secrets
+- no mainnet
+- no roulette implementation
+
+Mainnet portability is future work and remains disabled until explicit approval. Roulette remains future app adapter work above the foundation verifier.
 
 Online verification should never be required to verify the mathematical fairness of a completed transcript, but it is required to verify live chain settlement status.
 

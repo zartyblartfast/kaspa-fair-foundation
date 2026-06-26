@@ -1,0 +1,59 @@
+$ cargo fmt --check
+
+$ cargo test -p kaspa-foundation --test env071_online_tn10_readonly_verifier
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running tests/env071_online_tn10_readonly_verifier.rs (target/debug/deps/env071_online_tn10_readonly_verifier-297eaac0ef6d3197)
+
+running 5 tests
+test live_tn10_readonly_verification_is_optional_and_gated ... ignored, optional live TN10 read-only integration test; requires explicit KASPA_FOUNDATION_RUN_LIVE_TN10=1
+test online_verifier_config_and_client_are_read_only ... ok
+test canonical_transcript_can_be_prepared_for_tn10_online_verification ... ok
+test online_verifier_refuses_mainnet_config ... ok
+test online_verifier_report_represents_pass_fail_and_skipped_checks ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ KASPA_FOUNDATION_RUN_LIVE_TN10=1 cargo test -p kaspa-foundation --test env071_online_tn10_readonly_verifier -- --ignored --nocapture live_tn10_readonly_verification_is_optional_and_gated
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running tests/env071_online_tn10_readonly_verifier.rs (target/debug/deps/env071_online_tn10_readonly_verifier-297eaac0ef6d3197)
+
+running 1 test
+connected_endpoint=Some("wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh")
+mempool_entry_for_env064_observed=false
+mempool_entry_for_env064_error=RPC Server (remote error) -> Transaction 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c not found
+covenant_address_utxo_count=1
+continuing_output_observed=true
+continuing_output_value_sompi=Some(99700000)
+transaction_detail_api_url=https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light
+transaction_detail_http_status=200 OK
+transaction_detail_is_accepted=true
+transaction_detail_accepting_block_hash=Some("e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190")
+transaction_detail_input_relationship_confirmed=true
+transaction_detail_output0_exists=true
+transaction_detail_output0_value_sompi=Some(99700000)
+transaction_detail_covenant_id=Some("e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7")
+ENV-071C live TN10 transaction-detail verifier report
+result=Pass
+network=testnet-10
+endpoint=None
+api_approach=kaspa_wrpc_client::KaspaRpcClient with WrpcEncoding::Borsh, Resolver::default(), NetworkId::with_suffix(NetworkType::Testnet, 10), ConnectStrategy::Fallback; read-only calls only
+offline_prerequisite_passed=true
+read_only=true
+mainnet_enabled=false
+check name="network" status=Supported passed=Some(true) reason=None
+check name="node synced" status=Supported passed=Some(true) reason=None
+check name="utxo index" status=Supported passed=Some(true) reason=None
+check name="ENV-064 spend txid known" status=Supported passed=Some(true) reason=None
+check name="ENV-063 input spent by ENV-064" status=Supported passed=Some(true) reason=None
+check name="continuing output exists" status=Supported passed=Some(true) reason=None
+check name="continuing output value" status=Supported passed=Some(true) reason=None
+check name="covenant id" status=Supported passed=Some(true) reason=None
+check name="transcript network" status=Supported passed=Some(true) reason=None
+test live_tn10_readonly_verification_is_optional_and_gated ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 20.11s
+
+$ cargo check -p kaspa-foundation
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+
+$ git diff --check

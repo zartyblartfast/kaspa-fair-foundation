@@ -199,16 +199,16 @@ future live submit / app adapter / demo workflows
 
 Verifier priority should be:
 
-1. offline verifier first
-2. online verifier later
+1. offline verifier first as a deterministic scaffold and safety prerequisite
+2. online TN10 read-only verifier for actual operational settlement checks
 
 Meaning:
 
 - first, build tooling that can read committed evidence and the proof transcript without requiring a node or wallet
-- later, optionally add online/read-only helpers that compare transcript claims against current network state
+- then add online/read-only helpers that compare transcript claims against current TN10 state
 - submit/broadcast remains out of scope for the transcript layer
 
-The transcript should therefore be usable by a deterministic offline verifier before any richer network-connected verifier exists.
+The transcript should therefore be usable by a deterministic offline verifier before any richer network-connected verifier runs. The offline verifier is not the end goal; it is a sanity layer before read-only online verification proves whether the canonical evidence bundle still matches live TN10 chain state.
 
 ## 9. Application direction
 
@@ -305,4 +305,45 @@ The verifier intentionally does not check every Kaspa consensus rule. It does no
 
 The verifier does not contact TN10 or mainnet. It requires no RPC endpoint, no network access, no wallet files, no helper keys, and no secrets. Submit, sign, broadcast, and transaction creation remain out of scope for the transcript layer.
 
-Online/read-only verification against a live node is future work and should be added separately from this offline verifier boundary.
+## 13. ENV-071 online TN10 read-only proof transcript verifier
+
+ENV-071 adds the first online verifier scaffold for the canonical ENV-063/064/065 transcript. It keeps the ENV-070 offline verifier as a prerequisite, then compares normalized read-only TN10 observations against the canonical transcript values.
+
+The online verifier is the operational direction for a limited Toccata layer on TN10. It is intended to answer whether a transcript/evidence bundle matches live chain state without trusting the app server and without replaying historical live actions.
+
+The ENV-071 verifier can represent each live-chain check as:
+
+- supported
+- not yet supported, with a reason
+- skipped, with a reason
+
+It must not fake full verification when a public API or adapter cannot expose a field yet.
+
+The configured public TN10 approach is the one already used by the reference spike: rusty-kaspa wRPC via `kaspa_wrpc_client::KaspaRpcClient` with `WrpcEncoding::Borsh`, `Resolver::default()`, `NetworkId::with_suffix(NetworkType::Testnet, 10)`, and `ConnectStrategy::Fallback`. ENV-071B exercised that path from an ignored, explicitly gated live integration test while the default verifier path remained deterministic/offline. ENV-071C adds a second read-only transaction-detail source, `https://api-tn10.kaspa.org/transactions/<txid>?inputs=true&outputs=true&resolve_previous_outpoints=light`, to retrieve accepted mined transaction structure by txid. The live adapter imports only read-only calls; it does not import signing, wallet, transaction creation, or submit paths into the default verifier flow.
+
+ENV-071C live status: public rusty-kaspa wRPC confirmed TN10 node readiness and continuing UTXO visibility, and the public TN10 transaction-detail API confirmed ENV-064 is accepted, has accepting block `e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190`, spends ENV-063 outpoint `2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0`, creates output `4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0` with value `99700000` sompi, and exposes covenant id `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7`. With these fields supported, the live online verifier result is `Pass`.
+
+The verifier is limited to TN10/testnet-10. Mainnet portability remains future work and is disabled until explicit approval.
+
+Safety boundary for ENV-071:
+
+- read-only TN10 queries are allowed
+- no signing
+- no transaction creation
+- no submitting or broadcasting
+- no wallet or private-key access
+- no secrets
+- no mainnet
+- no roulette implementation
+
+The target live checks are:
+
+- server/network is TN10/testnet-10
+- node sync and UTXO-index readiness where available
+- ENV-064 spend txid is known or accepted/visible where available
+- ENV-063 covenant input outpoint is spent by ENV-064 where available
+- ENV-064 continuing output exists
+- continuing output value is `99700000` sompi
+- covenant id is `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7` where available
+
+Roulette remains future app adapter work layered above the foundation verifier.

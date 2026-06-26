@@ -1,6 +1,7 @@
 //! Stable proof transcript models for offline verification and evidence reuse.
 
 pub mod canonical;
+pub mod online_verifier;
 pub mod schema;
 pub mod verifier;
 

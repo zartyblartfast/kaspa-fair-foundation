@@ -1,0 +1,11 @@
+ M crates/kaspa-foundation/Cargo.toml
+ M crates/kaspa-foundation/src/transcript/mod.rs
+ M docs/kaspa-foundation-architecture.md
+ M docs/proof-transcript-format.md
+?? crates/kaspa-foundation/src/transcript/online_verifier.rs
+?? crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs
+?? spikes/kaspa-foundation/artifacts/env-071-online-tn10-readonly-verifier/env-071-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-071-online-tn10-readonly-verifier/env-071-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-071-online-tn10-readonly-verifier/env-071-live-tn10-readonly-output.txt
+?? spikes/kaspa-foundation/artifacts/env-071-online-tn10-readonly-verifier/env-071-summary.md
+?? spikes/kaspa-foundation/artifacts/env-071-online-tn10-readonly-verifier/env-071-test-output.txt
