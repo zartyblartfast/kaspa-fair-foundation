@@ -1,0 +1,14 @@
+Repo: /root/kaspa-fair-foundation
+Check: placeholder crate formatting and compile sanity
+
+$ cargo fmt --check
+
+$ cargo check
+    Checking kaspa-foundation v0.1.0 (/root/kaspa-fair-foundation/crates/kaspa-foundation)
+    Checking kaspa-fair-cli v0.1.0 (/root/kaspa-fair-foundation/crates/kaspa-fair-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.20s
+
+Assessment:
+- cargo fmt --check passed: true
+- cargo check passed: true
+- placeholder crates compile: true

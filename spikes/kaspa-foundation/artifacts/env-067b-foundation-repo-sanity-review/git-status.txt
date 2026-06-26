@@ -1,0 +1,22 @@
+Repo: /root/kaspa-fair-foundation
+Check: repository sanity git metadata
+
+$ git status --short
+
+$ git remote -v
+origin	https://github.com/zartyblartfast/kaspa-fair-foundation.git (fetch)
+origin	https://github.com/zartyblartfast/kaspa-fair-foundation.git (push)
+
+$ git log --oneline -5
+b24ef53 Initial Kaspa fair foundation skeleton
+
+$ git branch --show-current
+main
+
+$ git rev-parse HEAD
+b24ef5319b1be3252249b37086c8f962fe7f3205
+
+Assessment:
+- git status clean at start: true
+- branch is main: true
+- origin remote matches expected GitHub URL: true

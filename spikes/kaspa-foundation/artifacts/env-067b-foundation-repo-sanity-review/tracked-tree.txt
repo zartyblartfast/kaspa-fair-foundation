@@ -1,0 +1,49 @@
+Tracked tree generated from:
+$ git ls-tree -r --name-only HEAD | sort
+
+.gitignore
+.hermes/skills/tn10-official-wallet-workflow.md
+Cargo.toml
+README.md
+crates/kaspa-fair-cli/Cargo.toml
+crates/kaspa-fair-cli/src/main.rs
+crates/kaspa-foundation/Cargo.toml
+crates/kaspa-foundation/src/lib.rs
+docs/kaspa-foundation-architecture.md
+docs/proof-transcript-format.md
+docs/roulette-poc-architecture.md
+docs/safety-and-secrets.md
+docs/threat-model.md
+examples/roulette-poc/README.md
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/create-submit.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/fee-analysis.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/postcheck.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/postcheck.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/spend-submit.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env-065-summary.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/original-utxo-status.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/server-info.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/evidence-index.txt
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt
+reference/tn10-covenant-spike/Cargo.toml
+reference/tn10-covenant-spike/src/main.rs
+spikes/kaspa-foundation/artifacts/env-067a-clean-repo-migration/copied-files.txt
+spikes/kaspa-foundation/artifacts/env-067a-clean-repo-migration/env-067a-summary.txt
+spikes/kaspa-foundation/artifacts/env-067a-clean-repo-migration/safety-check.txt
+spikes/kaspa-foundation/artifacts/env-067a-clean-repo-migration/skipped-files.txt
+
+$ wc -l /tmp/kaspa-fair-foundation-tree-env067b.txt
+37 /tmp/kaspa-fair-foundation-tree-env067b.txt
+
+Assessment:
+- tracked path count: 37
+- canonical TN10 fixtures present: true
+- reference helper crate present: true
+- roulette implementation present beyond placeholder README/docs: false

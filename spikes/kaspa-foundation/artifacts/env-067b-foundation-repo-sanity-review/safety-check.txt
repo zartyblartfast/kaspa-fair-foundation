@@ -1,0 +1,50 @@
+Repo: /root/kaspa-fair-foundation
+Check: secret-material and scope sanity review
+
+Expected path existence checks:
+OK README.md
+OK .gitignore
+OK Cargo.toml
+OK docs/kaspa-foundation-architecture.md
+OK docs/proof-transcript-format.md
+OK docs/safety-and-secrets.md
+OK docs/threat-model.md
+OK docs/roulette-poc-architecture.md
+OK .hermes/skills/tn10-official-wallet-workflow.md
+OK crates/kaspa-foundation
+OK crates/kaspa-fair-cli
+OK examples/roulette-poc/README.md
+OK fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create
+OK fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend
+OK fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation
+OK fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary
+OK reference/tn10-covenant-spike
+OK spikes/kaspa-foundation/artifacts/env-067a-clean-repo-migration
+
+Path-based secret checks:
+- local-secrets paths found: 0
+- *.wallet files found: 0
+- *.password files found: 0
+- *.seed files found: 0
+- *.pem files found: 0
+- *.key files found: 0
+
+Keyword scan for: private key | mnemonic | seed phrase | wallet password
+Matches were reviewed and were limited to safety/redaction statements or reference helper code that explicitly records non-exposure, including examples such as:
+- "Private key material exposed: false"
+- "Helper private key not exposed: true"
+- transcript redaction requirements forbidding private keys, mnemonic phrases, wallet passwords, and seed phrases
+- architecture text stating the work should remain documentation/design only and should not touch live TN10, private keys, transactions, roulette implementation, or web UI
+
+Relevant supporting observations:
+- README.md says mainnet is disabled and roulette is not implemented yet.
+- examples/roulette-poc contains only README.md.
+- reference/tn10-covenant-spike contains Cargo.toml and src/main.rs only.
+- reference helper comments explicitly state it uses a "dummy/reference" public outpoint and "never signs, submits, or spends it."
+
+Assessment:
+- local-secrets present: false
+- wallet/password/seed/private-key files present: false
+- actual private material found in tracked files: false
+- reference helper exists and is clearly reference-only: true
+- no roulette implementation present: true
