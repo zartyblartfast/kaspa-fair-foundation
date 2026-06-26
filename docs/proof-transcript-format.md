@@ -1,341 +1,276 @@
 # Proof Transcript Format
 
-Status: ENV-067 design baseline
-Scope: documentation/design only
-Target result: READY_FOR_REFACTOR
+Status: ENV-069 foundation transcript baseline
+Scope: offline/read-only foundation layer only
+Target result: stable versioned transcript schema for the canonical TN10 covenant evidence path
 
 ## 1. Purpose
 
-Proof transcripts are first-class project artifacts. They make covenant actions, read-only confirmations, and app-level fairness checks independently reviewable.
+The proof transcript format turns the already-proven corrected TN10 covenant path into a stable, app-agnostic artifact that later tools can verify without re-running live workflow steps.
 
-Every meaningful action should produce both:
+For the foundation repository, a proof transcript exists to:
+
+- preserve the canonical evidence trail from ENV-063, ENV-064, and ENV-065
+- expose a stable schema that later offline and online verifiers can share
+- keep covenant proof data separate from roulette or any future app adapter
+- keep live submit/signing concerns outside the transcript layer
+
+The transcript is a foundation-level description of what was proven, where the evidence lives, and which canonical values later verifiers must confirm.
+
+## 2. Scope
+
+ENV-069 is intentionally modest.
+
+In scope:
+
+- versioned transcript metadata
+- versioned evidence-bundle metadata
+- ordered ENV steps for the canonical TN10 path
+- canonical txid / outpoint / continuing output / value / covenant id fields
+- fixture path links into committed evidence directories
+- explicit safety boundary fields for offline verification work
+
+Out of scope:
+
+- live TN10 activity
+- RPC/network requirements
+- signing or wallet access
+- transaction submission or rebroadcast
+- mainnet support
+- roulette implementation
+- app-specific fairness objects beyond future adapter layers
+
+## 3. Evidence Bundle Schema vs Proof Transcript Schema
+
+The repository should treat evidence bundles and proof transcripts as related but separate schemas.
+
+### 3.1 Evidence bundle schema
+
+The evidence bundle schema names the raw committed evidence set:
 
 ```text
-proof-transcript.json
-proof-transcript.md
+kaspa-fair-evidence-v1
 ```
 
-The JSON file is the canonical machine-verifiable artifact. The Markdown file is the human-readable rendering of the same evidence.
+Examples of evidence-bundle contents:
 
-## 2. Result Vocabulary
+- ENV summaries
+- preflight notes
+- submit outputs
+- postcheck outputs
+- read-only confirmation outputs
+- final summary indexes
 
-Verifier outputs should use a small stable vocabulary:
+The evidence bundle is source material.
+
+### 3.2 Proof transcript schema
+
+The proof transcript schema names the stable interpreted layer built on top of evidence bundles:
 
 ```text
-PASS
-FAIL
-AMBIGUOUS
-UNAVAILABLE
+kaspa-fair-transcript-v1
 ```
 
-Meanings:
+The transcript does not replace evidence bundles. It points at them, orders them, and extracts the canonical facts later verifiers must check.
 
-- `PASS`: required evidence is present and independently verifies.
-- `FAIL`: evidence is present and contradicts the claimed result.
-- `AMBIGUOUS`: evidence is incomplete or insufficient to prove/falsify the claim.
-- `UNAVAILABLE`: required external data cannot currently be queried.
+In short:
 
-## 3. Top-level JSON Shape
+```text
+evidence bundle = raw committed evidence
+proof transcript = stable, verifier-oriented interpretation of that evidence
+```
 
-Draft schema shape:
+## 4. Canonical TN10 transcript instance
+
+ENV-069 defines the first canonical foundation transcript around the corrected TN10 covenant path proven earlier.
+
+Network:
+
+```text
+TN10/testnet-10 only
+mainnet_supported = false
+```
+
+Canonical values:
+
+- ENV-064 spend txid:
+  `4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c`
+- ENV-063 covenant input spent by ENV-064:
+  `2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0`
+- continuing output:
+  `4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0`
+- continuing output value:
+  `99700000 sompi`
+- covenant id:
+  `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7`
+
+## 5. Canonical ENV step ordering
+
+The canonical transcript order is fixed:
+
+```text
+ENV-063 create
+-> ENV-064 spend
+-> ENV-065 confirmation
+```
+
+Step-by-step meaning:
+
+1. `ENV-063`
+   - role: canonical create evidence
+   - character of original action: live TN10 create
+   - transcript use: evidence-only historical reference
+   - fixture path:
+     `fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/`
+
+2. `ENV-064`
+   - role: canonical spend evidence
+   - character of original action: live TN10 spend
+   - transcript use: evidence-only historical reference
+   - fixture path:
+     `fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/`
+
+3. `ENV-065`
+   - role: canonical read-only confirmation evidence
+   - character of original action: read-only settlement confirmation
+   - transcript use: evidence-only historical reference
+   - fixture path:
+     `fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/`
+
+The transcript itself is offline evidence. It records that ENV-063 and ENV-064 were historically live steps, but using the transcript later must not require replaying them.
+
+## 6. Foundation transcript shape
+
+At the Rust layer, the foundation transcript should remain simple and strongly typed.
+
+Recommended top-level fields:
+
+- transcript schema version
+- evidence schema version
+- transcript id
+- network
+- mainnet supported flag
+- verifier direction flags
+- app-agnostic / roulette flags
+- safety boundary flags
+- canonical proven TN10 values
+- ordered transcript steps
+
+Recommended step fields:
+
+- ENV id
+- role/purpose
+- fixture path
+- mode of original step (`live`, `read-only`, `offline`, or `evidence-only`)
+- whether the transcript is using that step only as historical evidence
+- expected txid / input outpoint / continuing output / value / covenant id where relevant
+
+This is enough for foundation verifiers without over-engineering application logic into the crate.
+
+## 7. Safety boundary
+
+The canonical ENV-069 transcript must explicitly state that later offline transcript work requires:
+
+- no secrets
+- no wallet
+- no signing
+- no network
+- no broadcast
+- no mainnet
+
+This is a hard separation boundary between:
+
+```text
+foundation transcript and verifier work
+vs
+future live submit / app adapter / demo workflows
+```
+
+## 8. Verifier direction
+
+Verifier priority should be:
+
+1. offline verifier first
+2. online verifier later
+
+Meaning:
+
+- first, build tooling that can read committed evidence and the proof transcript without requiring a node or wallet
+- later, optionally add online/read-only helpers that compare transcript claims against current network state
+- submit/broadcast remains out of scope for the transcript layer
+
+The transcript should therefore be usable by a deterministic offline verifier before any richer network-connected verifier exists.
+
+## 9. Application direction
+
+The foundation layer is app-agnostic.
+
+That means:
+
+- the transcript names covenant facts, not roulette round logic
+- the transcript can later support multiple adapters
+- roulette remains future adapter/demo work only
+
+Roulette-specific fairness data can be layered on top later, but it must not leak backward into the foundation transcript baseline.
+
+## 10. Minimal stable JSON example
+
+The ENV-069 sample JSON artifact should stay readable and stable. A canonical shape is:
 
 ```json
 {
-  "schema_version": "kaspa-fair-proof-transcript-v0",
-  "transcript_id": "env-067-example",
-  "created_at_utc": "2026-06-26T00:00:00Z",
-  "project": {
-    "repo": "kaspa-fair-lab",
-    "git_commit": null,
-    "git_dirty": null
-  },
-  "network": {
-    "network_id": "testnet-10",
-    "mainnet": false,
-    "server_info": null,
-    "sync_status": null,
-    "has_utxo_index": null
-  },
-  "app": {
-    "app_id": null,
-    "round_id": null,
-    "action_type": "design-only"
-  },
-  "covenant": {
-    "recipe_id": "toccata-v1-keyed-blake3-state-transition",
-    "tx_version": 1,
-    "covenant_id": null,
-    "state_before": null,
-    "state_after": null
-  },
-  "transactions": {
-    "input_utxos": [],
-    "output_utxos": [],
-    "txids": [],
-    "submit_result": null,
-    "postcheck_result": null
-  },
-  "local_verification": {
-    "vm_proof_result": null,
-    "shape_validation_result": null,
-    "state_transition_result": null
-  },
-  "fairness": null,
+  "transcript_schema_version": "kaspa-fair-transcript-v1",
+  "evidence_schema_version": "kaspa-fair-evidence-v1",
+  "transcript_id": "canonical-tn10-covenant-path",
+  "network": "TN10/testnet-10",
+  "mainnet_supported": false,
+  "offline_verifier_first": true,
+  "online_verifier_later": true,
+  "app_agnostic_foundation_layer": true,
+  "includes_roulette_adapter": false,
   "safety": {
-    "transaction_created": false,
-    "transaction_signed": false,
-    "transaction_submitted": false,
-    "submission_count": 0,
-    "mainnet_used": false,
-    "wallet_secrets_accessed": false,
-    "helper_private_key_exposed": false,
-    "secret_redaction_checked": true
+    "requires_secrets": false,
+    "requires_wallet": false,
+    "requires_signing": false,
+    "requires_network": false,
+    "requires_broadcast": false,
+    "mainnet_supported": false
   },
-  "verification_summary": {
-    "result": "PASS",
-    "checks": []
-  }
-}
-```
-
-## 4. Required Fields by Transcript Type
-
-### 4.1 Design-only / Planning Transcript
-
-Required:
-
-- `schema_version`
-- `transcript_id`
-- `created_at_utc`
-- `app.action_type`
-- `safety.transaction_created=false`
-- `safety.transaction_signed=false`
-- `safety.transaction_submitted=false`
-- `safety.submission_count=0`
-- `safety.mainnet_used=false`
-- `verification_summary.result`
-
-### 4.2 Covenant Create Transcript
-
-Required:
-
-- network id
-- server info or explicit reason unavailable
-- input UTXOs
-- planned outputs
-- fee
-- tx version
-- covenant recipe id
-- covenant id if created/observable
-- local transaction id reconstruction
-- local shape validation result
-- submit result when submitted
-- exact rejection when rejected
-- postcheck result
-- safety block
-
-### 4.3 Covenant Spend Transcript
-
-Required:
-
-- network id
-- previous covenant outpoint
-- previous covenant id/state
-- intended next output/state
-- covenant recipe id
-- local VM proof result
-- state transition verification result
-- submit result when submitted
-- exact rejection when rejected
-- postcheck result
-- safety block
-
-### 4.4 Read-only Confirmation Transcript
-
-Required:
-
-- network id
-- server info
-- sync status
-- UTXO index availability when relevant
-- transaction/mempool query result
-- original input status
-- continuing output status
-- value/covenant id where observable
-- explicit `transaction_created=false`
-- explicit `transaction_submitted=false`
-
-### 4.5 Roulette Round Transcript
-
-Required:
-
-- app id
-- round id
-- player address or public player identifier
-- stake
-- bet type
-- bet selection
-- house commitment
-- player entropy
-- reveal value after reveal
-- outcome encoding version
-- outcome number
-- payout rule version
-- expected payout
-- actual settlement output(s)
-- covenant create txid
-- covenant spend/settlement txid
-- independent verifier result
-
-## 5. Roulette Fairness Object
-
-Draft shape:
-
-```json
-{
-  "model": "commit-reveal-v0",
-  "round_id": "round-001",
-  "house_commitment": "blake3:<hex>",
-  "house_reveal": "redacted-until-reveal-or-hex-after-reveal",
-  "player_entropy": "hex-or-public-value",
-  "covenant_create_txid": "<txid>",
-  "encoding": "kaspa-fair-roulette-v0",
-  "seed_formula": "blake3(round_id || house_secret || player_entropy || covenant_create_txid)",
-  "seed_hex": "<hex>",
-  "outcome_formula": "integer(seed) mod 37",
-  "outcome_number": 17,
-  "wheel": "european-0-36",
-  "bet": {
-    "type": "red_black",
-    "selection": "red",
-    "stake_sompi": 100000000
+  "canonical": {
+    "env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+    "env063_input_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+    "continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+    "continuing_output_value_sompi": 99700000,
+    "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
   },
-  "payout": {
-    "rule_id": "european-roulette-v0",
-    "expected_multiplier": "2x",
-    "expected_payout_sompi": 200000000,
-    "actual_payout_sompi": 200000000,
-    "result": "PASS"
-  },
-  "checks": [
+  "steps": [
     {
-      "id": "commitment-fixed-before-reveal",
-      "result": "PASS"
+      "env_id": "ENV-063",
+      "purpose": "covenant-create",
+      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/"
     },
     {
-      "id": "reveal-matches-commitment",
-      "result": "PASS"
+      "env_id": "ENV-064",
+      "purpose": "covenant-spend",
+      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/"
     },
     {
-      "id": "outcome-calculation",
-      "result": "PASS"
-    },
-    {
-      "id": "payout-rule",
-      "result": "PASS"
+      "env_id": "ENV-065",
+      "purpose": "read-only-confirmation",
+      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/"
     }
   ]
 }
 ```
 
-## 6. Markdown Rendering
+## 11. ENV-069 result
 
-The Markdown transcript should be generated from the JSON transcript and should include:
+ENV-069 should leave the foundation repository with:
 
-```text
-# Proof Transcript
+- a stable transcript schema identifier: `kaspa-fair-transcript-v1`
+- a stable evidence schema identifier: `kaspa-fair-evidence-v1`
+- a transcript module in `crates/kaspa-foundation/src/transcript/`
+- fixture-backed tests covering the canonical TN10 proof path
+- a committed sample transcript artifact under `spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/`
 
-Result: PASS / FAIL / AMBIGUOUS / UNAVAILABLE
-Network: testnet-10
-Action: <action>
-App: <app id or none>
-Round: <round id or none>
-Covenant recipe: <recipe id>
-
-## Summary
-...
-
-## Safety
-- Transaction created: true/false
-- Transaction signed: true/false
-- Transaction submitted: true/false
-- Submission count: N
-- Mainnet used: false
-- Wallet secrets accessed: false
-- Helper private key exposed: false
-
-## Covenant Evidence
-...
-
-## Local Verification
-...
-
-## Live Submission / Read-only Confirmation
-...
-
-## App/Fairness Evidence
-...
-
-## Independent Verification Result
-...
-```
-
-## 7. Verification Rules
-
-The verifier should fail closed for critical mismatches:
-
-- wrong network
-- mainnet evidence when mainnet is disabled
-- tx version not matching recipe
-- missing local VM proof for a submitted covenant spend
-- covenant id mismatch
-- state transition mismatch
-- reveal does not match commitment
-- outcome calculation mismatch
-- payout mismatch
-- submitted transaction without explicit submit authorization evidence
-
-The verifier should return `AMBIGUOUS` instead of `PASS` when:
-
-- postcheck evidence is missing
-- current RPC cannot answer the needed read-only query
-- settlement is not yet indexed
-- mempool state is inconclusive
-- transcript omits non-critical but relevant evidence
-
-## 8. Secret Redaction Requirements
-
-A transcript must not contain:
-
-- private keys
-- mnemonic phrases
-- wallet passwords
-- seed phrases
-- raw house secret before reveal
-- unrelated local filesystem secrets
-
-After reveal, the house secret can be included only if it is required to verify the round and the protocol defines it as public at that phase.
-
-## 9. ENV-063/064/065 Golden Transcript Targets
-
-Initial golden transcript fixtures should reconstruct and verify:
-
-- ENV-063 corrected create txid: `2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849`
-- ENV-064 corrected spend txid: `4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c`
-- continuing output: `4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0`
-- continuing output value: `99700000` sompi
-- covenant id: `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7`
-
-## 10. First Implementation Recommendation
-
-Implement transcript generation before a polished UI.
-
-Recommended no-live sequence:
-
-1. define Rust structs for the transcript schema
-2. generate JSON for ENV-063/064/065 evidence fixtures
-3. render Markdown from JSON
-4. write verifier that returns PASS/FAIL/AMBIGUOUS/UNAVAILABLE
-5. add tamper tests for txid, network, covenant id, reveal, and payout
-
-No private keys are needed for verifier work.
+That gives later work a clean base for offline verification first, then online verification later, while keeping submit/broadcast and roulette logic out of the foundation transcript layer.

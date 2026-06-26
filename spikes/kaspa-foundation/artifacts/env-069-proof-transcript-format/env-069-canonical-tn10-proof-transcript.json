@@ -1,0 +1,73 @@
+{
+  "transcript_schema_version": "kaspa-fair-transcript-v1",
+  "evidence_schema_version": "kaspa-fair-evidence-v1",
+  "transcript_id": "canonical-tn10-covenant-path",
+  "network": "TN10/testnet-10",
+  "mainnet_supported": false,
+  "offline_verifier_first": true,
+  "online_verifier_later": true,
+  "app_agnostic_foundation_layer": true,
+  "includes_roulette_adapter": false,
+  "safety": {
+    "requires_secrets": false,
+    "requires_wallet": false,
+    "requires_signing": false,
+    "requires_network": false,
+    "requires_broadcast": false,
+    "mainnet_supported": false
+  },
+  "canonical": {
+    "env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+    "env063_input_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+    "continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+    "continuing_output_value_sompi": 99700000,
+    "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+  },
+  "steps": [
+    {
+      "env_id": "ENV-063",
+      "role": "canonical create evidence",
+      "purpose": "covenant-create",
+      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/",
+      "mode": "live",
+      "historical_live_evidence": true,
+      "read_only_evidence": false,
+      "evidence_only": true,
+      "expected_spend_txid": null,
+      "expected_input_outpoint": null,
+      "expected_continuing_output": null,
+      "expected_continuing_output_value_sompi": null,
+      "expected_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+    },
+    {
+      "env_id": "ENV-064",
+      "role": "canonical spend evidence",
+      "purpose": "covenant-spend",
+      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/",
+      "mode": "live",
+      "historical_live_evidence": true,
+      "read_only_evidence": false,
+      "evidence_only": true,
+      "expected_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+      "expected_input_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+      "expected_continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+      "expected_continuing_output_value_sompi": 99700000,
+      "expected_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+    },
+    {
+      "env_id": "ENV-065",
+      "role": "read-only confirmation evidence",
+      "purpose": "read-only-confirmation",
+      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/",
+      "mode": "read-only",
+      "historical_live_evidence": false,
+      "read_only_evidence": true,
+      "evidence_only": true,
+      "expected_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+      "expected_input_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+      "expected_continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+      "expected_continuing_output_value_sompi": 99700000,
+      "expected_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+    }
+  ]
+}

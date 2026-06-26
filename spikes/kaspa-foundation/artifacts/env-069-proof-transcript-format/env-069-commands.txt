@@ -1,0 +1,26 @@
+cd /root/kaspa-fair-foundation
+
+git status --short --untracked-files=all
+git log --oneline -5
+cargo fmt --check
+cargo test -p kaspa-foundation
+cargo check -p kaspa-foundation
+git diff --check
+
+# ENV-069 implementation workflow
+cargo test -p kaspa-foundation --test env069_proof_transcript
+cargo fmt
+cargo fmt --check
+cargo test -p kaspa-foundation
+cargo check -p kaspa-foundation
+git diff --check
+git status --short --untracked-files=all
+
+git add docs/proof-transcript-format.md crates/kaspa-foundation spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/
+git diff --cached --name-only | grep -E 'local-secrets|helper-private|private-key|mnemonic|seed|wallet|password|.env|.pem|.key' && echo "STOP: secret-looking file staged" || echo "OK: no obvious secret file staged"
+
+git commit -m "Define proof transcript format"
+git push origin main
+
+git status
+git log --oneline -5

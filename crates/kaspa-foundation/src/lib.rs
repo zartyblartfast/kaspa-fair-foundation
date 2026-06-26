@@ -7,6 +7,7 @@
 pub mod covenant;
 pub mod evidence;
 pub mod safety;
+pub mod transcript;
 pub mod verifier;
 
 /// Returns a concise status string used by the migration skeleton.
