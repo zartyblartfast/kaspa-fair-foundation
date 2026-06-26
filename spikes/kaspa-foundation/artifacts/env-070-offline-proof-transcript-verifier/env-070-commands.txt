@@ -1,0 +1,19 @@
+Initial preflight:
+  git status --short --untracked-files=all
+  git log --oneline -5
+  cargo fmt --check
+  cargo test -p kaspa-foundation
+  cargo check -p kaspa-foundation
+  git diff --check
+
+Focused RED/GREEN test cycle:
+  cargo test -p kaspa-foundation --test env070_offline_transcript_verifier
+  cargo fmt
+  cargo test -p kaspa-foundation --test env070_offline_transcript_verifier
+
+Final verification:
+  cargo fmt --check
+  cargo test -p kaspa-foundation
+  cargo check -p kaspa-foundation
+  git diff --check
+  git status --short --untracked-files=all

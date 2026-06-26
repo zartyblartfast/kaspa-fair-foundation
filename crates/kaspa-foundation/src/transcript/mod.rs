@@ -2,6 +2,7 @@
 
 pub mod canonical;
 pub mod schema;
+pub mod verifier;
 
 pub use canonical::{canonical_tn10_proof_transcript, CanonicalTranscriptValues, ProofTranscript};
 pub use schema::{

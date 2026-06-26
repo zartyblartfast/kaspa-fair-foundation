@@ -283,3 +283,26 @@ ENV-069 should leave the foundation repository with:
 - a committed sample transcript artifact under `spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/`
 
 That gives later work a clean base for offline verification first, then online verification later, while keeping submit/broadcast and roulette logic out of the foundation transcript layer.
+
+## 12. ENV-070 offline proof transcript verifier
+
+ENV-070 adds the first foundation offline verifier for the canonical TN10 proof transcript. The verifier is deliberately modest: it validates the transcript model and the committed fixture-path links without re-running live Kaspa workflow steps.
+
+The offline verifier checks:
+
+- transcript schema version is `kaspa-fair-transcript-v1`
+- evidence schema version is `kaspa-fair-evidence-v1`
+- network is `TN10/testnet-10`
+- `mainnet_supported = false`
+- ENV sequence is exactly `ENV-063 -> ENV-064 -> ENV-065`
+- canonical ENV-064 spend txid, ENV-063 input outpoint, continuing output, continuing output value, and covenant id match the proven TN10 values
+- transcript step expectations agree with the same canonical values
+- referenced fixture paths exist relative to the repository root
+- safety boundary requires no secrets, no wallet, no signing, no network, no broadcast, and no mainnet
+- transcript remains app-agnostic and does not include a roulette adapter
+
+The verifier intentionally does not check every Kaspa consensus rule. It does not execute scripts, build or sign transactions, query node state, fetch UTXOs, submit transactions, or prove that current TN10 state still matches the historical fixture evidence. It is a deterministic local consistency checker over the foundation transcript and committed fixture tree.
+
+The verifier does not contact TN10 or mainnet. It requires no RPC endpoint, no network access, no wallet files, no helper keys, and no secrets. Submit, sign, broadcast, and transaction creation remain out of scope for the transcript layer.
+
+Online/read-only verification against a live node is future work and should be added separately from this offline verifier boundary.
