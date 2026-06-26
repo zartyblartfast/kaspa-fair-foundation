@@ -1097,26 +1097,39 @@ Mainnet remains disabled until explicitly and separately approved.
 The project can add new apps without compromising the proven covenant foundation.
 ```
 
-## 26. Immediate Next Recommendation
+## 26. ENV-068 Extraction Status
 
-The next concrete task should be:
+ENV-068 started the clean reusable foundation crate extraction from the proven corrected TN10 path.
 
-```text
-ENV-067: Foundation Refactor Plan
-```
-
-This should be documentation/design only. It should not touch live TN10, private keys, transactions, roulette implementation, or web UI.
-
-ENV-067 should produce:
+The crate now represents the canonical corrected recipe as offline metadata and fixture-backed constants:
 
 ```text
-docs/kaspa-foundation-architecture.md
-docs/proof-transcript-format.md
-spikes/kaspa-foundation/artifacts/env-067-foundation-refactor-plan/
+recipe id: toccata-v1-keyed-blake3-state-transition
+network: TN10/testnet-10
+transaction version: TX_VERSION_TOCCATA = 1
+hash opcode: OpBlake3WithKey
+domain key policy: 32-byte padded domain keys
+canonical evidence: ENV-063 create, ENV-064 spend, ENV-065 read-only settlement confirmation
 ```
 
-Result target:
+The old ENV-060C path is retained only as historical/non-canonical evidence. It must not be used as the canonical implementation.
+
+The extraction deliberately avoids copying the reference helper's rusty-kaspa path dependencies into the foundation crate. The reference helper depends on historical local source paths under `tools/rusty-kaspa-source/...`; the foundation crate should integrate official Kaspa crates later through a clean dependency strategy rather than through hidden links to the old lab workspace.
+
+ENV-068 does not expose default live signing, wallet, RPC submit, mainnet, roulette, or web-app APIs. It is an offline/refactor step only.
+
+## 27. Immediate Next Recommendation
+
+The next concrete task should be either:
 
 ```text
-READY_FOR_REFACTOR
+ENV-069: Proof transcript format implementation
 ```
+
+or, if reviewers want a deeper crate extraction before transcript work:
+
+```text
+ENV-068B: official Kaspa crate dependency integration plan / spike
+```
+
+Both should preserve the existing safety boundary: no live TN10 action, no signing, no transaction submission, no wallet/helper secret access, no mainnet, and no roulette/web app unless explicitly approved in a later environment.
