@@ -9,11 +9,11 @@
   "app_agnostic_foundation_layer": true,
   "includes_roulette_adapter": false,
   "safety": {
-    "requires_secrets": false,
-    "requires_wallet": false,
-    "requires_signing": false,
-    "requires_network": false,
-    "requires_broadcast": false,
+    "requires_no_secrets": true,
+    "requires_no_wallet": true,
+    "requires_no_signing": true,
+    "requires_no_network": true,
+    "requires_no_broadcast": true,
     "mainnet_supported": false
   },
   "canonical": {

@@ -29,11 +29,11 @@ pub enum StepPurpose {
 /// Safety constraints required to work with a transcript offline.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct TranscriptSafetyBoundary {
-    pub requires_secrets: bool,
-    pub requires_wallet: bool,
-    pub requires_signing: bool,
-    pub requires_network: bool,
-    pub requires_broadcast: bool,
+    pub requires_no_secrets: bool,
+    pub requires_no_wallet: bool,
+    pub requires_no_signing: bool,
+    pub requires_no_network: bool,
+    pub requires_no_broadcast: bool,
     pub mainnet_supported: bool,
 }
 

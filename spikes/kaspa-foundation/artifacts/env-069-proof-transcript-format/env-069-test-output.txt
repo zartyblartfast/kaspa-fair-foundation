@@ -3,8 +3,8 @@ $ cargo fmt --check
 $ cargo test -p kaspa-foundation
 
 running 4 tests
-test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
 test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
 test safety::tests::defaults_are_safe ... ok
 test verifier::tests::canonical_sanity_passes ... ok
 

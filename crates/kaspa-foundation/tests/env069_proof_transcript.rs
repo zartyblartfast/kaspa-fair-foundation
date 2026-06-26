@@ -100,11 +100,11 @@ fn canonical_transcript_is_offline_readonly_evidence_only_and_safe() {
     assert!(transcript.app_agnostic_foundation_layer);
     assert!(!transcript.includes_roulette_adapter);
 
-    assert!(!transcript.safety.requires_secrets);
-    assert!(!transcript.safety.requires_wallet);
-    assert!(!transcript.safety.requires_signing);
-    assert!(!transcript.safety.requires_network);
-    assert!(!transcript.safety.requires_broadcast);
+    assert!(transcript.safety.requires_no_secrets);
+    assert!(transcript.safety.requires_no_wallet);
+    assert!(transcript.safety.requires_no_signing);
+    assert!(transcript.safety.requires_no_network);
+    assert!(transcript.safety.requires_no_broadcast);
     assert!(!transcript.safety.mainnet_supported);
 
     assert!(transcript.steps[0].historical_live_evidence);

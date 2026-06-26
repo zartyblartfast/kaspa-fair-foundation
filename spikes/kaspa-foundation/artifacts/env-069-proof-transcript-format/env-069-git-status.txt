@@ -1,12 +1,8 @@
-$ git status --short --untracked-files=all
- M crates/kaspa-foundation/src/lib.rs
+ M crates/kaspa-foundation/src/transcript/canonical.rs
+ M crates/kaspa-foundation/src/transcript/schema.rs
+ M crates/kaspa-foundation/tests/env069_proof_transcript.rs
  M docs/proof-transcript-format.md
-?? crates/kaspa-foundation/src/transcript/canonical.rs
-?? crates/kaspa-foundation/src/transcript/mod.rs
-?? crates/kaspa-foundation/src/transcript/schema.rs
-?? crates/kaspa-foundation/tests/env069_proof_transcript.rs
-?? spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-canonical-tn10-proof-transcript.json
-?? spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-commands.txt
-?? spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-git-status.txt
-?? spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-summary.md
-?? spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-test-output.txt
+ M spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-canonical-tn10-proof-transcript.json
+ M spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-commands.txt
+ M spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-git-status.txt
+ M spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/env-069-test-output.txt

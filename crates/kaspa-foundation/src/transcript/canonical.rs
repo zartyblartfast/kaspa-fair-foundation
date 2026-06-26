@@ -108,11 +108,11 @@ pub fn canonical_tn10_proof_transcript() -> ProofTranscript {
         app_agnostic_foundation_layer: true,
         includes_roulette_adapter: false,
         safety: TranscriptSafetyBoundary {
-            requires_secrets: false,
-            requires_wallet: false,
-            requires_signing: capabilities.signing_api_exposed,
-            requires_network: false,
-            requires_broadcast: capabilities.submit_api_exposed,
+            requires_no_secrets: true,
+            requires_no_wallet: true,
+            requires_no_signing: !capabilities.signing_api_exposed,
+            requires_no_network: true,
+            requires_no_broadcast: !capabilities.submit_api_exposed,
             mainnet_supported: capabilities.mainnet_enabled,
         },
         canonical: CanonicalTranscriptValues {

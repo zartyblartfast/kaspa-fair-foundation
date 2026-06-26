@@ -178,6 +178,15 @@ The canonical ENV-069 transcript must explicitly state that later offline transc
 - no broadcast
 - no mainnet
 
+At the schema level, these appear as explicit positive safety markers:
+
+- `requires_no_secrets = true`
+- `requires_no_wallet = true`
+- `requires_no_signing = true`
+- `requires_no_network = true`
+- `requires_no_broadcast = true`
+- `mainnet_supported = false`
+
 This is a hard separation boundary between:
 
 ```text
@@ -229,11 +238,11 @@ The ENV-069 sample JSON artifact should stay readable and stable. A canonical sh
   "app_agnostic_foundation_layer": true,
   "includes_roulette_adapter": false,
   "safety": {
-    "requires_secrets": false,
-    "requires_wallet": false,
-    "requires_signing": false,
-    "requires_network": false,
-    "requires_broadcast": false,
+    "requires_no_secrets": true,
+    "requires_no_wallet": true,
+    "requires_no_signing": true,
+    "requires_no_network": true,
+    "requires_no_broadcast": true,
     "mainnet_supported": false
   },
   "canonical": {
