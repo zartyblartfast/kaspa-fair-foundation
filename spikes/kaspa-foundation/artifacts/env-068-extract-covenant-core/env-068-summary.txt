@@ -1,0 +1,59 @@
+ENV-068 extract reusable covenant core
+
+Result: PASS
+Repo path: /root/kaspa-fair-foundation
+Current branch: main
+HEAD before work: 86d6742 Record foundation repo sanity review
+HEAD at artifact creation: 86d6742
+Recent git log:
+86d6742 Record foundation repo sanity review
+b24ef53 Initial Kaspa fair foundation skeleton
+
+Files changed:
+M crates/kaspa-foundation/Cargo.toml
+ M crates/kaspa-foundation/src/lib.rs
+ M docs/kaspa-foundation-architecture.md
+?? crates/kaspa-foundation/src/covenant/constants.rs
+?? crates/kaspa-foundation/src/covenant/mod.rs
+?? crates/kaspa-foundation/src/covenant/recipe.rs
+?? crates/kaspa-foundation/src/evidence/canonical_fixtures.rs
+?? crates/kaspa-foundation/src/evidence/mod.rs
+?? crates/kaspa-foundation/src/safety/mod.rs
+?? crates/kaspa-foundation/src/verifier/mod.rs
+?? crates/kaspa-foundation/tests/env068_canonical_recipe.rs
+?? spikes/kaspa-foundation/artifacts/env-068-extract-covenant-core/cargo-check.txt
+?? spikes/kaspa-foundation/artifacts/env-068-extract-covenant-core/env-068-summary.txt
+?? spikes/kaspa-foundation/artifacts/env-068-extract-covenant-core/extracted-api.txt
+?? spikes/kaspa-foundation/artifacts/env-068-extract-covenant-core/fixture-sanity.txt
+?? spikes/kaspa-foundation/artifacts/env-068-extract-covenant-core/reference-inspection.txt
+?? spikes/kaspa-foundation/artifacts/env-068-extract-covenant-core/safety-check.txt
+
+Diff stat at artifact creation:
+crates/kaspa-foundation/Cargo.toml    |  6 ++++++
+ crates/kaspa-foundation/src/lib.rs    | 13 +++++++++++--
+ docs/kaspa-foundation-architecture.md | 33 +++++++++++++++++++++++----------
+ 3 files changed, 40 insertions(+), 12 deletions(-)
+
+Whether placeholder foundation crate was replaced/extended: true; src/lib.rs now exposes offline-first covenant/evidence/safety/verifier modules.
+Whether corrected TN10 recipe is now represented in crates/kaspa-foundation: true
+Whether old ENV-060C is explicitly historical/non-canonical: true
+Whether fixture constants/tests were added: true
+Whether cargo fmt/test/check passed: true
+- cargo fmt --check exit_code: 0
+- cargo test exit_code: 0
+- cargo check exit_code: 0
+Whether any live TN10 action occurred: false
+Whether any transaction was created/submitted: false
+Whether any wallet/helper secret was accessed: false
+Whether any local-secrets/wallet/password/seed/private-key files exist in repo: false
+Whether mainnet was used: false
+Whether roulette/web app was touched: false
+Recommended next step: ENV-069 proof transcript format; use ENV-068B only if reviewers want official Kaspa crate dependency integration before transcript implementation.
+
+Artifact files:
+- env-068-summary.txt
+- extracted-api.txt
+- reference-inspection.txt
+- fixture-sanity.txt
+- cargo-check.txt
+- safety-check.txt

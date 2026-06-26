@@ -1,0 +1,59 @@
+ENV-068 extracted API
+
+New modules added under crates/kaspa-foundation/src/:
+- covenant/mod.rs
+- covenant/constants.rs
+- covenant/recipe.rs
+- evidence/mod.rs
+- evidence/canonical_fixtures.rs
+- safety/mod.rs
+- verifier/mod.rs
+
+Public constants added:
+- CORRECTED_TN10_RECIPE_ID
+- HISTORICAL_ENV060C_RECIPE_ID
+- TX_VERSION_TOCCATA_NAME
+- TX_VERSION_TOCCATA
+- HASH_OPCODE_NAME
+- DOMAIN_KEY_POLICY
+- CANONICAL_ENV064_SPEND_TXID
+- CANONICAL_ENV063_INPUT_OUTPOINT
+- CANONICAL_CONTINUING_OUTPUT
+- CANONICAL_CONTINUING_OUTPUT_VALUE_SOMPI
+- CANONICAL_COVENANT_ID
+
+Public types/functions added:
+- covenant::recipe::CovenantRecipe
+- covenant::recipe::corrected_tn10_recipe()
+- covenant::recipe::historical_env060c_recipe()
+- evidence::canonical_fixtures::CanonicalFixtureSet
+- evidence::canonical_fixtures::canonical_fixture_set()
+- evidence::canonical_fixtures::fixture_values_are_internally_consistent()
+- safety::FoundationCapabilities
+- safety::default_capabilities()
+- safety::OFFLINE_ONLY_BOUNDARY
+- verifier::canonical_recipe_sanity_passes()
+
+Crate features added:
+- default = ["offline"]
+- offline = []
+- live-submit = [] as a future explicit integration point only; ENV-068 exposes no live submit/signing API.
+
+Tests added:
+- crates/kaspa-foundation/tests/env068_canonical_recipe.rs
+- module unit tests in covenant, evidence, safety, and verifier modules.
+
+Intentionally not extracted yet:
+- no transaction builder
+- no signing API
+- no submit/broadcast API
+- no live RPC client
+- no wallet/helper private key handling
+- no rusty-kaspa path dependencies from /root/kaspa-fair-lab
+- no full script-byte builder using official Kaspa crates
+- no roulette implementation
+- no web app
+
+TODO for later:
+- integrate official Kaspa crates through a clean dependency plan instead of hidden historical lab paths.
+- implement proof transcript format and offline verifier around this recipe metadata.

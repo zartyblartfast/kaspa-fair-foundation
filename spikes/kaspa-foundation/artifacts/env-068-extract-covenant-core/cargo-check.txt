@@ -1,0 +1,45 @@
+ENV-068 cargo verification
+
+$ cargo fmt --check
+exit_code=0
+
+
+$ cargo test
+exit_code=0
+Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/main.rs (target/debug/deps/kaspa_fair_cli-4fc9ac5cfa237560)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kaspa_foundation-6b58285f0bf06e0a)
+
+running 4 tests
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
+test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+test safety::tests::defaults_are_safe ... ok
+test verifier::tests::canonical_sanity_passes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env068_canonical_recipe.rs (target/debug/deps/env068_canonical_recipe-5adb618fc5ebd36a)
+
+running 5 tests
+test canonical_env064_fixture_values_are_represented ... ok
+test corrected_recipe_identity_and_network_are_canonical ... ok
+test corrected_recipe_records_toccata_keyed_blake3_and_domain_policy ... ok
+test default_foundation_capabilities_do_not_expose_sign_or_submit ... ok
+test historical_env060c_recipe_is_not_canonical ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kaspa_foundation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo check
+exit_code=0
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s

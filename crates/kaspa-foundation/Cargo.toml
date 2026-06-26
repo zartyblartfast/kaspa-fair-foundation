@@ -3,4 +3,10 @@ name = "kaspa-foundation"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = ["offline"]
+offline = []
+# Future explicit integration point only. ENV-068 exposes no live submit/signing API.
+live-submit = []
+
 [dependencies]

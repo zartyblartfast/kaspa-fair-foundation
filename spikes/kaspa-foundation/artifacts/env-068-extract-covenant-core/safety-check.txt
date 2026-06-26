@@ -1,0 +1,87 @@
+ENV-068 safety check
+
+Commands run:
+find . -path '*/local-secrets/*' -print
+find . \( -name '*.wallet' -o -name '*.password' -o -name '*.seed' -o -name '*.pem' -o -name '*.key' \) -print
+
+grep -R -n -i "private key\|mnemonic\|seed phrase\|wallet password" README.md docs .hermes fixtures reference crates examples spikes 2>/dev/null || true
+
+Exit code: 0
+
+Output:
+docs/kaspa-foundation-architecture.md:686:The offline verifier should require no RPC connection and no private keys.
+docs/kaspa-foundation-architecture.md:740:- no private key strings in artifacts
+docs/kaspa-foundation-architecture.md:741:- no mnemonic/password/seed strings in docs
+docs/proof-transcript-format.md:265:- Helper private key exposed: false
+docs/proof-transcript-format.md:310:- private keys
+docs/proof-transcript-format.md:311:- mnemonic phrases
+docs/proof-transcript-format.md:312:- wallet passwords
+docs/proof-transcript-format.md:313:- seed phrases
+docs/proof-transcript-format.md:341:No private keys are needed for verifier work.
+.hermes/skills/tn10-official-wallet-workflow.md:77:- Never expose mnemonic, seed, private key, wallet password, or wallet file contents.
+.hermes/skills/tn10-official-wallet-workflow.md:82:- Public artifacts must not include wallet password, mnemonic, seed phrase, private key, or wallet file contents.
+.hermes/skills/tn10-official-wallet-workflow.md:98:- Never use mainnet, expose wallet secrets/helper private key material, build roulette, or build a web app under this workflow.
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt:24:Private key material exposed: false
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env-065-summary.txt:18:Helper private key exposed in ENV-065: false
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt:39:- Helper private key material was not exposed.
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt:21:Helper private key not exposed: true
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt:28:Private key material exposed: false
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/spend-submit.txt:9:Private key material exposed: false
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt:19:Confirmation helper private key not exposed: true
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt:9:Helper private key exists: true
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt:10:Helper private key path is under ignored local-secrets: true
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt:26:Private key material exposed: false
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt:26:Helper private key not exposed: true
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/fee-analysis.txt:19:Private key material exposed: false
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/create-submit.txt:10:Private key material exposed: false
+reference/tn10-covenant-spike/src/main.rs:557:        write_blocked_summary(&summary_path, "helper private key file missing")?;
+reference/tn10-covenant-spike/src/main.rs:558:        return Err("blocked: helper private key file missing".into());
+reference/tn10-covenant-spike/src/main.rs:689:            "Helper private key exists: true\n",
+reference/tn10-covenant-spike/src/main.rs:690:            "Helper private key path is under ignored local-secrets: true\n",
+reference/tn10-covenant-spike/src/main.rs:704:            "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:741:                "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:771:                        "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:886:                        "- helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:914:                    "ENV-060C create submit\n\nResult: REJECTED\nSubmission attempts: 1\nallow_orphan: false\nLocal txid: {}\nRejection/error: {}\nPrivate key material exposed: false\n",
+reference/tn10-covenant-spike/src/main.rs:982:                        "- helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:1011:        return Err("blocked: helper private key file missing".into());
+reference/tn10-covenant-spike/src/main.rs:1117:                    "- helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:1127:        write_env063_blocked("helper private key file missing")?;
+reference/tn10-covenant-spike/src/main.rs:1128:        return Err("blocked: helper private key file missing".into());
+reference/tn10-covenant-spike/src/main.rs:1263:            "Helper private key exists: true\n",
+reference/tn10-covenant-spike/src/main.rs:1264:            "Helper private key path is under ignored local-secrets: true\n",
+reference/tn10-covenant-spike/src/main.rs:1280:            "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:1318:                "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:1349:                        "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:1426:                        "Helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:1454:                    "ENV-063 create submit\n\nResult: REJECTED\nSubmission attempts: 1\nallow_orphan: false\nCovenant script path: corrected ENV-062B v1\nLocal txid: {}\nRejection/error: {}\nPrivate key material exposed: false\n",
+reference/tn10-covenant-spike/src/main.rs:1488:                        "Helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:1720:                "Helper key role: helper private key should not sign the covenant input unless the actual spend construction proves it is required; helper key may sign a separate helper fee input only if future ENV-062 explicitly approves adding one.\n",
+reference/tn10-covenant-spike/src/main.rs:1795:                "- stop before private key exposure, mainnet, roulette, or web app work.\n\n",
+reference/tn10-covenant-spike/src/main.rs:1802:                "- no private key exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:2053:                "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:2090:                        "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:2169:                        "Confirmation helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:2194:                    "ENV-062 covenant spend submit\n\nResult: REJECTED\nSubmission attempts: 1\nallow_orphan: false\nLocal txid: {}\nRejection/error: {}\nPrivate key material exposed: false\n",
+reference/tn10-covenant-spike/src/main.rs:2221:                        "Confirmation helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:2445:                "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:2482:                        "Private key material exposed: false\n"
+reference/tn10-covenant-spike/src/main.rs:2563:                        "Confirmation helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:2588:                    "ENV-064 covenant spend submit\n\nResult: REJECTED\nSubmission attempts: 1\nallow_orphan: false\nLocal txid: {}\nRejection/error: {}\nPrivate key material exposed: false\n",
+reference/tn10-covenant-spike/src/main.rs:2617:                        "Confirmation helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:3065:            "  Helper private key exposed: false\n",
+reference/tn10-covenant-spike/src/main.rs:3179:                "Confirmation helper private key not exposed: true\n",
+reference/tn10-covenant-spike/src/main.rs:3214:                "Confirmation helper private key not exposed: true
+reference/tn10-covenant-spike/src/main.rs:3295:            "ENV-060C live helper-controlled TN10 covenant create fee retry\n\nResult: BLOCKED\nReason: {}\nSafety confirmations: no submission attempted, no covenant spend attempted, no mainnet, no wallet secrets accessed, helper private key not exposed, no roulette/web app.\n",
+spikes/kaspa-foundation/artifacts/env-067b-foundation-repo-sanity-review/safety-check.txt:32:Keyword scan for: private key | mnemonic | seed phrase | wallet password
+spikes/kaspa-foundation/artifacts/env-067b-foundation-repo-sanity-review/safety-check.txt:34:- "Private key material exposed: false"
+spikes/kaspa-foundation/artifacts/env-067b-foundation-repo-sanity-review/safety-check.txt:35:- "Helper private key not exposed: true"
+spikes/kaspa-foundation/artifacts/env-067b-foundation-repo-sanity-review/safety-check.txt:36:- transcript redaction requirements forbidding private keys, mnemonic phrases, wallet passwords, and seed phrases
+spikes/kaspa-foundation/artifacts/env-067b-foundation-repo-sanity-review/safety-check.txt:37:- architecture text stating the work should remain documentation/design only and should not touch live TN10, private keys, transactions, roulette implementation, or web UI
+spikes/kaspa-foundation/artifacts/env-067b-foundation-repo-sanity-review/env-067b-summary.txt:27:- Keyword hits for private key / mnemonic / seed phrase / wallet password were redaction or safety statements only; no actual secret material was found.
+spikes/kaspa-foundation/artifacts/env-067a-clean-repo-migration/env-067a-summary.txt:8:Any wallet/password/seed/private key files copied: false
+
+Interpretation:
+- local-secrets/wallet/password/seed/pem/key file find output was empty.
+- Keyword scan hits are safety/redaction prose and fixture assertions such as 'Private key material exposed: false'; no actual secret material was identified by this check.
+- No live TN10 action, signing, transaction creation/submission, wallet/helper secret access, mainnet, roulette, or web app work was performed in ENV-068.

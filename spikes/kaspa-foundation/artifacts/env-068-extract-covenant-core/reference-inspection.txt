@@ -1,0 +1,96 @@
+ENV-068 reference inspection
+
+Source files inspected under reference/tn10-covenant-spike/:
+reference/tn10-covenant-spike/Cargo.toml
+reference/tn10-covenant-spike/src/main.rs
+
+Where the corrected v1 path appears:
+- reference/tn10-covenant-spike/src/main.rs: run_covenant_create_v1 (ENV-063) uses build_covenant_script_v1 instead of build_covenant_script.
+- reference/tn10-covenant-spike/src/main.rs: run_covenant_spend_v1 (ENV-064) uses build_covenant_script_v1 and reconstruct_env063_create_tx.
+- reference/tn10-covenant-spike/src/main.rs: build_covenant_script_v1 documents and implements the corrected v1 previous-txid proof path.
+
+Where OpBlake3WithKey appears if found:
+- Imported from kaspa_txscript::opcodes::codes.
+- Used three times in build_covenant_script_v1 for TransactionRest, PayloadDigest, and TransactionV1Id keyed BLAKE3 hashing.
+
+Where 32-byte padded domain key logic appears if found:
+- domain_key_32(domain: &[u8]) -> [u8; 32] zero-pads domain strings to 32 bytes.
+- build_covenant_script_v1 uses domain_key_32 for TransactionRest, PayloadDigest, and TransactionV1Id.
+
+Dependency issue that should not be copied blindly:
+- reference/tn10-covenant-spike/Cargo.toml uses path dependencies under ../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/...
+- src/main.rs also records SOURCE_PATH = /root/kaspa-fair-lab/tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3.
+- ENV-068 therefore extracted app-owned constants/types/tests only and left official Kaspa crate integration as a TODO.
+
+Relevant grep evidence:
+reference/tn10-covenant-spike/Cargo.toml:7:kaspa-addresses = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/crypto/addresses" }
+reference/tn10-covenant-spike/Cargo.toml:8:kaspa-consensus-core = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/consensus/core" }
+reference/tn10-covenant-spike/Cargo.toml:9:kaspa-hashes = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/crypto/hashes" }
+reference/tn10-covenant-spike/Cargo.toml:10:kaspa-rpc-core = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/rpc/core" }
+reference/tn10-covenant-spike/Cargo.toml:11:kaspa-txscript = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/crypto/txscript" }
+reference/tn10-covenant-spike/Cargo.toml:12:kaspa-txscript-errors = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/crypto/txscript/errors" }
+reference/tn10-covenant-spike/Cargo.toml:13:kaspa-wrpc-client = { path = "../../../tools/rusty-kaspa-source/env058-20260625T230041Z/rusty-kaspa-tn10-toc3/rpc/wrpc/client" }
+reference/tn10-covenant-spike/src/main.rs:10:use kaspa_consensus_core::constants::TX_VERSION_TOCCATA;
+reference/tn10-covenant-spike/src/main.rs:27:    Op1Add, OpBlake2bWithKey, OpBlake3WithKey, OpCat, OpDup, OpEqual, OpEqualVerify,
+reference/tn10-covenant-spike/src/main.rs:128:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:203:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:236:            "- kaspa_consensus_core::constants::TX_VERSION_TOCCATA\n",
+reference/tn10-covenant-spike/src/main.rs:260:            "Expected TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:282:            "- This ENV-058 scaffold supersedes the stale local helper assumption for new offline Toccata-oriented construction by using TX_VERSION_TOCCATA = 1.\n",
+reference/tn10-covenant-spike/src/main.rs:305:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:306:        tx.version == TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:342:    let private_key_path = secret_dir.join("helper-private-key.hex");
+reference/tn10-covenant-spike/src/main.rs:555:    let private_key_path = env059_secret_dir().join("helper-private-key.hex");
+reference/tn10-covenant-spike/src/main.rs:646:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:655:    if tx.version != TX_VERSION_TOCCATA || tx.version == 2 || tx.outputs[0].covenant.is_none() {
+reference/tn10-covenant-spike/src/main.rs:694:            "TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:714:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:737:                "TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:749:            TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:756:    let submit_result = client.submit_transaction((&signed_tx).into(), false).await;
+reference/tn10-covenant-spike/src/main.rs:1009:    let private_key_path = env059_secret_dir().join("helper-private-key.hex");
+reference/tn10-covenant-spike/src/main.rs:1075:/// uses `build_covenant_script_v1()` instead of the v0 `build_covenant_script()`,
+reference/tn10-covenant-spike/src/main.rs:1109:                    "Covenant-create submit_transaction calls attempted: 0\n",
+reference/tn10-covenant-spike/src/main.rs:1125:    let private_key_path = env059_secret_dir().join("helper-private-key.hex");
+reference/tn10-covenant-spike/src/main.rs:1198:    let covenant_script = build_covenant_script_v1()?;
+reference/tn10-covenant-spike/src/main.rs:1223:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:1232:    if tx.version != TX_VERSION_TOCCATA || tx.version == 2 || tx.outputs[0].covenant.is_none() {
+reference/tn10-covenant-spike/src/main.rs:1269:            "Covenant script path: corrected ENV-062B v1 (build_covenant_script_v1)\n",
+reference/tn10-covenant-spike/src/main.rs:1270:            "TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:1290:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:1314:                "TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:1326:            TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:1333:    let submit_result = client.submit_transaction((&signed_tx).into(), false).await;
+reference/tn10-covenant-spike/src/main.rs:1721:                "Expected tx version: {} (TX_VERSION_TOCCATA)\n",
+reference/tn10-covenant-spike/src/main.rs:1738:                "- stop before mainnet, wallet-secret access, helper-private-key exposure, roulette, or web app work.\n"
+reference/tn10-covenant-spike/src/main.rs:1752:            TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:1985:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2040:                "TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:2064:            TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2075:    let submit_result = client.submit_transaction((&spend_tx).into(), false).await;
+reference/tn10-covenant-spike/src/main.rs:2282:    let covenant_script = build_covenant_script_v1()?;
+reference/tn10-covenant-spike/src/main.rs:2377:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2432:                "TX_VERSION_TOCCATA: {}\n",
+reference/tn10-covenant-spike/src/main.rs:2456:            TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2467:    let submit_result = client.submit_transaction((&spend_tx).into(), false).await;
+reference/tn10-covenant-spike/src/main.rs:2652:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2671:    let covenant_script = build_covenant_script_v1()?;
+reference/tn10-covenant-spike/src/main.rs:2683:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2745:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2874:            "first OP_EQUALVERIFY; the upstream v0 script hashes prev_rest||prev_payload with TransactionID, but live TX_VERSION_TOCCATA v1 txid is TransactionV1Id(payload_digest||rest_digest)"
+reference/tn10-covenant-spike/src/main.rs:2904:    let covenant_script = build_covenant_script_v1()?;
+reference/tn10-covenant-spike/src/main.rs:2919:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:2957:        TX_VERSION_TOCCATA,
+reference/tn10-covenant-spike/src/main.rs:3416:/// Version-1 (TX_VERSION_TOCCATA) compatible counter covenant script.
+reference/tn10-covenant-spike/src/main.rs:3423:/// For `TX_VERSION_TOCCATA` (v1) transactions the txid composition is different
+reference/tn10-covenant-spike/src/main.rs:3462:fn build_covenant_script_v1() -> ScriptBuilderResult<Vec<u8>> {
+reference/tn10-covenant-spike/src/main.rs:3463:    let key_rest = domain_key_32(b"TransactionRest");
+reference/tn10-covenant-spike/src/main.rs:3464:    let key_payload = domain_key_32(b"PayloadDigest");
+reference/tn10-covenant-spike/src/main.rs:3465:    let key_v1id = domain_key_32(b"TransactionV1Id");
+reference/tn10-covenant-spike/src/main.rs:3471:        .add_op(OpBlake3WithKey)?
+reference/tn10-covenant-spike/src/main.rs:3474:        .add_op(OpBlake3WithKey)?
+reference/tn10-covenant-spike/src/main.rs:3478:        .add_op(OpBlake3WithKey)?
+reference/tn10-covenant-spike/src/main.rs:3503:fn domain_key_32(domain: &[u8]) -> [u8; 32] {
+reference/tn10-covenant-spike/src/main.rs:3573:        assert_eq!(tx.version, TX_VERSION_TOCCATA);
+reference/tn10-covenant-spike/src/main.rs:3597:        assert_eq!(tx.version, TX_VERSION_TOCCATA);
+reference/tn10-covenant-spike/src/main.rs:3634:        let v1 = build_covenant_script_v1().expect("v1 script");

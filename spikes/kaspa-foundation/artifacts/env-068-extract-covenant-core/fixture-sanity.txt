@@ -1,0 +1,79 @@
+ENV-068 fixture sanity
+
+Fixture files inspected under fixtures/tn10-canonical-covenant-path/:
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/create-submit.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/fee-analysis.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/postcheck.txt
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/postcheck.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/spend-submit.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env-065-summary.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/original-utxo-status.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/server-info.txt
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/evidence-index.txt
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt
+
+Canonical values confirmed from ENV-063/064/065 fixtures:
+- ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+- ENV-063 covenant input spent by ENV-064: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+- Continuing output: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+- Continuing output value: 99700000 sompi
+- Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+- TX_VERSION_TOCCATA observed in ENV-063/064 fixtures: 1
+
+Relevant grep evidence:
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt:7:ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt:10:Mempool lookup error if unavailable: RPC Server (remote error) -> Transaction 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c not found
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt:21:Local txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env064-spend-status.txt:22:Submitted txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env-065-summary.txt:7:ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env-065-summary.txt:12:Continuing output value if visible: 99700000
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/env-065-summary.txt:13:Covenant id if visible: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/original-utxo-status.txt:3:Original ENV-063 covenant outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt:3:Continuing output outpoint: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt:5:Continuing output value if visible: 99700000
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt:6:Continuing output value matches expected 99700000: true
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt:7:Covenant id if visible: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/transition-utxo-status.txt:14:utxo outpoint=4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0 amount_sompi=99700000 is_coinbase=false covenant_id=e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt:10:4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt:13:2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt:16:4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt:19:99700000 sompi
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/env-066-summary.txt:22:e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/evidence-index.txt:24:  Purpose: corrected live TN10 covenant spend, accepted spend txid 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c.
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/evidence-index.txt:26:  Purpose: read-only settlement confirmation; continuing output 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0 visible with value 99700000 sompi and covenant id e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7.
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt:11:Accepted ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt:12:Original ENV-063 covenant input: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt:13:Continuing output: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt:14:Continuing output value: 99700000 sompi
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary/final-status.txt:15:Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt:9:Covenant input outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt:11:Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt:15:TX_VERSION_TOCCATA: 1
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/preflight.txt:22:Continuing covenant output value sompi: 99700000
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/spend-submit.txt:6:Local txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/spend-submit.txt:7:Submitted txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt:6:Covenant input outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt:8:Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt:9:Spend txid if accepted: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/env-064-summary.txt:11:Resulting output/state details: output0 same covenant SPK, same covenant id, value 99700000 sompi, payload 01
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/postcheck.txt:7:Submitted txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/postcheck.txt:14:New transition output if accepted: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0 value 99700000 sompi same SPK same covenant id payload 01
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt:12:Input amount sompi: 199700000
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt:15:Covenant script path: corrected ENV-062B v1 (build_covenant_script_v1)
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/preflight.txt:16:TX_VERSION_TOCCATA: 1
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt:7:Input amount sompi: 199700000
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt:12:Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt:18:New covenant UTXO outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0 (100000000 sompi)
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/env-063-summary.txt:20:Used corrected ENV-062B v1 script path: true
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/fee-analysis.txt:9:Input amount sompi: 199700000
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/fee-analysis.txt:14:Covenant script path: corrected ENV-062B v1
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/fee-analysis.txt:15:TX_VERSION_TOCCATA: 1
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/postcheck.txt:24:  2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0 amount_sompi=100000000 is_coinbase=false
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/create-submit.txt:6:Covenant script path: corrected ENV-062B v1
