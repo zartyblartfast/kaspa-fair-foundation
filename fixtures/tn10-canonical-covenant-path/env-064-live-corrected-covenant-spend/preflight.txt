@@ -1,0 +1,28 @@
+ENV-064 preflight
+
+Result: PASS
+Network requested: testnet-10
+Server network_id: testnet-10
+Server is_synced: true
+Server has_utxo_index: true
+Covenant address: kaspatest:prn06m02u6aygczhzjuttgclymxlsrj7tdhy0ptye3u8gcdwl2grc0kk4fn7r
+Covenant input outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+Covenant input amount sompi: 100000000
+Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+Covenant UTXO observed before submit: true
+Mempool spend of covenant outpoint before submit: false
+Reconstructed corrected v1 create txid matches ENV-063: true
+TX_VERSION_TOCCATA: 1
+Spend transaction version: 1
+Uses literal version 2: false
+Spend input count: 1
+Spend uses expected covenant UTXO only: true
+Helper fee input used: false
+Spend output count: 1
+Continuing covenant output value sompi: 99700000
+Fee sompi: 300000
+Covenant output/state transition: output0 same SPK, same covenant id, payload 01
+Redeem script length: 122
+Sigscript length: 382
+Local VM covenant spend check passed: true
+Private key material exposed: false

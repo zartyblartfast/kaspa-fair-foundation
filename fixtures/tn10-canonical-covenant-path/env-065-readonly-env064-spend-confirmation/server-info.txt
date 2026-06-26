@@ -1,0 +1,8 @@
+ENV-065 server info
+
+Result: PASS
+Network requested: testnet-10
+Server network_id: testnet-10
+Server is_synced: true
+Server has_utxo_index: true
+Read-only only: true

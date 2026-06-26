@@ -1,0 +1,44 @@
+ENV-066 final covenant spike evidence consolidation
+
+Result: COMPLETE
+Network: TN10 / testnet-10
+Corrected covenant create ENV: ENV-063
+Corrected covenant spend ENV: ENV-064
+Settlement confirmation ENV: ENV-065
+
+Accepted ENV-064 spend txid:
+4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+
+Original ENV-063 covenant input:
+2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+
+Continuing output:
+4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+
+Continuing output value:
+99700000 sompi
+
+Covenant id:
+e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+
+Final evidence summary:
+- ENV-063 created the corrected v1 TN10 covenant UTXO using the corrected covenant script path.
+- ENV-064 spent that corrected ENV-063 covenant UTXO exactly once and was accepted on TN10.
+- ENV-065 confirmed settlement by read-only UTXO-set evidence: the original ENV-063 covenant input is absent/spent and the continuing output is visible as a UTXO with the expected value and covenant id.
+- The old ENV-060C/ENV-061 UTXO f4941c478e9540c477e04d0a2dff7ab1b0d0d794a3ae453c8148d25d125fe53d:0 was superseded and was not used for the final corrected path.
+
+ENV-066 action boundary:
+- No live action was performed in ENV-066.
+- No transaction was created.
+- No transaction was signed.
+- No transaction was submitted.
+- No transaction was broadcast.
+- No UTXO was spent.
+- No mainnet action occurred.
+- No wallet secrets were accessed.
+- Helper private key material was not exposed.
+- No roulette work was performed.
+- No web app work was performed.
+
+Recommended next project step:
+Review and commit the ENV-066 documentation/evidence consolidation. After review, treat TN10 covenant feasibility as complete for the spike and move only to a separately scoped handoff/reporting or product-planning phase; do not perform further live covenant actions without a new reviewed plan and explicit approval.

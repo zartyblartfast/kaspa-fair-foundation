@@ -1,0 +1,2 @@
+=== kaspa-fair-foundation migration run ===
+LICENSE (missing in source)

@@ -1,0 +1,10 @@
+ENV-063 create submit
+
+Result: PASS
+Submission attempts: 1
+allow_orphan: false
+Covenant script path: corrected ENV-062B v1
+Local txid: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849
+Submitted txid: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849
+Mempool accepted RPC response: true
+Private key material exposed: false

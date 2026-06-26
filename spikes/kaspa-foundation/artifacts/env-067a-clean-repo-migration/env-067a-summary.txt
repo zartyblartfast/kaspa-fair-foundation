@@ -1,0 +1,12 @@
+Result: PASS
+Source repo: /root/kaspa-fair-lab
+Destination repo: /root/kaspa-fair-foundation
+Files copied: see copied-files.txt
+Files intentionally skipped: see skipped-files.txt
+Any secrets copied: false
+Any local-secrets copied: false
+Any wallet/password/seed/private key files copied: false
+Any live TN10 action occurred: false
+Any transaction created or submitted: false
+Mainnet used: false
+Recommended next step: ENV-068 extract covenant core

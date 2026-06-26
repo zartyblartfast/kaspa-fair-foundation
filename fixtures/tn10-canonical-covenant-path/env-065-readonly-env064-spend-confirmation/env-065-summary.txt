@@ -1,0 +1,23 @@
+ENV-065 read-only ENV-064 covenant spend confirmation
+
+Result: CONFIRMED
+Network: TN10 / testnet-10
+Node synced: true
+UTXO index: true
+ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+ENV-064 spend status: CONFIRMED_BY_UTXO_SET
+Spend still in mempool: false
+Whether original ENV-063 covenant UTXO appears spent/absent: true
+Whether continuing output appears as UTXO: true
+Continuing output value if visible: 99700000
+Covenant id if visible: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+Payload/state if visible: not directly observable from UTXO response; expected/carry-forward state from ENV-064 spend payload is 01
+Transaction created in ENV-065: false
+Transaction submitted in ENV-065: false
+Wallet secrets accessed in ENV-065: false
+Helper private key exposed in ENV-065: false
+Old ENV-060C UTXO touched in ENV-065: false
+Roulette/web app touched in ENV-065: false
+Source ENV-064 evidence read: true
+Evidence path: spikes/tn12-minimal-covenant/artifacts/env-065-readonly-env064-spend-confirmation/
+Recommended next step: review ENV-065 evidence, then optionally commit it; no further live covenant spend should be attempted without a new explicit reviewed plan.

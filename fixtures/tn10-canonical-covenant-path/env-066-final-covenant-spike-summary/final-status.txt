@@ -1,0 +1,24 @@
+ENV-066 final status
+
+Result: COMPLETE
+Network: TN10 / testnet-10
+
+Final proven path:
+1. ENV-063 corrected covenant create accepted on TN10.
+2. ENV-064 corrected covenant spend accepted on TN10.
+3. ENV-065 read-only settlement confirmation observed the continuing covenant UTXO.
+
+Accepted ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Original ENV-063 covenant input: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+Continuing output: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+Continuing output value: 99700000 sompi
+Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+
+Old ENV-060C UTXO not used for final corrected path: true
+No live action performed in ENV-066: true
+No mainnet: true
+No wallet secrets accessed: true
+Helper private key not exposed: true
+No roulette/web app: true
+
+Recommended next project step: review the ENV-066 diffs and artifact files, then commit only after review. Treat TN10 covenant feasibility as complete for the spike; keep any further live work behind a new reviewed plan and explicit approval.

@@ -1,0 +1,25 @@
+ENV-065 ENV-064 spend status
+
+Source evidence directory: /root/kaspa-fair-lab/spikes/tn12-minimal-covenant/artifacts/env-064-live-corrected-covenant-spend
+Source ENV-064 summary read: true
+Source ENV-064 submit artifact read: true
+Source ENV-064 postcheck artifact read: true
+ENV-064 spend txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Mempool entry observed: false
+Mempool entry spends original ENV-063 outpoint: false
+Mempool lookup error if unavailable: RPC Server (remote error) -> Transaction 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c not found
+Spend status: CONFIRMED_BY_UTXO_SET
+Transaction created in ENV-065: false
+Transaction submitted in ENV-065: false
+
+--- Source ENV-064 submit excerpt ---
+ENV-064 covenant spend submit
+
+Result: PASS
+Submission attempts: 1
+allow_orphan: false
+Local txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Submitted txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Mempool accepted RPC response: true
+Private key material exposed: false
+

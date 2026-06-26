@@ -1,0 +1,32 @@
+ENV-066 evidence index
+
+Final consolidation artifacts:
+- spikes/tn12-minimal-covenant/artifacts/env-066-final-covenant-spike-summary/env-066-summary.txt
+- spikes/tn12-minimal-covenant/artifacts/env-066-final-covenant-spike-summary/evidence-index.txt
+- spikes/tn12-minimal-covenant/artifacts/env-066-final-covenant-spike-summary/final-status.txt
+
+Primary prior evidence artifacts read/used:
+- ENV-060C: spikes/tn12-minimal-covenant/artifacts/env-060c-live-covenant-create-fee-retry/env-060c-summary.txt
+  Purpose: original accepted but later superseded v0-locked covenant create path; old UTXO not used for final corrected path.
+- ENV-061: spikes/tn12-minimal-covenant/artifacts/env-061-covenant-utxo-inspection-spend-preflight/env-061-summary.txt
+  Purpose: read-only observation of old ENV-060C covenant UTXO and spend preflight for the superseded path.
+- ENV-062: spikes/tn12-minimal-covenant/artifacts/env-062-live-covenant-spend/env-062-summary.txt
+  Purpose: blocked first spend attempt before submission after local VerifyError.
+- ENV-062A: spikes/tn12-minimal-covenant/artifacts/env-062a-covenant-spend-verifyerror-diagnosis/env-062a-summary.txt
+  Purpose: diagnosed v0/v1 transaction-id proof mismatch.
+- ENV-062B: spikes/tn12-minimal-covenant/artifacts/env-062b-covenant-spend-local-proof-fix/env-062b-summary.txt
+  Purpose: fixed and locally proved the v1-compatible covenant script path.
+- ENV-062C: spikes/tn12-minimal-covenant/artifacts/env-062c-live-covenant-spend-retry/env-062c-summary.txt
+  Purpose: blocked retry against the superseded ENV-060C UTXO; zero submissions.
+- ENV-063: spikes/tn12-minimal-covenant/artifacts/env-063-corrected-live-covenant-create/env-063-summary.txt
+  Purpose: corrected live TN10 covenant create, accepted txid 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849.
+- ENV-064: spikes/tn12-minimal-covenant/artifacts/env-064-live-corrected-covenant-spend/env-064-summary.txt
+  Purpose: corrected live TN10 covenant spend, accepted spend txid 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c.
+- ENV-065: spikes/tn12-minimal-covenant/artifacts/env-065-readonly-env064-spend-confirmation/env-065-summary.txt
+  Purpose: read-only settlement confirmation; continuing output 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0 visible with value 99700000 sompi and covenant id e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7.
+
+Documentation updated:
+- docs/current-handoff.md
+- docs/toccata-feasibility.md
+- .hermes/skills/tn10-official-wallet-workflow.md
+- spikes/tn12-minimal-covenant/README.md

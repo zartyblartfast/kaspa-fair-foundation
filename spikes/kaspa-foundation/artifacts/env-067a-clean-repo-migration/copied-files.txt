@@ -1,0 +1,20 @@
+=== kaspa-fair-foundation migration run ===
+README.md
+.gitignore
+docs/kaspa-foundation-architecture.md
+docs/proof-transcript-format.md
+docs/safety-and-secrets.md
+docs/threat-model.md
+docs/roulette-poc-architecture.md
+.hermes/skills/tn10-official-wallet-workflow.md
+fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create
+fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend
+fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation
+fixtures/tn10-canonical-covenant-path/env-066-final-covenant-spike-summary
+reference/tn10-covenant-spike
+crates/kaspa-foundation/Cargo.toml
+crates/kaspa-foundation/src/lib.rs
+crates/kaspa-fair-cli/Cargo.toml
+crates/kaspa-fair-cli/src/main.rs
+Cargo.toml
+examples/roulette-poc/README.md

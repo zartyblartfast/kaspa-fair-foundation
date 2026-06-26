@@ -1,0 +1,21 @@
+ENV-064 live corrected TN10 covenant spend
+
+Result: PASS
+Network: TN10 / testnet-10
+Source covenant-create ENV: ENV-063
+Covenant input outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+Covenant input amount: 100000000
+Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+Spend txid if accepted: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Fee used: 300000
+Resulting output/state details: output0 same covenant SPK, same covenant id, value 99700000 sompi, payload 01
+Original covenant UTXO appears spent: true
+New output/UTXO appears: false
+Exact rejection if rejected: none
+Exactly one covenant-spend submission attempted: true
+Confirmation old ENV-060C covenant UTXO was not touched: true
+Confirmation no mainnet: true
+Confirmation no wallet secrets accessed: true
+Confirmation helper private key not exposed: true
+Confirmation no roulette/web app: true
+Evidence path: spikes/tn12-minimal-covenant/artifacts/env-064-live-corrected-covenant-spend/

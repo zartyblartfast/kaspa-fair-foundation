@@ -1,0 +1,14 @@
+ENV-064 postcheck
+
+Result: PASS
+Server network_id: testnet-10
+Server is_synced: true
+Server has_utxo_index: true
+Submitted txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Mempool entry observed: true
+Mempool entry spends original covenant outpoint: true
+Covenant address UTXO count after submit: 1
+Original covenant UTXO still visible in UTXO set: true
+Original covenant UTXO appears spent or pending-spent: true
+New transition UTXO visible in UTXO set: false
+New transition output if accepted: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0 value 99700000 sompi same SPK same covenant id payload 01

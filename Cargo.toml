@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "crates/kaspa-foundation",
+  "crates/kaspa-fair-cli",
+]
+resolver = "2"

@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Rust
+target/
+Cargo.lock
+
+# IDE and OS files
+.DS_Store
+.vscode/
+.idea/
+
+# Logs and temp files
+*.log
+tmp/
+
+# Local scripts / tooling outputs
+*.out
+*.err
+
+# Build outputs
+build/
+dist/
+coverage/
+external/
+
+# kaspa-fair-lab local-only secret material
+spikes/tn12-minimal-covenant/local-secrets/
+spikes/tn12-minimal-covenant/**/*.secret
+spikes/tn12-minimal-covenant/**/*.private
+spikes/tn12-minimal-covenant/**/*.key
+
+# Rust build output from nested spike/helper crates
+**/target/
+
+# Local downloaded Rusty Kaspa release binaries/source archives
+tools/rusty-kaspa-releases/
+tools/rusty-kaspa-source/
+local-secrets/
+**/local-secrets/
+*.wallet
+*.password
+*.key
+*.pem
+*.seed
+.env.*
+tools/

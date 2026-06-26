@@ -1,0 +1,9 @@
+ENV-064 covenant spend submit
+
+Result: PASS
+Submission attempts: 1
+allow_orphan: false
+Local txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Submitted txid: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c
+Mempool accepted RPC response: true
+Private key material exposed: false

@@ -1,0 +1,8 @@
+ENV-065 original ENV-063 covenant UTXO status
+
+Original ENV-063 covenant outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0
+Original ENV-063 covenant input amount: 100000000
+Original ENV-063 covenant UTXO visible at covenant address: false
+Original ENV-063 covenant UTXO appears spent/absent: true
+Mempool entry spends original outpoint: false
+Covenant address UTXO count: 1

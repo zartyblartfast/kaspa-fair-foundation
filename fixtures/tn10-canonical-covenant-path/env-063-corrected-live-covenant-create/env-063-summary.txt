@@ -1,0 +1,28 @@
+ENV-063 corrected live TN10 covenant create (v1 script path)
+
+Result: PASS
+Network: TN10 / testnet-10
+Helper address: kaspatest:qzn7auhpkdladk9m20f02dz46clvv7whgumgrm4pex4djesaued0g9wutcqld
+Input UTXO: f4941c478e9540c477e04d0a2dff7ab1b0d0d794a3ae453c8148d25d125fe53d:1
+Input amount sompi: 199700000
+Fee used sompi: 300000
+Covenant output index: 0
+Covenant output value sompi: 100000000
+Change output index/value: 1 / 99400000
+Covenant id: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+Submitted txid if accepted: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849
+Covenant UTXO observed post-submit: false
+Covenant UTXO appears unspent: false
+Covenant UTXO observed post-mining (follow-up read-only check): true
+Covenant UTXO appears unspent post-mining (follow-up read-only check): true
+New covenant UTXO outpoint: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0 (100000000 sompi)
+Covenant address: kaspatest:prn06m02u6aygczhzjuttgclymxlsrj7tdhy0ptye3u8gcdwl2grc0kk4fn7r
+Used corrected ENV-062B v1 script path: true
+Exactly one covenant-create submission attempted: true
+No covenant spend attempted: true
+Old ENV-060C covenant UTXO not spent: true
+No mainnet: true
+No wallet secrets accessed: true
+Helper private key not exposed: true
+No roulette/web app: true
+Evidence path: spikes/tn12-minimal-covenant/artifacts/env-063-corrected-live-covenant-create/

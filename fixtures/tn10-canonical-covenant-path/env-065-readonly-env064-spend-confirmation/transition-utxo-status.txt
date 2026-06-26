@@ -1,0 +1,14 @@
+ENV-065 continuing transition UTXO status
+
+Continuing output outpoint: 4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0
+Continuing output visible as UTXO: true
+Continuing output value if visible: 99700000
+Continuing output value matches expected 99700000: true
+Covenant id if visible: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+Covenant id matches expected: true
+Payload/state if observable: not directly observable from UTXO response; expected/carry-forward state from ENV-064 spend payload is 01
+Covenant address: kaspatest:prn06m02u6aygczhzjuttgclymxlsrj7tdhy0ptye3u8gcdwl2grc0kk4fn7r
+Covenant address UTXO count: 1
+
+--- Covenant-address UTXOs ---
+utxo outpoint=4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0 amount_sompi=99700000 is_coinbase=false covenant_id=e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7

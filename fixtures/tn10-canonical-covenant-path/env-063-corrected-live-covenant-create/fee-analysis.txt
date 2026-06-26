@@ -1,0 +1,19 @@
+ENV-063 fee analysis
+
+Prior ENV-060B result: REJECTED
+Prior ENV-060B fee used sompi: 100000
+Prior ENV-060B required fee reported sompi: 208300
+Prior ENV-060B reported compute mass: 2083
+ENV-063 selected fee sompi: 300000
+Fee margin above prior reported requirement sompi: 91700
+Input amount sompi: 199700000
+Covenant output value sompi: 100000000
+Change output value sompi: 99400000
+Change returns to helper address: true (kaspatest:qzn7auhpkdladk9m20f02dz46clvv7whgumgrm4pex4djesaued0g9wutcqld)
+Excessive spend guard: PASS (fee + covenant output <= input)
+Covenant script path: corrected ENV-062B v1
+TX_VERSION_TOCCATA: 1
+Transaction version: 1
+Covenant binding present before signing: true
+allow_orphan planned: false
+Private key material exposed: false

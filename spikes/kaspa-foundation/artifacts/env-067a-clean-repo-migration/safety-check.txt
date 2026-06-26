@@ -1,0 +1,8 @@
+Safety checks run: PASS
+- find . -path '*/local-secrets/*' => no matches
+- find . \( -name '*.wallet' -o -name '*.password' -o -name '*.seed' -o -name '*.pem' -o -name '*.key' \) => no matches
+- grep for secret phrases in README/docs/.hermes/fixtures/reference/crates/examples/spikes => only policy text and existing audit summaries
+- git status before commit: clean working tree aside from staged migration files (no untracked)
+- live TN10 action taken in this migration step: false
+- transaction created/submitted: false
+- mainnet used: false

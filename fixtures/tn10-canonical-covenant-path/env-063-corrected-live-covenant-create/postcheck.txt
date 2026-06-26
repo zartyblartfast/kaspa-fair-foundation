@@ -1,0 +1,27 @@
+ENV-063 postcheck
+
+Result: PASS
+Server network_id: testnet-10
+Server is_synced: true
+Server has_utxo_index: true
+Submitted txid: 2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849
+Mempool entry observed: true
+Helper UTXO count after submit: 1
+Covenant address: kaspatest:prn06m02u6aygczhzjuttgclymxlsrj7tdhy0ptye3u8gcdwl2grc0kk4fn7r
+Covenant UTXO observed: false
+Covenant UTXO appears unspent: false
+Covenant postcheck UTXO count: 0
+
+--- Follow-up read-only confirmation (after mining; same session) ---
+Note: the immediate post-submit snapshot above only saw the mempool entry; the
+covenant output was not yet UTXO-indexed. A later read-only TN10 inspection
+(get-server-info + get-utxos-by-addresses) confirmed the mined state:
+Server network_id: testnet-10  is_synced: true  has_utxo_index: true
+Helper address now holds the ENV-063 change output:
+  2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:1 amount_sompi=99400000 (old funding f4941c...:1 consumed)
+Covenant address kaspatest:prn06m02u6aygczhzjuttgclymxlsrj7tdhy0ptye3u8gcdwl2grc0kk4fn7r:
+  utxo_count=1
+  2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0 amount_sompi=100000000 is_coinbase=false
+Covenant UTXO observed post-mining: true
+Covenant UTXO appears unspent post-mining: true
+Method: read-only only; no signing, no spend, no submission in this follow-up check.
