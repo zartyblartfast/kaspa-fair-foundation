@@ -1,0 +1,25 @@
+# ENV-072 commands
+
+# Preflight before ENV-072 edits
+git status --short --untracked-files=all
+git log --oneline -5
+cargo fmt --check
+cargo test -p kaspa-foundation
+cargo check -p kaspa-foundation
+git diff --check
+
+# Developer-facing command implemented and verified
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+
+# Convenience wrapper
+scripts/env072-live-tn10-verify.sh
+
+# Final verification commands
+cargo fmt --check
+cargo test -p kaspa-foundation
+cargo test -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+git diff --check
+
+git status --short --untracked-files=all

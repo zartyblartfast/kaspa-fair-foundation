@@ -716,6 +716,16 @@ ENV-071B proved the wRPC path with an explicitly gated live read-only test. Publ
 
 ENV-071C closes that gap with the public TN10 transaction-detail API at `https://api-tn10.kaspa.org/transactions/<txid>?inputs=true&outputs=true&resolve_previous_outpoints=light`. That read-only response exposes mined/accepted ENV-064 transaction structure, including `is_accepted`, accepting block hash, previous outpoint hash/index, output 0 value, and covenant id. The live verifier now reaches `Pass` when those fields match the canonical transcript and still fails closed on contradictions.
 
+ENV-072 turns the ENV-071 live verifier into a developer-facing operational command instead of requiring a long ignored-test invocation:
+
+```bash
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+```
+
+The command is a thin CLI wrapper around the foundation online verifier library. It reads public TN10 state through read-only wRPC/API calls, prints the endpoint/API used and each key canonical check, and exits successfully only when the final verifier result is `PASS`. `PARTIAL` and `FAIL` are non-zero outcomes. A convenience wrapper is also available at `scripts/env072-live-tn10-verify.sh`.
+
+This makes the limited Toccata layer operational for developers: offline/unit tests remain deterministic regression and safety checks, while the live command is the explicit way to confirm the canonical ENV-063/064/065 proof transcript against current TN10 chain data before any roulette PoC adapter is built.
+
 The initial online verifier must stay narrow:
 
 - read-only TN10 queries only

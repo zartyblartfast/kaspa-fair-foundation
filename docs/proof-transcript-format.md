@@ -347,3 +347,23 @@ The target live checks are:
 - covenant id is `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7` where available
 
 Roulette remains future app adapter work layered above the foundation verifier.
+
+## 14. ENV-072 developer-facing live TN10 verifier command
+
+ENV-072 promotes the ENV-071 live verifier from ignored-test scaffolding into an operational developer command:
+
+```bash
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+```
+
+The command calls the foundation online verifier library directly. It performs only read-only TN10 queries, then prints a clear `PASS`, `PARTIAL`, or `FAIL` result with the wRPC endpoint, transaction-detail API URL, ENV-064 acceptance status, accepting block hash, ENV-063 input relationship, continuing output existence/value, covenant id, and final verifier result.
+
+Exit behavior:
+
+- `PASS`: exit 0
+- `FAIL`: non-zero
+- `PARTIAL`: non-zero ambiguous/partial result
+
+Normal cargo tests remain deterministic and do not require TN10 availability. The offline verifier is a prerequisite/regression safety layer, not the main operational goal of ENV-072. The live CLI command is the explicit path for developers to confirm that the canonical transcript still matches public TN10 chain data.
+
+ENV-072 does not add signing, transaction creation, submission/broadcast, wallet/private-key access, secrets, mainnet support, or roulette logic. Mainnet remains disabled/not supported; roulette remains future app adapter work above the limited Toccata foundation verifier.

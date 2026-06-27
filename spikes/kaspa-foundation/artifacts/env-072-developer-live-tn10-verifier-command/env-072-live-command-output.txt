@@ -1,0 +1,76 @@
+$ cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+   Compiling kaspa-fair-cli v0.1.0 (/root/kaspa-fair-foundation/crates/kaspa-fair-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.43s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical`
+ENV-072 live TN10 canonical verifier
+result=PASS
+network=testnet-10
+wrpc_endpoint=wss://boson-10.kaspa.red/kaspa/testnet-10/wrpc/borsh
+transaction_detail_api_url=https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light
+transaction_detail_http_status=200 OK
+api_approach=kaspa_wrpc_client::KaspaRpcClient with WrpcEncoding::Borsh, Resolver::default(), NetworkId::with_suffix(NetworkType::Testnet, 10), ConnectStrategy::Fallback; read-only calls only
+offline_prerequisite_passed=true
+read_only=true
+mainnet_enabled=false
+server_network_id=testnet-10
+server_is_synced=true
+server_has_utxo_index=true
+mempool_entry_for_env064_observed=false
+covenant_address_utxo_count=1
+continuing_output_observed_in_utxo_set=true
+continuing_output_utxo_value_sompi=Some(99700000)
+ENV-064 accepted=true
+accepting_block_hash=e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190
+ENV-063 input relationship confirmed=true
+continuing_output_exists=true
+continuing_output_value_sompi=99700000
+covenant_id_confirmed=e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+final_verifier_result=PASS
+check name="network" status=Supported passed=Some(true) reason=None
+check name="node synced" status=Supported passed=Some(true) reason=None
+check name="utxo index" status=Supported passed=Some(true) reason=None
+check name="ENV-064 spend txid known" status=Supported passed=Some(true) reason=None
+check name="ENV-063 input spent by ENV-064" status=Supported passed=Some(true) reason=None
+check name="continuing output exists" status=Supported passed=Some(true) reason=None
+check name="continuing output value" status=Supported passed=Some(true) reason=None
+check name="covenant id" status=Supported passed=Some(true) reason=None
+check name="transcript network" status=Supported passed=Some(true) reason=None
+exit_status=0
+
+$ scripts/env072-live-tn10-verify.sh
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical`
+ENV-072 live TN10 canonical verifier
+result=PASS
+network=testnet-10
+wrpc_endpoint=wss://electron-10.kaspa.stream/kaspa/testnet-10/wrpc/borsh
+transaction_detail_api_url=https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light
+transaction_detail_http_status=200 OK
+api_approach=kaspa_wrpc_client::KaspaRpcClient with WrpcEncoding::Borsh, Resolver::default(), NetworkId::with_suffix(NetworkType::Testnet, 10), ConnectStrategy::Fallback; read-only calls only
+offline_prerequisite_passed=true
+read_only=true
+mainnet_enabled=false
+server_network_id=testnet-10
+server_is_synced=true
+server_has_utxo_index=true
+mempool_entry_for_env064_observed=false
+covenant_address_utxo_count=1
+continuing_output_observed_in_utxo_set=true
+continuing_output_utxo_value_sompi=Some(99700000)
+ENV-064 accepted=true
+accepting_block_hash=e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190
+ENV-063 input relationship confirmed=true
+continuing_output_exists=true
+continuing_output_value_sompi=99700000
+covenant_id_confirmed=e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+final_verifier_result=PASS
+check name="network" status=Supported passed=Some(true) reason=None
+check name="node synced" status=Supported passed=Some(true) reason=None
+check name="utxo index" status=Supported passed=Some(true) reason=None
+check name="ENV-064 spend txid known" status=Supported passed=Some(true) reason=None
+check name="ENV-063 input spent by ENV-064" status=Supported passed=Some(true) reason=None
+check name="continuing output exists" status=Supported passed=Some(true) reason=None
+check name="continuing output value" status=Supported passed=Some(true) reason=None
+check name="covenant id" status=Supported passed=Some(true) reason=None
+check name="transcript network" status=Supported passed=Some(true) reason=None
+script_exit_status=0

@@ -1,0 +1,84 @@
+$ cargo fmt --check
+
+$ cargo test -p kaspa-foundation
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running unittests src/lib.rs (target/debug/deps/kaspa_foundation-ad4aa55bb2c949fb)
+
+running 4 tests
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
+test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+test safety::tests::defaults_are_safe ... ok
+test verifier::tests::canonical_sanity_passes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env068_canonical_recipe.rs (target/debug/deps/env068_canonical_recipe-98c45bed863f44f7)
+
+running 5 tests
+test canonical_env064_fixture_values_are_represented ... ok
+test corrected_recipe_identity_and_network_are_canonical ... ok
+test corrected_recipe_records_toccata_keyed_blake3_and_domain_policy ... ok
+test default_foundation_capabilities_do_not_expose_sign_or_submit ... ok
+test historical_env060c_recipe_is_not_canonical ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env069_proof_transcript.rs (target/debug/deps/env069_proof_transcript-e4eaa646c3499764)
+
+running 5 tests
+test canonical_env_sequence_is_exactly_env063_env064_env065 ... ok
+test canonical_transcript_is_offline_readonly_evidence_only_and_safe ... ok
+test canonical_transcript_links_to_fixture_paths_that_exist ... ok
+test canonical_transcript_records_proven_tn10_values ... ok
+test transcript_schema_versions_are_stable ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env070_offline_transcript_verifier.rs (target/debug/deps/env070_offline_transcript_verifier-c2e768c016600f1c)
+
+running 6 tests
+test mainnet_and_unsafe_requirements_are_rejected ... ok
+test canonical_transcript_verifies_successfully ... ok
+test missing_fixture_path_is_rejected ... ok
+test wrong_canonical_values_are_rejected ... ok
+test wrong_env_sequence_is_rejected ... ok
+test wrong_schema_versions_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env071_online_tn10_readonly_verifier.rs (target/debug/deps/env071_online_tn10_readonly_verifier-297eaac0ef6d3197)
+
+running 5 tests
+test live_tn10_readonly_verification_is_optional_and_gated ... ignored, optional live TN10 read-only integration test; requires explicit KASPA_FOUNDATION_RUN_LIVE_TN10=1
+test canonical_transcript_can_be_prepared_for_tn10_online_verification ... ok
+test online_verifier_config_and_client_are_read_only ... ok
+test online_verifier_refuses_mainnet_config ... ok
+test online_verifier_report_represents_pass_fail_and_skipped_checks ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kaspa_foundation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+$ cargo test -p kaspa-fair-cli
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/main.rs (target/debug/deps/kaspa_fair_cli-132202689684337d)
+
+running 2 tests
+test tests::command_parser_selects_live_verifier_command ... ok
+test tests::result_labels_match_cli_contract ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+$ cargo check -p kaspa-foundation
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+
+$ cargo check -p kaspa-fair-cli
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
+
+$ git diff --check

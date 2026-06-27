@@ -1,0 +1,14 @@
+$ git diff --check
+
+$ git status --short --untracked-files=all
+ M crates/kaspa-fair-cli/Cargo.toml
+ M crates/kaspa-fair-cli/src/main.rs
+ M docs/kaspa-foundation-architecture.md
+ M docs/proof-transcript-format.md
+?? crates/kaspa-fair-cli/README.md
+?? scripts/env072-live-tn10-verify.sh
+?? spikes/kaspa-foundation/artifacts/env-072-developer-live-tn10-verifier-command/env-072-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-072-developer-live-tn10-verifier-command/env-072-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-072-developer-live-tn10-verifier-command/env-072-live-command-output.txt
+?? spikes/kaspa-foundation/artifacts/env-072-developer-live-tn10-verifier-command/env-072-summary.md
+?? spikes/kaspa-foundation/artifacts/env-072-developer-live-tn10-verifier-command/env-072-test-output.txt
