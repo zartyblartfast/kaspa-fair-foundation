@@ -1,35 +1,34 @@
 # Roulette PoC
 
-ENV-080B cleans up the roulette UI at `examples/roulette-poc/ui/` so the current mock bet control is explicitly temporary and intentionally limited before ENV-081 table-zone work.
+ENV-081A defines the declarative European roulette table layout schema at `examples/roulette-poc/ui/roulette-table-schema.json`.
 
 What it does:
-- relabels the current control as a temporary simple/prototype straight-number mock bet only path
-- visibly states that full roulette table bet zones are not implemented yet
-- lists the future table-driven bet zones deferred to ENV-081: straight, split, street, corner, six-line, dozens, columns, red/black, odd/even, high/low
-- allows temporary simple mock bets to be placed before wheel start in `BetsOpen`
-- allows temporary simple mock bets to be placed during `SpinVisualStarted`
-- blocks temporary simple mock bets only after `NoMoreBets`
-- lets the user trigger `Start Wheel`, `No More Bets`, `Reveal Result`, `Show Settlement`, `Publish Proof`, and `Reset Round`
-- resets the UI to `BetsOpen` without page refresh and clears UI-added mock bets
-- keeps the deterministic result, settlement, and proof sourced from `sample-round.json`
-- clearly states that UI-added bets are temporary prototype display bets only and deterministic settlement is from the engine sample round
-- explicitly states `spin animation != result finalisation`
-- defers proper table-driven roulette bet zones to ENV-081
+- defines the standard European roulette layout as schema data only
+- keeps `0` as a dedicated green region on the left of the main number grid
+- defines all 37 straight number cells with coordinates and chip anchors
+- defines dozens, outside even-money bets, and explicit column selector regions
+- defines future hotspot geometry for split, street, corner, and six-line bets
+- provides a stable schema that can drive future SVG/table-hotspot rendering
+- keeps the current UI rebuild deferred to ENV-081B
+- explicitly avoids giant inside-zone lists
+- explicitly avoids dropdown-based inside-zone betting
 
 What it does not do:
+- rebuild the betting UI yet
+- render the final SVG betting surface yet
 - decide, generate, or randomise the result
 - real betting
 - real payouts
 - wallet integration
+- backend custody or accounts
 - signing
 - transaction creation
 - submitting/broadcasting
-- backend custody or accounts
 - mainnet
 - production casino functionality
 
 Readiness command:
 
 ```bash
-scripts/env080b-roulette-ui-bet-cleanup-smoke.sh
+scripts/env081a-roulette-table-schema-smoke.sh
 ```

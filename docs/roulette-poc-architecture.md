@@ -1,6 +1,6 @@
 # Roulette PoC Architecture
 
-Status: ENV-079 interactive static roulette UI flow prototype on top of the deterministic round engine and foundation verifier contract
+Status: ENV-081A declarative European roulette table layout schema on top of the deterministic round engine and foundation verifier contract
 
 Purpose: define and now demonstrate an interactive static roulette UI flow prototype that displays the deterministic round result and proof/safety status without adding production casino features.
 
@@ -568,16 +568,42 @@ UI behavior now demonstrated:
 
 ENV-080B intentionally does not implement full roulette table bet zones.
 
-ENV-081 should implement or design the proper table-zone model for real roulette bet types such as straight, split, street, corner, six-line, dozens, columns, red/black, odd/even, high/low, and zero-area bets.
+ENV-081A now defines the proper table-zone model as declarative schema data for the standard European layout.
 
-ENV-080B remains intentionally minimal and offline-safe:
-- no full roulette bet-zone implementation
-- no real betting
-- no real payouts
-- no wallet
-- no backend custody
-- no signing
-- no broadcasting
-- no transaction creation
-- no mainnet
-- no production casino functionality
+## 19. ENV-081A European roulette table layout schema
+
+ENV-081A defines the table layout schema only. It does not rebuild the UI betting surface yet.
+
+Primary readiness command:
+- `scripts/env081a-roulette-table-schema-smoke.sh`
+
+Primary schema files:
+- `examples/roulette-poc/ui/roulette-table-schema.json`
+- `examples/roulette-poc/ui/roulette-table-schema.js`
+
+Schema behavior now defined:
+- standard European roulette layout
+- dedicated green `0` region on the left of the main number grid
+- 12 x 3 number grid with visual rows `3,6,9,...,36`, `2,5,8,...,35`, `1,4,7,...,34`
+- explicit dozen regions for `1st 12`, `2nd 12`, and `3rd 12`
+- explicit outside bet regions for `1 to 18`, `EVEN`, `RED`, `BLACK`, `ODD`, and `19 to 36`
+- explicit clickable column selector rectangles for the three standard European columns
+- future hotspot geometry for split, street, corner, and six-line bets
+- coordinates on every clickable region so the schema can drive future SVG/hotspot rendering
+
+ENV-081A intentionally does not rebuild the roulette UI.
+
+ENV-081B is the deferred UI rebuild step that should consume this schema for SVG or table-hotspot rendering.
+
+ENV-081A explicitly avoids:
+- giant inside-zone lists
+- dropdown-based inside-zone betting
+- real betting
+- real payouts
+- wallet access
+- backend custody
+- signing
+- broadcasting
+- transaction creation
+- mainnet
+- production casino functionality

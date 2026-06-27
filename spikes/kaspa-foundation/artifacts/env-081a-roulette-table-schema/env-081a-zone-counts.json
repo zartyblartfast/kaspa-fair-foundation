@@ -1,0 +1,12 @@
+{
+  "straight": 37,
+  "split": 57,
+  "street": 12,
+  "corner": 22,
+  "six_line": 11,
+  "dozen": 3,
+  "column": 3,
+  "outside": 6,
+  "schema": "kaspa-fair-roulette-table-layout-v1",
+  "roulette_variant": "european"
+}

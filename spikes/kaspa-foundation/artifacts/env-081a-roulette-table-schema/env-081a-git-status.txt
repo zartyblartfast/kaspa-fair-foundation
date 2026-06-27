@@ -1,0 +1,11 @@
+M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+?? examples/roulette-poc/ui/roulette-table-schema.js
+?? examples/roulette-poc/ui/roulette-table-schema.json
+?? scripts/env081a-roulette-table-schema-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-081a-roulette-table-schema/env-081a-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-081a-roulette-table-schema/env-081a-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-081a-roulette-table-schema/env-081a-schema-smoke-output.txt
+?? spikes/kaspa-foundation/artifacts/env-081a-roulette-table-schema/env-081a-summary.md
+?? spikes/kaspa-foundation/artifacts/env-081a-roulette-table-schema/env-081a-test-output.txt
+?? spikes/kaspa-foundation/artifacts/env-081a-roulette-table-schema/env-081a-zone-counts.json

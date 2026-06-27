@@ -1,0 +1,7 @@
+cargo fmt --check
+cargo test -p kaspa-fair-cli
+cargo test -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+git diff --check
+scripts/env081a-roulette-table-schema-smoke.sh
