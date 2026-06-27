@@ -1,27 +1,32 @@
 # Roulette PoC
 
-ENV-078 adds a simple static UI prototype at `examples/roulette-poc/ui/`.
+ENV-079 upgrades the roulette UI at `examples/roulette-poc/ui/` into an interactive static UI flow prototype.
 
 What it does:
-- displays the existing deterministic ENV-077 round JSON
+- demonstrates the correct round-state sequence in the browser UI with intentionally minimal visual polish
+- starts in `BetsOpen`
+- lets the user trigger `Start Wheel`, `No More Bets`, `Reveal Result`, `Show Settlement`, and `Publish Proof`
+- keeps bets visually open while the wheel is spinning
+- finalises the displayed result only after `NoMoreBets`
+- displays settlement and proof panels from deterministic engine JSON
 - shows trust/safety status from the foundation verifier fields
-- shows the round sequence, roulette table, mock bets, settlement, and proof panel
-- treats wheel/spin as visual only
+- explicitly states `spin animation != result finalisation`
+- consumes deterministic engine JSON from `sample-round.json`
 
 What it does not do:
-- decide or randomise the result
+- decide, generate, or randomise the result
 - real betting
 - real payouts
 - wallet integration
 - signing
 - transaction creation
 - submitting/broadcasting
-- custody or accounts
+- backend custody or accounts
 - mainnet
 - production casino functionality
 
 Readiness command:
 
 ```bash
-scripts/env078-roulette-ui-smoke.sh
+scripts/env079-roulette-ui-flow-smoke.sh
 ```

@@ -1,0 +1,102 @@
+>>> cargo fmt --check
+<<< PASS: cargo fmt --check
+
+>>> cargo test -p kaspa-fair-cli
+
+running 18 tests
+test roulette::tests::candidate_stream_changes_when_seed_changes ... ok
+test roulette::tests::engine_round_reaches_proof_published_and_pass ... ok
+test roulette::tests::european_colour_table_is_complete_and_exact ... ok
+test roulette::tests::foundation_contract_validator_accepts_passing_contract ... ok
+test roulette::tests::foundation_contract_validator_rejects_unsafe_flags ... ok
+test roulette::tests::deterministic_algorithm_label_is_stable ... ok
+test roulette::tests::mock_ledger_hash_is_stable ... ok
+test roulette::tests::roulette_engine_json_contains_required_contract_fields ... ok
+test roulette::tests::same_ledger_hash_is_stable_and_changed_ledger_differs ... ok
+test roulette::tests::same_seed_material_gives_same_result_and_result_is_in_range ... ok
+test roulette::tests::state_machine_rejects_invalid_transitions ... ok
+test tests::command_parser_selects_live_verifier_command ... ok
+test tests::json_result_labels_match_app_contract ... ok
+test tests::live_verifier_json_schema_and_safety_fields_are_stable ... ok
+test roulette::tests::mock_settlement_is_reproducible ... ok
+test tests::roulette_poc_rejects_unsafe_foundation_contract ... ok
+test tests::roulette_poc_round_json_is_stable_for_passing_foundation_contract ... ok
+test tests::result_labels_match_cli_contract ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+<<< PASS: cargo test -p kaspa-fair-cli
+
+>>> cargo test -p kaspa-foundation
+
+running 4 tests
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
+test safety::tests::defaults_are_safe ... ok
+test verifier::tests::canonical_sanity_passes ... ok
+test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test canonical_env064_fixture_values_are_represented ... ok
+test corrected_recipe_records_toccata_keyed_blake3_and_domain_policy ... ok
+test default_foundation_capabilities_do_not_expose_sign_or_submit ... ok
+test historical_env060c_recipe_is_not_canonical ... ok
+test corrected_recipe_identity_and_network_are_canonical ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test canonical_transcript_is_offline_readonly_evidence_only_and_safe ... ok
+test canonical_env_sequence_is_exactly_env063_env064_env065 ... ok
+test canonical_transcript_links_to_fixture_paths_that_exist ... ok
+test transcript_schema_versions_are_stable ... ok
+test canonical_transcript_records_proven_tn10_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 6 tests
+test canonical_transcript_verifies_successfully ... ok
+test mainnet_and_unsafe_requirements_are_rejected ... ok
+test missing_fixture_path_is_rejected ... ok
+test wrong_env_sequence_is_rejected ... ok
+test wrong_schema_versions_are_rejected ... ok
+test wrong_canonical_values_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test live_tn10_readonly_verification_is_optional_and_gated ... ignored, optional live TN10 read-only integration test; requires explicit KASPA_FOUNDATION_RUN_LIVE_TN10=1
+test online_verifier_config_and_client_are_read_only ... ok
+test online_verifier_refuses_mainnet_config ... ok
+test online_verifier_report_represents_pass_fail_and_skipped_checks ... ok
+test canonical_transcript_can_be_prepared_for_tn10_online_verification ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+<<< PASS: cargo test -p kaspa-foundation
+
+>>> cargo check -p kaspa-fair-cli
+<<< PASS: cargo check -p kaspa-fair-cli
+
+>>> cargo check -p kaspa-foundation
+<<< PASS: cargo check -p kaspa-foundation
+
+>>> git diff --check
+<<< PASS: git diff --check
+
+>>> node --check examples/roulette-poc/ui/app.js
+<<< PASS: node --check examples/roulette-poc/ui/app.js
+
+>>> scripts/env079-roulette-ui-flow-smoke.sh
+ROULETTE_UI_FLOW_READY=PASS
+<<< PASS: scripts/env079-roulette-ui-flow-smoke.sh

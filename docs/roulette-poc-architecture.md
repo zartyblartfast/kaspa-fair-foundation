@@ -1,8 +1,8 @@
 # Roulette PoC Architecture
 
-Status: ENV-078 simple roulette UI prototype on top of the deterministic round engine and foundation verifier contract
+Status: ENV-079 interactive static roulette UI flow prototype on top of the deterministic round engine and foundation verifier contract
 
-Purpose: define and now demonstrate a simple static roulette UI prototype that displays the existing deterministic ENV-077 round result and proof/safety status without adding production casino features.
+Purpose: define and now demonstrate an interactive static roulette UI flow prototype that displays the deterministic round result and proof/safety status without adding production casino features.
 
 Safety boundary:
 - no production web app or backend
@@ -470,3 +470,37 @@ ENV-078 is intentionally minimal:
 - the UI does not decide or randomise the result
 - the wheel/spin is visual only
 - there is no real betting, real payouts, wallet integration, signing, broadcasting, custody, mainnet, or production casino functionality
+
+## 16. ENV-079 interactive roulette UI flow prototype
+
+ENV-079 upgrades the simple display into an interactive static UI flow prototype while preserving the deterministic round result from engine JSON.
+
+Primary readiness command:
+- `scripts/env079-roulette-ui-flow-smoke.sh`
+
+Primary UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/sample-round.json`
+
+UI behavior now demonstrated:
+- `BetsOpen` is the initial visible state
+- `Start Wheel` moves the UI to `SpinVisualStarted`
+- bets may remain visually open while the wheel is spinning
+- `No More Bets` moves the UI to `NoMoreBets`
+- adding or changing bets is blocked after `NoMoreBets`
+- result finalisation occurs only after `NoMoreBets`
+- `Reveal Result` displays the deterministic result from `sample-round.json`
+- `Show Settlement` displays deterministic settlement from `sample-round.json`
+- `Publish Proof` displays proof fields and final `PASS` status
+- the fairness statement `spin animation != result finalisation` is shown explicitly
+- the roulette table highlights the deterministic result number only after reveal
+- the UI displays foundation verifier status and safety flags: `testnet-10`, `mainnet_supported: false`, `readonly: true`, `signing_used: false`, `transaction_created: false`, `broadcast_used: false`, `wallet_access_used: false`
+
+ENV-079 remains intentionally minimal and offline-safe:
+- visual polish is intentionally minimal
+- the UI demonstrates state sequence and proof display
+- the UI does not decide the result
+- the UI consumes deterministic engine JSON
+- there is no real betting, no real payouts, no wallet, no signing, no broadcasting, no backend custody, and no mainnet

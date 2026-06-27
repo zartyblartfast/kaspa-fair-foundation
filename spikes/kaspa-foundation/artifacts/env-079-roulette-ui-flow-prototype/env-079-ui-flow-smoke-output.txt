@@ -1,0 +1,27 @@
+PASS: index.html references app.js
+PASS: index.html references styles.css
+PASS: app.js contains round state BetsOpen
+PASS: app.js contains round state SpinVisualStarted
+PASS: app.js contains round state NoMoreBets
+PASS: app.js contains round state ResultFinalised
+PASS: app.js contains round state Settled
+PASS: app.js contains round state ProofPublished
+PASS: app.js blocks bet changes after NoMoreBets
+PASS: app.js does not call Math.random
+PASS: app.js does not use crypto random APIs
+PASS: app.js does not generate a roulette number
+PASS: app.js loads or uses sample-round.json
+PASS: UI text contains spin animation != result finalisation
+PASS: sample-round.json is valid JSON
+PASS: sample-round.json has final_result == PASS
+PASS: sample-round.json has round_state == ProofPublished
+PASS: sample-round.json has result_number in 0..36
+PASS: sample-round.json has result_colour in green/red/black
+PASS: sample-round.json has foundation_verifier_result == PASS
+PASS: sample-round.json has foundation_network == testnet-10
+PASS: sample-round.json has mainnet_supported == false
+PASS: sample-round.json has signing_used == false
+PASS: sample-round.json has transaction_created == false
+PASS: sample-round.json has broadcast_used == false
+PASS: sample-round.json has wallet_access_used == false
+ROULETTE_UI_FLOW_READY=PASS

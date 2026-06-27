@@ -1,0 +1,32 @@
+ M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/app.js
+ M examples/roulette-poc/ui/index.html
+ M examples/roulette-poc/ui/styles.css
+?? scripts/env079-roulette-ui-flow-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/env-079-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/env-079-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/env-079-sample-round.json
+?? spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/env-079-summary.md
+?? spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/env-079-test-output.txt
+?? spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/env-079-ui-flow-smoke-output.txt
+
+---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   docs/roulette-poc-architecture.md
+	modified:   examples/roulette-poc/README.md
+	modified:   examples/roulette-poc/ui/app.js
+	modified:   examples/roulette-poc/ui/index.html
+	modified:   examples/roulette-poc/ui/styles.css
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	scripts/env079-roulette-ui-flow-smoke.sh
+	spikes/kaspa-foundation/artifacts/env-079-roulette-ui-flow-prototype/
+
+no changes added to commit (use "git add" and/or "git commit -a")

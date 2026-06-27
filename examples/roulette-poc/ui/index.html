@@ -9,14 +9,14 @@
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">ENV-078 simple UI prototype</p>
+        <p class="eyebrow">ENV-079 interactive roulette UI flow prototype</p>
         <h1>Kaspa Fair Roulette PoC</h1>
         <p class="subhead">
-          Static prototype that displays the existing deterministic ENV-077 round JSON.
-          The wheel/spin is visual only. The UI does not decide or randomise the result.
+          Interactive static flow prototype with intentionally minimal visual polish.
+          The UI demonstrates the round-state sequence and proof display while consuming deterministic engine JSON only.
         </p>
       </div>
-      <div id="overall-status" class="status-pill status-loading">Loading round proof…</div>
+      <div id="overall-status" class="status-pill status-loading">Loading deterministic round…</div>
     </header>
 
     <main class="layout">
@@ -25,9 +25,85 @@
         <p id="failure-message">Round data failed validation.</p>
       </section>
 
+      <section class="panel wide hero-panel">
+        <div>
+          <div class="label">Current round state</div>
+          <div id="current-round-state" class="state-banner">BetsOpen</div>
+          <p class="note" id="state-description">
+            Bets are open. Mock display bets may still be changed in the UI.
+          </p>
+        </div>
+        <div class="wheel-visual-panel">
+          <div class="label">Wheel visual</div>
+          <div id="wheel-visual" class="wheel-visual">READY</div>
+          <p class="note">spin animation != result finalisation</p>
+        </div>
+      </section>
+
+      <section class="panel wide" id="controls-panel">
+        <h2>Interactive round controls</h2>
+        <p class="note">
+          Follow the required flow: BetsOpen → SpinVisualStarted → NoMoreBets → ResultFinalised → Settled → ProofPublished.
+        </p>
+        <div class="button-row">
+          <button id="start-wheel-button" type="button">Start Wheel</button>
+          <button id="no-more-bets-button" type="button">No More Bets</button>
+          <button id="reveal-result-button" type="button">Reveal Result</button>
+          <button id="show-settlement-button" type="button">Show Settlement</button>
+          <button id="publish-proof-button" type="button">Publish Proof</button>
+        </div>
+      </section>
+
       <section class="panel" id="trust-panel">
-        <h2>Trust status</h2>
+        <h2>Foundation verifier status</h2>
         <ul class="kv-list" id="trust-status-list"></ul>
+      </section>
+
+      <section class="panel" id="safety-panel">
+        <h2>Safety flags</h2>
+        <ul class="kv-list" id="safety-flags-list"></ul>
+      </section>
+
+      <section class="panel wide" id="sequence-panel">
+        <h2>Round sequence</h2>
+        <ol class="sequence-list" id="sequence-list"></ol>
+      </section>
+
+      <section class="panel wide" id="bet-editor-panel">
+        <h2>Mock bet display</h2>
+        <p class="note">
+          This editor is visual-only and does not alter the deterministic result, settlement, or proof loaded from sample-round.json.
+        </p>
+        <div class="bet-editor-grid">
+          <label>
+            <span class="label">Bet type</span>
+            <select id="bet-type-select">
+              <option value="straight-number">straight-number</option>
+              <option value="colour">colour</option>
+              <option value="parity">parity</option>
+              <option value="range">range</option>
+            </select>
+          </label>
+          <label>
+            <span class="label">Selection</span>
+            <input id="bet-selection-input" type="text" value="17" />
+          </label>
+          <label>
+            <span class="label">Stake units</span>
+            <input id="bet-stake-input" type="number" min="1" step="1" value="10" />
+          </label>
+          <button id="apply-bet-button" type="button">Add / Change Mock Bet</button>
+        </div>
+        <div id="bet-status" class="bet-status bet-open">BetsOpen: mock display bets can be changed.</div>
+        <ul class="mock-bet-list" id="mock-bet-list"></ul>
+      </section>
+
+      <section class="panel wide" id="table-panel">
+        <h2>Roulette table</h2>
+        <div class="table-note">
+          Bets may remain visually open while the wheel is spinning. Highlighted result appears only after deterministic reveal.
+        </div>
+        <div class="roulette-table" id="roulette-table"></div>
       </section>
 
       <section class="panel" id="result-panel">
@@ -35,35 +111,22 @@
         <div class="result-card">
           <div>
             <div class="label">Result number</div>
-            <div class="result-number" id="result-number">--</div>
+            <div class="result-number hidden-result" id="result-number">--</div>
           </div>
           <div>
             <div class="label">Result colour</div>
-            <div class="result-colour" id="result-colour">--</div>
+            <div class="result-colour" id="result-colour">Hidden until reveal</div>
           </div>
         </div>
         <div class="algorithm-box">
-          <div class="label">Algorithm</div>
-          <code id="result-algorithm">blake3-domain-separated-rejection-sampling-v1</code>
+          <div class="label">Deterministic result algorithm</div>
+          <code id="result-algorithm">Loading…</code>
         </div>
-      </section>
-
-      <section class="panel wide" id="sequence-panel">
-        <h2>Round sequence</h2>
-        <p class="note">spin animation != result finalisation</p>
-        <ol class="sequence-list" id="sequence-list"></ol>
-      </section>
-
-      <section class="panel wide" id="table-panel">
-        <h2>European table</h2>
-        <div class="table-note">
-          Enough layout to make bet areas understandable. Highlight shows the deterministic ENV-077 result.
-        </div>
-        <div class="roulette-table" id="roulette-table"></div>
       </section>
 
       <section class="panel wide" id="bets-panel">
-        <h2>Mock bets and deterministic settlement</h2>
+        <h2>Deterministic settlement input</h2>
+        <p class="note">Accepted-bet ledger and settlement rows come directly from sample-round.json.</p>
         <table>
           <thead>
             <tr>
@@ -80,8 +143,15 @@
         </table>
       </section>
 
+      <section class="panel wide" id="settlement-panel">
+        <h2>Settlement panel</h2>
+        <div id="settlement-summary" class="settlement-summary">Settlement hidden until Show Settlement.</div>
+        <ul class="kv-list" id="settlement-list"></ul>
+      </section>
+
       <section class="panel wide" id="proof-panel">
         <h2>Proof panel</h2>
+        <div id="proof-status" class="proof-status">Proof hidden until Publish Proof.</div>
         <ul class="kv-list proof-list" id="proof-list"></ul>
       </section>
     </main>
