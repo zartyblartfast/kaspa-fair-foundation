@@ -542,3 +542,42 @@ ENV-080 remains intentionally minimal and offline-safe:
 - no transaction creation
 - no mainnet
 - no production casino functionality
+
+## 18. ENV-080B UI bet placement cleanup before table-zone model
+
+ENV-080B cleans up the temporary mock bet UI so the current roulette prototype no longer implies full roulette table bet placement support.
+
+Primary readiness command:
+- `scripts/env080b-roulette-ui-bet-cleanup-smoke.sh`
+
+Primary UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/sample-round.json`
+
+UI behavior now demonstrated:
+- the current bet control is explicitly labeled as a temporary simple/prototype straight-number mock bet path only
+- the UI visibly states that full roulette table bet zones are not implemented yet
+- the UI visibly lists the future table-driven bet zones deferred to ENV-081: straight, split, street, corner, six-line, dozens, columns, red/black, odd/even, high/low
+- simple mock bets remain allowed in `BetsOpen`
+- simple mock bets remain allowed in `SpinVisualStarted`
+- simple mock bets remain blocked after `NoMoreBets`
+- `Reset Round` still clears UI-added mock bets and returns the UI flow to `BetsOpen`
+- deterministic result, settlement, and proof still come from `sample-round.json` only
+
+ENV-080B intentionally does not implement full roulette table bet zones.
+
+ENV-081 should implement or design the proper table-zone model for real roulette bet types such as straight, split, street, corner, six-line, dozens, columns, red/black, odd/even, high/low, and zero-area bets.
+
+ENV-080B remains intentionally minimal and offline-safe:
+- no full roulette bet-zone implementation
+- no real betting
+- no real payouts
+- no wallet
+- no backend custody
+- no signing
+- no broadcasting
+- no transaction creation
+- no mainnet
+- no production casino functionality

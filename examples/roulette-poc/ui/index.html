@@ -9,10 +9,10 @@
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">ENV-080 UI mock bet placement and reset flow</p>
+        <p class="eyebrow">ENV-080B temporary simple mock bet UI cleanup</p>
         <h1>Kaspa Fair Roulette PoC</h1>
         <p class="subhead">
-          Interactive static roulette prototype with visible mock bet placement, intentionally minimal visual polish,
+          Interactive static roulette prototype with temporary simple mock bet placement, intentionally minimal visual polish,
           and deterministic result/proof display from sample-round.json only.
         </p>
       </div>
@@ -29,7 +29,7 @@
         <div>
           <div class="label">Current round state</div>
           <div id="current-round-state" class="state-banner">BetsOpen</div>
-          <p class="note" id="state-description">Mock bets may be placed before wheel start.</p>
+          <p class="note" id="state-description">Temporary simple straight-number mock bets may be placed before wheel start.</p>
         </div>
         <div class="wheel-visual-panel">
           <div class="label">Wheel visual</div>
@@ -69,32 +69,29 @@
       </section>
 
       <section class="panel wide" id="bet-editor-panel">
-        <h2>Mock bet placement</h2>
+        <h2>Temporary simple mock bet prototype</h2>
         <p class="note">
-          UI-added bets are mock-only. They do not alter the deterministic result, settlement, or proof loaded from sample-round.json.
+          UI-added bets are temporary prototype straight-number mock bets only. They do not alter the deterministic result, settlement, or proof loaded from sample-round.json.
         </p>
+        <p class="note">Full roulette table bet zones are not implemented yet.</p>
+        <p class="note">Future table-driven bet zones: straight, split, street, corner, six-line, dozens, columns, red/black, odd/even, high/low.</p>
         <div class="bet-editor-grid">
           <label>
-            <span class="label">Bet choice</span>
+            <span class="label">Prototype straight-number mock bet choice</span>
             <select id="bet-choice-select">
+              <option value="straight-number:0">straight number 0</option>
               <option value="straight-number:17">straight number 17</option>
               <option value="straight-number:21">straight number 21</option>
-              <option value="colour:red">red</option>
-              <option value="colour:black">black</option>
-              <option value="parity:odd">odd</option>
-              <option value="parity:even">even</option>
-              <option value="range:high">high</option>
-              <option value="range:low">low</option>
             </select>
           </label>
           <label>
             <span class="label">Stake units</span>
             <input id="bet-stake-input" type="number" min="1" step="1" value="5" />
           </label>
-          <button id="place-mock-bet-button" type="button">Place Mock Bet</button>
+          <button id="place-mock-bet-button" type="button">Add Prototype Straight-Number Mock Bet</button>
         </div>
-        <div id="bet-status" class="bet-status bet-open">BetsOpen: mock bets may be placed before wheel start.</div>
-        <div id="bet-placement-note" class="bet-placement-note">Straight number, red, black, odd, even, high, and low are supported mock choices.</div>
+        <div id="bet-status" class="bet-status bet-open">BetsOpen: temporary simple straight-number mock bets may be placed before wheel start.</div>
+        <div id="bet-placement-note" class="bet-placement-note">Only temporary simple straight-number mock bets are supported in this prototype UI.</div>
         <h3>UI mock bet ledger</h3>
         <ul class="mock-bet-list" id="mock-bet-list"></ul>
       </section>

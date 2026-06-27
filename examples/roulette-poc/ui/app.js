@@ -8,11 +8,11 @@ const ROUND_SEQUENCE = [
 ];
 
 const ROUND_DESCRIPTIONS = {
-  BetsOpen: "Mock bets may be placed before wheel start.",
+  BetsOpen: "Temporary simple straight-number mock bets may be placed before wheel start.",
   SpinVisualStarted: "Bets are still open while the wheel is visually spinning.",
   NoMoreBets: "No more bets — ledger locked.",
   ResultFinalised: "Deterministic result revealed from sample-round.json after NoMoreBets.",
-  Settled: "Deterministic settlement from sample-round.json is shown. UI-added bets remain mock-only.",
+  Settled: "Deterministic settlement from sample-round.json is shown. UI-added bets remain temporary simple mock bets only.",
   ProofPublished: "Proof fields and final PASS status are now displayed.",
 };
 
@@ -127,14 +127,14 @@ function renderStaticPanels(round) {
   renderDeterministicSettlementInput(round);
   renderRouletteTable();
   ui.resultAlgorithm.textContent = round.result_algorithm;
-  setOverallStatus("PASS — deterministic sample JSON loaded; interactive mock bet flow ready", true);
+  setOverallStatus("PASS — deterministic sample JSON loaded; temporary simple mock bet prototype ready", true);
 }
 
 function resetRoundFlow() {
   appState.uiState = "BetsOpen";
   appState.uiMockBets = [];
   appState.nextMockBetId = 1;
-  ui.betChoiceSelect.value = "straight-number:17";
+  ui.betChoiceSelect.value = "straight-number:0";
   ui.betStakeInput.value = "5";
   renderFlow();
 }
@@ -371,7 +371,7 @@ function placeMockBet() {
 
   ui.betStatus.textContent = currentState === "SpinVisualStarted"
     ? "Bets are still open while the wheel is visually spinning."
-    : "BetsOpen: mock bets may be placed before wheel start.";
+    : "BetsOpen: temporary simple straight-number mock bets may be placed before wheel start.";
   ui.betStatus.className = "bet-status bet-open";
   renderUiMockBetLedger();
 }
@@ -380,7 +380,7 @@ function renderUiMockBetLedger() {
   ui.mockBetList.innerHTML = "";
   if (appState.uiMockBets.length === 0) {
     const item = document.createElement("li");
-    item.innerHTML = "<div class=\"label\">UI mock bet ledger</div><strong>No UI-added mock bets yet.</strong><div>Place Mock Bet to add a visible prototype bet.</div>";
+    item.innerHTML = "<div class=\"label\">UI mock bet ledger</div><strong>No UI-added mock bets yet.</strong><div>Add Prototype Straight-Number Mock Bet to add a visible temporary prototype bet.</div>";
     ui.mockBetList.appendChild(item);
     return;
   }
@@ -403,7 +403,7 @@ function buildBetStatusText(uiState) {
     return "Bets are still open while the wheel is visually spinning.";
   }
   if (uiState === "BetsOpen") {
-    return "BetsOpen: mock bets may be placed before wheel start.";
+    return "BetsOpen: temporary simple straight-number mock bets may be placed before wheel start.";
   }
   return `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
 }
