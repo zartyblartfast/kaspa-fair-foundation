@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaspa Fair Roulette PoC</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">ENV-078 simple UI prototype</p>
+        <h1>Kaspa Fair Roulette PoC</h1>
+        <p class="subhead">
+          Static prototype that displays the existing deterministic ENV-077 round JSON.
+          The wheel/spin is visual only. The UI does not decide or randomise the result.
+        </p>
+      </div>
+      <div id="overall-status" class="status-pill status-loading">Loading round proof…</div>
+    </header>
+
+    <main class="layout">
+      <section class="panel wide" id="failure-panel" hidden>
+        <h2>Failure / unsafe state</h2>
+        <p id="failure-message">Round data failed validation.</p>
+      </section>
+
+      <section class="panel" id="trust-panel">
+        <h2>Trust status</h2>
+        <ul class="kv-list" id="trust-status-list"></ul>
+      </section>
+
+      <section class="panel" id="result-panel">
+        <h2>Result</h2>
+        <div class="result-card">
+          <div>
+            <div class="label">Result number</div>
+            <div class="result-number" id="result-number">--</div>
+          </div>
+          <div>
+            <div class="label">Result colour</div>
+            <div class="result-colour" id="result-colour">--</div>
+          </div>
+        </div>
+        <div class="algorithm-box">
+          <div class="label">Algorithm</div>
+          <code id="result-algorithm">blake3-domain-separated-rejection-sampling-v1</code>
+        </div>
+      </section>
+
+      <section class="panel wide" id="sequence-panel">
+        <h2>Round sequence</h2>
+        <p class="note">spin animation != result finalisation</p>
+        <ol class="sequence-list" id="sequence-list"></ol>
+      </section>
+
+      <section class="panel wide" id="table-panel">
+        <h2>European table</h2>
+        <div class="table-note">
+          Enough layout to make bet areas understandable. Highlight shows the deterministic ENV-077 result.
+        </div>
+        <div class="roulette-table" id="roulette-table"></div>
+      </section>
+
+      <section class="panel wide" id="bets-panel">
+        <h2>Mock bets and deterministic settlement</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Bet</th>
+              <th>Type</th>
+              <th>Selection</th>
+              <th>Stake</th>
+              <th>Win/Loss</th>
+              <th>Payout</th>
+              <th>Net</th>
+            </tr>
+          </thead>
+          <tbody id="bets-body"></tbody>
+        </table>
+      </section>
+
+      <section class="panel wide" id="proof-panel">
+        <h2>Proof panel</h2>
+        <ul class="kv-list proof-list" id="proof-list"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+PASS: ENV-077 prerequisite artifacts exist
+PASS: sample-round.json refreshed from ENV-077 engine output
+PASS: final_result == PASS
+PASS: round_state == ProofPublished
+PASS: foundation_verifier_result == PASS
+PASS: foundation_network == testnet-10
+PASS: mainnet_supported == false
+PASS: wallet_access_used == false
+PASS: signing_used == false
+PASS: transaction_created == false
+PASS: broadcast_used == false
+PASS: result_number in 0..36
+PASS: result_colour in green/red/black
+PASS: required UI files exist
+PASS: index.html references app.js
+PASS: index.html references styles.css
+PASS: UI contains Kaspa Fair Roulette PoC
+PASS: UI contains spin animation != result finalisation
+PASS: UI contains ProofPublished
+ROULETTE_UI_PROTOTYPE_READY=PASS

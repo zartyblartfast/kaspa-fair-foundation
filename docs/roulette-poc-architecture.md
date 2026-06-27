@@ -1,12 +1,11 @@
 # Roulette PoC Architecture
 
-Status: ENV-077 deterministic roulette round engine on top of the foundation verifier contract
+Status: ENV-078 simple roulette UI prototype on top of the deterministic round engine and foundation verifier contract
 
-Purpose: define and now demonstrate a deterministic dry-run roulette round engine that consumes the existing Kaspa Fair Foundation / TN10 Toccata trust layer without replacing it.
+Purpose: define and now demonstrate a simple static roulette UI prototype that displays the existing deterministic ENV-077 round result and proof/safety status without adding production casino features.
 
 Safety boundary:
-- no roulette implementation
-- no web app
+- no production web app or backend
 - no signing
 - no transaction creation
 - no submitting or broadcasting
@@ -442,3 +441,32 @@ ENV-077 still does not implement:
 - mainnet
 - ZK
 - vProgs
+
+## 15. ENV-078 simple roulette UI prototype
+
+ENV-078 adds a simple static UI prototype that displays the existing ENV-077 deterministic engine JSON without changing the underlying result.
+
+Primary readiness command:
+- `scripts/env078-roulette-ui-smoke.sh`
+
+Static UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/sample-round.json`
+
+UI behavior now demonstrated:
+- it displays the foundation verifier trust/safety status
+- it displays the full round sequence through `ProofPublished`
+- it explicitly states `spin animation != result finalisation`
+- it renders a simple European `0..36` table and highlights the deterministic result number
+- it displays mock bets, win/loss state, payout units, and net units from the engine JSON
+- it displays proof fields including covenant id, ENV-064 txid, accepting block hash, and bet ledger hash
+- it shows a clear failure/unsafe state if the JSON is not `PASS` or if safety flags are unsafe
+
+ENV-078 is intentionally minimal:
+- visual polish is intentionally minimal
+- the UI displays existing deterministic engine JSON
+- the UI does not decide or randomise the result
+- the wheel/spin is visual only
+- there is no real betting, real payouts, wallet integration, signing, broadcasting, custody, mainnet, or production casino functionality
