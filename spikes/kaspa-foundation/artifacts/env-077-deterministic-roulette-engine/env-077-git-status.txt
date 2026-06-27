@@ -1,0 +1,11 @@
+ M crates/kaspa-fair-cli/README.md
+ M crates/kaspa-fair-cli/src/main.rs
+ M docs/roulette-poc-architecture.md
+?? crates/kaspa-fair-cli/src/roulette.rs
+?? scripts/env077-roulette-engine-check.sh
+?? spikes/kaspa-foundation/artifacts/env-077-deterministic-roulette-engine/env-077-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-077-deterministic-roulette-engine/env-077-engine-check-output.txt
+?? spikes/kaspa-foundation/artifacts/env-077-deterministic-roulette-engine/env-077-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-077-deterministic-roulette-engine/env-077-live-foundation-verifier.json
+?? spikes/kaspa-foundation/artifacts/env-077-deterministic-roulette-engine/env-077-roulette-engine-output.json
+?? spikes/kaspa-foundation/artifacts/env-077-deterministic-roulette-engine/env-077-test-output.txt

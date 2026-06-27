@@ -1,8 +1,8 @@
 # Roulette PoC Architecture
 
-Status: ENV-076 dry-run adapter skeleton on top of the foundation verifier contract
+Status: ENV-077 deterministic roulette round engine on top of the foundation verifier contract
 
-Purpose: define and now demonstrate a dry-run roulette proof-of-concept adapter that consumes the existing Kaspa Fair Foundation / TN10 Toccata trust layer without replacing it.
+Purpose: define and now demonstrate a deterministic dry-run roulette round engine that consumes the existing Kaspa Fair Foundation / TN10 Toccata trust layer without replacing it.
 
 Safety boundary:
 - no roulette implementation
@@ -391,3 +391,54 @@ It does not implement:
 - production casino behavior
 
 The ENV-076 adapter proves that future roulette code can sit above the foundation verifier contract instead of replacing it.
+
+## 14. ENV-077 deterministic roulette round engine
+
+ENV-077 turns the ENV-076 adapter into a reusable deterministic round engine on the app/CLI side.
+
+Primary engine command:
+- `cargo run -p kaspa-fair-cli -- roulette-engine-dry-run --json`
+
+Persistent readiness command:
+- `scripts/env077-roulette-engine-check.sh`
+
+The engine models the full deterministic sequence:
+- `Created`
+- `BetsOpen`
+- `SpinVisualStarted`
+- `NoMoreBets`
+- `ResultFinalised`
+- `Settled`
+- `ProofPublished`
+
+Required behavior now demonstrated by code and tests:
+- wheel/spin animation may start before bet close
+- spin animation is not result finalisation
+- bets are accepted only in `BetsOpen` and `SpinVisualStarted`
+- bets are rejected after `NoMoreBets`
+- result finalisation is rejected before `NoMoreBets`
+- settlement is rejected before `ResultFinalised`
+- proof publication is rejected before settlement
+- the final published round JSON carries `round_state = ProofPublished`
+
+The deterministic engine keeps the foundation boundary intact:
+- it consumes the live TN10 foundation verifier JSON contract
+- it requires `verifier_result = PASS`
+- it enforces read-only/no-wallet/no-signing/no-broadcast/no-mainnet safety flags
+- it uses mock bets only
+- it derives the result with the same domain-separated BLAKE3 rejection-sampling algorithm
+- it uses the fixed European colour table
+- it calculates deterministic settlement with fixed payout multipliers
+- it emits the stable `kaspa-fair-roulette-engine-round-v1` JSON contract
+
+ENV-077 still does not implement:
+- a web app
+- real betting
+- real payouts
+- wallets or custody
+- signing
+- transaction creation
+- submitting or broadcasting
+- mainnet
+- ZK
+- vProgs

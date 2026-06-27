@@ -1,3 +1,5 @@
+mod roulette;
+
 use std::env;
 use std::error::Error;
 use std::path::PathBuf;
@@ -16,6 +18,7 @@ use kaspa_foundation::transcript::online_verifier::{
 
 const COMMAND_VERIFY_LIVE_TN10_CANONICAL: &str = "verify-live-tn10-canonical";
 const COMMAND_ROULETTE_POC_DRY_RUN: &str = "roulette-poc-dry-run";
+const COMMAND_ROULETTE_ENGINE_DRY_RUN: &str = "roulette-engine-dry-run";
 const FLAG_JSON: &str = "--json";
 const LIVE_VERIFICATION_SCHEMA_V1: &str = "kaspa-fair-live-verification-result-v1";
 const ROULETTE_POC_SCHEMA_V1: &str = "kaspa-fair-roulette-poc-round-v1";
@@ -56,6 +59,7 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
         }
         CliCommand::VerifyLiveTn10Canonical { output } => run_verify_live_tn10_canonical(output),
         CliCommand::RoulettePocDryRun { output } => run_roulette_poc_dry_run(output),
+        CliCommand::RouletteEngineDryRun { output } => run_roulette_engine_dry_run(output),
     }
 }
 
@@ -64,6 +68,7 @@ enum CliCommand {
     Help,
     VerifyLiveTn10Canonical { output: OutputMode },
     RoulettePocDryRun { output: OutputMode },
+    RouletteEngineDryRun { output: OutputMode },
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -97,6 +102,17 @@ fn parse_command(args: &[String]) -> CliCommand {
                 }
             }
         }
+        Some(COMMAND_ROULETTE_ENGINE_DRY_RUN) => {
+            if args.get(1).map(String::as_str) == Some(FLAG_JSON) {
+                CliCommand::RouletteEngineDryRun {
+                    output: OutputMode::Json,
+                }
+            } else {
+                CliCommand::RouletteEngineDryRun {
+                    output: OutputMode::Human,
+                }
+            }
+        }
         Some(_) => CliCommand::Help,
     }
 }
@@ -111,6 +127,11 @@ fn print_help() {
     println!("      Emit the stable {LIVE_VERIFICATION_SCHEMA_V1} machine-readable contract.");
     println!("  {COMMAND_ROULETTE_POC_DRY_RUN} {FLAG_JSON}");
     println!("      Emit the stable {ROULETTE_POC_SCHEMA_V1} dry-run roulette adapter contract.");
+    println!("  {COMMAND_ROULETTE_ENGINE_DRY_RUN} {FLAG_JSON}");
+    println!(
+        "      Emit the stable {} deterministic roulette engine contract.",
+        roulette::ROULETTE_ENGINE_SCHEMA_V1
+    );
     println!();
     println!("Safety:");
     println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
@@ -138,9 +159,13 @@ fn run_roulette_poc_dry_run(output: OutputMode) -> Result<ExitCode, Box<dyn Erro
     let runtime = tokio::runtime::Runtime::new()?;
     let summary = runtime.block_on(read_and_verify_live_tn10_canonical())?;
     let foundation_value = live_tn10_summary_json(&summary);
-    let validated = validate_foundation_verifier_contract(&foundation_value)
-        .map_err(|err| format!("roulette PoC rejected foundation verifier contract: {err}"))?;
-    let round = roulette_poc_round_json(&validated)?;
+    let validated = roulette::validate_foundation_verifier_contract(
+        &foundation_value,
+        LIVE_VERIFICATION_SCHEMA_V1,
+        ENV064_CONTINUING_OUTPUT_VALUE_SOMPI,
+    )
+    .map_err(|err| format!("roulette PoC rejected foundation verifier contract: {err}"))?;
+    let round = roulette::roulette_poc_round_json(&validated)?;
 
     match output {
         OutputMode::Human => print_roulette_poc_round_summary(&round),
@@ -148,6 +173,32 @@ fn run_roulette_poc_dry_run(output: OutputMode) -> Result<ExitCode, Box<dyn Erro
     }
 
     if round["final_result"] == "PASS" {
+        Ok(ExitCode::SUCCESS)
+    } else {
+        Ok(ExitCode::from(2))
+    }
+}
+
+fn run_roulette_engine_dry_run(
+    output: OutputMode,
+) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+    let runtime = tokio::runtime::Runtime::new()?;
+    let summary = runtime.block_on(read_and_verify_live_tn10_canonical())?;
+    let foundation_value = live_tn10_summary_json(&summary);
+    let validated = roulette::validate_foundation_verifier_contract(
+        &foundation_value,
+        LIVE_VERIFICATION_SCHEMA_V1,
+        ENV064_CONTINUING_OUTPUT_VALUE_SOMPI,
+    )
+    .map_err(|err| format!("roulette engine rejected foundation verifier contract: {err}"))?;
+    let round = roulette::roulette_engine_round_json(&validated)?;
+
+    match output {
+        OutputMode::Human => print_roulette_engine_round_summary(&round),
+        OutputMode::Json => println!("{round}"),
+    }
+
+    if round["final_result"] == "PASS" && round["round_state"] == "ProofPublished" {
         Ok(ExitCode::SUCCESS)
     } else {
         Ok(ExitCode::from(2))
@@ -495,6 +546,46 @@ fn print_roulette_poc_round_summary(round: &serde_json::Value) {
     println!(
         "round_id={}",
         round["round_id"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "foundation_verifier_result={}",
+        round["foundation_verifier_result"]
+            .as_str()
+            .unwrap_or("unavailable")
+    );
+    println!(
+        "foundation_network={}",
+        round["foundation_network"]
+            .as_str()
+            .unwrap_or("unavailable")
+    );
+    println!(
+        "bet_ledger_hash={}",
+        round["bet_ledger_hash"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "result_number={}",
+        round["result_number"].as_u64().unwrap_or_default()
+    );
+    println!(
+        "result_colour={}",
+        round["result_colour"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "final_result={}",
+        round["final_result"].as_str().unwrap_or("unavailable")
+    );
+}
+
+fn print_roulette_engine_round_summary(round: &serde_json::Value) {
+    println!("ENV-077 deterministic roulette engine dry run");
+    println!(
+        "round_id={}",
+        round["round_id"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "round_state={}",
+        round["round_state"].as_str().unwrap_or("unavailable")
     );
     println!(
         "foundation_verifier_result={}",
@@ -970,6 +1061,15 @@ mod tests {
                 FLAG_JSON.to_string()
             ]),
             CliCommand::RoulettePocDryRun {
+                output: OutputMode::Json
+            }
+        );
+        assert_eq!(
+            parse_command(&[
+                COMMAND_ROULETTE_ENGINE_DRY_RUN.to_string(),
+                FLAG_JSON.to_string()
+            ]),
+            CliCommand::RouletteEngineDryRun {
                 output: OutputMode::Json
             }
         );

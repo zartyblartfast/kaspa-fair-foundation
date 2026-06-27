@@ -105,3 +105,35 @@ The adapter:
 
 ENV-076 is not a web app, wallet integration, real betting flow, real payout
 system, signing flow, broadcasting flow, mainnet flow, or production roulette.
+
+## Deterministic roulette round engine
+
+ENV-077 turns the dry-run adapter into a reusable deterministic roulette round
+engine on the app/CLI side.
+
+Engine JSON command:
+
+```bash
+cargo run -p kaspa-fair-cli -- roulette-engine-dry-run --json
+```
+
+Persistent readiness script:
+
+```bash
+scripts/env077-roulette-engine-check.sh
+```
+
+The engine:
+- consumes the live TN10 verifier JSON contract
+- requires `verifier_result = PASS`
+- enforces the read-only/no-wallet/no-signing/no-broadcast/no-mainnet boundary
+- models the round state sequence `Created -> BetsOpen -> SpinVisualStarted -> NoMoreBets -> ResultFinalised -> Settled -> ProofPublished`
+- allows wheel/spin animation before bet close, but does not allow result finalisation before `NoMoreBets`
+- rejects bets after `NoMoreBets`
+- uses mock bets only
+- derives the deterministic European roulette result with domain-separated BLAKE3 rejection sampling
+- calculates deterministic mock settlement with fixed payout multipliers
+- emits the stable `kaspa-fair-roulette-engine-round-v1` JSON contract
+
+ENV-077 still does not implement a web app, real betting, wallets, real payouts,
+signing, broadcasting, custody, mainnet, ZK, or vProgs.
