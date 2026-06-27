@@ -1,0 +1,10 @@
+git status --short --untracked-files=all
+git log --oneline -5
+cargo fmt --check
+git diff --check
+cargo test -p kaspa-fair-cli
+cargo test -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+git status --short --untracked-files=all
+git diff -- docs/roulette-poc-architecture.md

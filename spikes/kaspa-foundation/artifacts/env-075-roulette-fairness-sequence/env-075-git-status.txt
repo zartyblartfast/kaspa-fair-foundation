@@ -1,0 +1,16 @@
+$ git status --short --untracked-files=all
+M docs/roulette-poc-architecture.md
+?? spikes/kaspa-foundation/artifacts/env-075-roulette-fairness-sequence/env-075-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-075-roulette-fairness-sequence/env-075-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-075-roulette-fairness-sequence/env-075-summary.md
+?? spikes/kaspa-foundation/artifacts/env-075-roulette-fairness-sequence/env-075-test-output.txt
+
+$ git log --oneline -5
+b19df1e Add limited Toccata layer readiness gate
+ee5be4e Add app-facing live TN10 verifier JSON output
+34efe50 Add developer live TN10 verifier command
+da422bc Add live TN10 read-only proof verifier
+b6b8623 Add offline proof transcript verifier
+
+$ git diff --check
+[exit 0]
