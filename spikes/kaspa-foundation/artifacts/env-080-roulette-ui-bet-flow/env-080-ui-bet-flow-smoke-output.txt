@@ -1,0 +1,27 @@
+PASS: index.html references app.js
+PASS: index.html references styles.css
+PASS: UI contains Place Mock Bet
+PASS: UI contains Reset Round or New Mock Round
+PASS: UI contains Bets are still open while the wheel is visually spinning
+PASS: app.js has state handling for BetsOpen
+PASS: app.js has state handling for SpinVisualStarted
+PASS: app.js has state handling for NoMoreBets
+PASS: app.js allows bet placement in BetsOpen
+PASS: app.js allows bet placement in SpinVisualStarted
+PASS: app.js blocks bet placement after NoMoreBets
+PASS: app.js contains blocked message BETS_CLOSED_NO_MORE_BETS
+PASS: app.js implements reset/new-round behaviour
+PASS: app.js does not call Math.random
+PASS: app.js does not use crypto random APIs
+PASS: app.js does not generate a roulette result
+PASS: sample-round.json is valid JSON
+PASS: sample-round.json has final_result == PASS
+PASS: sample-round.json has result_number in 0..36
+PASS: sample-round.json has result_colour in green/red/black
+PASS: sample-round.json has foundation_verifier_result == PASS
+PASS: sample-round.json has mainnet_supported == false
+PASS: sample-round.json has signing_used == false
+PASS: sample-round.json has transaction_created == false
+PASS: sample-round.json has broadcast_used == false
+PASS: sample-round.json has wallet_access_used == false
+ROULETTE_UI_BET_FLOW_READY=PASS

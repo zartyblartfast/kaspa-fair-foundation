@@ -8,16 +8,18 @@ const ROUND_SEQUENCE = [
 ];
 
 const ROUND_DESCRIPTIONS = {
-  BetsOpen: "Bets are open. Mock display bets may still be changed in the UI.",
-  SpinVisualStarted: "Wheel visual started. Bets remain visually open while the wheel is spinning.",
-  NoMoreBets: "No more bets. Adding or changing mock bets is now blocked in the UI.",
+  BetsOpen: "Mock bets may be placed before wheel start.",
+  SpinVisualStarted: "Bets are still open while the wheel is visually spinning.",
+  NoMoreBets: "No more bets — ledger locked.",
   ResultFinalised: "Deterministic result revealed from sample-round.json after NoMoreBets.",
-  Settled: "Deterministic settlement from sample-round.json is now shown.",
+  Settled: "Deterministic settlement from sample-round.json is shown. UI-added bets remain mock-only.",
   ProofPublished: "Proof fields and final PASS status are now displayed.",
 };
 
 const RED_NUMBERS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
 const BLACK_NUMBERS = new Set([2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]);
+const BETS_CLOSED_NO_MORE_BETS = "BETS_CLOSED_NO_MORE_BETS";
+const PLACEABLE_STATES = new Set(["BetsOpen", "SpinVisualStarted"]);
 
 const ui = {
   overallStatus: document.getElementById("overall-status"),
@@ -35,13 +37,13 @@ const ui = {
   resultAlgorithm: document.getElementById("result-algorithm"),
   betsBody: document.getElementById("bets-body"),
   settlementSummary: document.getElementById("settlement-summary"),
+  uiOnlyBetNote: document.getElementById("ui-only-bet-note"),
   settlementList: document.getElementById("settlement-list"),
   proofStatus: document.getElementById("proof-status"),
   proofList: document.getElementById("proof-list"),
-  betTypeSelect: document.getElementById("bet-type-select"),
-  betSelectionInput: document.getElementById("bet-selection-input"),
+  betChoiceSelect: document.getElementById("bet-choice-select"),
   betStakeInput: document.getElementById("bet-stake-input"),
-  applyBetButton: document.getElementById("apply-bet-button"),
+  placeMockBetButton: document.getElementById("place-mock-bet-button"),
   betStatus: document.getElementById("bet-status"),
   mockBetList: document.getElementById("mock-bet-list"),
   startWheelButton: document.getElementById("start-wheel-button"),
@@ -49,12 +51,14 @@ const ui = {
   revealResultButton: document.getElementById("reveal-result-button"),
   showSettlementButton: document.getElementById("show-settlement-button"),
   publishProofButton: document.getElementById("publish-proof-button"),
+  resetRoundButton: document.getElementById("reset-round-button"),
 };
 
 const appState = {
   round: null,
   uiState: "BetsOpen",
-  mockBets: [],
+  uiMockBets: [],
+  nextMockBetId: 1,
 };
 
 boot().catch((error) => {
@@ -70,10 +74,9 @@ async function boot() {
   const round = await response.json();
   validateRound(round);
   appState.round = round;
-  appState.mockBets = createInitialMockBets(round);
   bindEvents();
   renderStaticPanels(round);
-  renderFlow();
+  resetRoundFlow();
 }
 
 function validateRound(round) {
@@ -104,7 +107,8 @@ function bindEvents() {
   ui.revealResultButton.addEventListener("click", () => advanceState("ResultFinalised"));
   ui.showSettlementButton.addEventListener("click", () => advanceState("Settled"));
   ui.publishProofButton.addEventListener("click", () => advanceState("ProofPublished"));
-  ui.applyBetButton.addEventListener("click", applyMockBetChange);
+  ui.placeMockBetButton.addEventListener("click", placeMockBet);
+  ui.resetRoundButton.addEventListener("click", resetRoundFlow);
 }
 
 function advanceState(nextState) {
@@ -120,25 +124,33 @@ function advanceState(nextState) {
 function renderStaticPanels(round) {
   renderTrustPanel(round);
   renderSafetyFlags(round);
-  renderBets(round);
+  renderDeterministicSettlementInput(round);
   renderRouletteTable();
   ui.resultAlgorithm.textContent = round.result_algorithm;
-  setOverallStatus("PASS — deterministic sample JSON loaded; interactive flow ready", true);
+  setOverallStatus("PASS — deterministic sample JSON loaded; interactive mock bet flow ready", true);
+}
+
+function resetRoundFlow() {
+  appState.uiState = "BetsOpen";
+  appState.uiMockBets = [];
+  appState.nextMockBetId = 1;
+  ui.betChoiceSelect.value = "straight-number:17";
+  ui.betStakeInput.value = "5";
+  renderFlow();
 }
 
 function renderFlow() {
   const round = appState.round;
   const uiState = appState.uiState;
-  const uiStateIndex = ROUND_SEQUENCE.indexOf(uiState);
-  const betsLocked = uiStateIndex >= ROUND_SEQUENCE.indexOf("NoMoreBets");
-  const resultVisible = uiStateIndex >= ROUND_SEQUENCE.indexOf("ResultFinalised");
-  const settlementVisible = uiStateIndex >= ROUND_SEQUENCE.indexOf("Settled");
-  const proofVisible = uiStateIndex >= ROUND_SEQUENCE.indexOf("ProofPublished");
+  const resultVisible = hasReachedState("ResultFinalised");
+  const settlementVisible = hasReachedState("Settled");
+  const proofVisible = hasReachedState("ProofPublished");
+  const canPlaceMockBets = canPlaceBetsForState(uiState);
 
   ui.currentRoundState.textContent = uiState;
   ui.stateDescription.textContent = ROUND_DESCRIPTIONS[uiState];
-  ui.wheelVisual.textContent = uiStateIndex >= ROUND_SEQUENCE.indexOf("SpinVisualStarted") ? "SPINNING" : "READY";
-  ui.wheelVisual.className = `wheel-visual ${uiStateIndex >= ROUND_SEQUENCE.indexOf("SpinVisualStarted") ? (betsLocked ? "wheel-stopped" : "wheel-spinning") : "wheel-ready"}`;
+  ui.wheelVisual.textContent = hasReachedState("SpinVisualStarted") ? "SPINNING" : "READY";
+  ui.wheelVisual.className = `wheel-visual ${hasReachedState("SpinVisualStarted") ? (hasReachedState("NoMoreBets") ? "wheel-stopped" : "wheel-spinning") : "wheel-ready"}`;
 
   ui.startWheelButton.disabled = uiState !== "BetsOpen";
   ui.noMoreBetsButton.disabled = uiState !== "SpinVisualStarted";
@@ -146,16 +158,11 @@ function renderFlow() {
   ui.showSettlementButton.disabled = uiState !== "ResultFinalised";
   ui.publishProofButton.disabled = uiState !== "Settled";
 
-  ui.betTypeSelect.disabled = betsLocked;
-  ui.betSelectionInput.disabled = betsLocked;
-  ui.betStakeInput.disabled = betsLocked;
-  ui.applyBetButton.disabled = betsLocked;
-  ui.betStatus.textContent = betsLocked
-    ? "NoMoreBets: adding or changing mock bets is blocked in the UI."
-    : uiState === "SpinVisualStarted"
-      ? "SpinVisualStarted: wheel is visually spinning and bets are still visually allowed."
-      : "BetsOpen: mock display bets can be changed.";
-  ui.betStatus.className = `bet-status ${betsLocked ? "bet-closed" : "bet-open"}`;
+  ui.betChoiceSelect.disabled = !canPlaceMockBets;
+  ui.betStakeInput.disabled = !canPlaceMockBets;
+  ui.placeMockBetButton.disabled = !canPlaceMockBets;
+  ui.betStatus.textContent = buildBetStatusText(uiState);
+  ui.betStatus.className = `bet-status ${canPlaceMockBets ? "bet-open" : "bet-closed"}`;
 
   if (resultVisible) {
     ui.resultNumber.textContent = String(round.result_number);
@@ -169,7 +176,7 @@ function renderFlow() {
 
   renderRouletteTable(resultVisible ? round.result_number : null);
   renderRoundSequence(uiState);
-  renderMockBetList();
+  renderUiMockBetLedger();
   renderSettlement(round, settlementVisible);
   renderProof(round, proofVisible);
 }
@@ -256,7 +263,7 @@ function renderRouletteTable(resultNumber = null) {
   });
 }
 
-function renderBets(round) {
+function renderDeterministicSettlementInput(round) {
   const settlementById = new Map((round.settlement || []).map((item) => [item.bet_id, item]));
   ui.betsBody.innerHTML = "";
 
@@ -282,6 +289,7 @@ function renderSettlement(round, visible) {
   ui.settlementList.innerHTML = "";
   if (!visible) {
     ui.settlementSummary.textContent = "Settlement hidden until Show Settlement.";
+    ui.uiOnlyBetNote.textContent = "UI-added bets are prototype display bets only; deterministic settlement is from the engine sample round.";
     return;
   }
 
@@ -294,11 +302,14 @@ function renderSettlement(round, visible) {
   }, { totalStake: 0, totalPayout: 0, totalNet: 0, wins: 0 });
 
   ui.settlementSummary.textContent = `Deterministic settlement shown from sample-round.json for ${round.settlement.length} bets.`;
+  ui.uiOnlyBetNote.textContent = "UI-added bets are prototype display bets only; deterministic settlement is from the engine sample round.";
+
   const rows = [
     ["winning bets", totals.wins],
     ["total stake units", totals.totalStake],
     ["total payout units", totals.totalPayout],
     ["total net units", totals.totalNet],
+    ["ui-only mock bets in locked ledger", appState.uiMockBets.length],
   ];
 
   rows.forEach(([key, value]) => {
@@ -336,58 +347,73 @@ function renderProof(round, visible) {
   });
 }
 
-function createInitialMockBets(round) {
-  const firstBet = round.bets?.[0] || { bet_type: "straight-number", selection_value: "17", stake_units: 10 };
-  return [
-    {
-      label: "Editable mock display bet",
-      betType: firstBet.bet_type,
-      selection: firstBet.selection_value,
-      stakeUnits: firstBet.stake_units,
-    },
-  ];
-}
-
-function applyMockBetChange() {
-  const currentIndex = ROUND_SEQUENCE.indexOf(appState.uiState);
-  const closeIndex = ROUND_SEQUENCE.indexOf("NoMoreBets");
-  const canChangeBets = currentIndex < closeIndex;
-  if (!canChangeBets) {
-    ui.betStatus.textContent = "NoMoreBets: adding or changing mock bets is blocked in the UI.";
+function placeMockBet() {
+  const currentState = appState.uiState;
+  const canPlaceMockBets = canPlaceBetsForState(currentState);
+  if (!canPlaceMockBets) {
+    ui.betStatus.textContent = `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
     ui.betStatus.className = "bet-status bet-closed";
     return;
   }
 
-  const betType = ui.betTypeSelect.value.trim();
-  const selection = ui.betSelectionInput.value.trim() || "17";
+  const [betType, selection] = ui.betChoiceSelect.value.split(":");
   const stakeUnits = Number.parseInt(ui.betStakeInput.value, 10);
   const safeStakeUnits = Number.isInteger(stakeUnits) && stakeUnits > 0 ? stakeUnits : 1;
-
-  appState.mockBets[0] = {
-    label: appState.uiState === "SpinVisualStarted" ? "Editable mock display bet (spin visual active)" : "Editable mock display bet",
+  const mockBet = {
+    betId: `ui-mock-${String(appState.nextMockBetId).padStart(3, "0")}`,
     betType,
     selection,
     stakeUnits: safeStakeUnits,
+    placedDuringState: currentState,
   };
-  renderMockBetList();
-  ui.betStatus.textContent = appState.uiState === "SpinVisualStarted"
-    ? "SpinVisualStarted: wheel is visually spinning and bets are still visually allowed."
-    : "BetsOpen: mock display bets can be changed.";
+  appState.nextMockBetId += 1;
+  appState.uiMockBets.push(mockBet);
+
+  ui.betStatus.textContent = currentState === "SpinVisualStarted"
+    ? "Bets are still open while the wheel is visually spinning."
+    : "BetsOpen: mock bets may be placed before wheel start.";
   ui.betStatus.className = "bet-status bet-open";
+  renderUiMockBetLedger();
 }
 
-function renderMockBetList() {
+function renderUiMockBetLedger() {
   ui.mockBetList.innerHTML = "";
-  appState.mockBets.forEach((bet) => {
+  if (appState.uiMockBets.length === 0) {
+    const item = document.createElement("li");
+    item.innerHTML = "<div class=\"label\">UI mock bet ledger</div><strong>No UI-added mock bets yet.</strong><div>Place Mock Bet to add a visible prototype bet.</div>";
+    ui.mockBetList.appendChild(item);
+    return;
+  }
+
+  appState.uiMockBets.forEach((bet) => {
     const item = document.createElement("li");
     item.innerHTML = `
-      <div class="label">${escapeHtml(bet.label)}</div>
+      <div class="label">${escapeHtml(bet.betId)}</div>
       <strong>${escapeHtml(bet.betType)}</strong>
       <div>selection: <code>${escapeHtml(String(bet.selection))}</code></div>
       <div>stake_units: <code>${escapeHtml(String(bet.stakeUnits))}</code></div>
+      <div>placed during: <code>${escapeHtml(bet.placedDuringState)}</code></div>
     `;
     ui.mockBetList.appendChild(item);
   });
+}
+
+function buildBetStatusText(uiState) {
+  if (uiState === "SpinVisualStarted") {
+    return "Bets are still open while the wheel is visually spinning.";
+  }
+  if (uiState === "BetsOpen") {
+    return "BetsOpen: mock bets may be placed before wheel start.";
+  }
+  return `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
+}
+
+function canPlaceBetsForState(uiState) {
+  return PLACEABLE_STATES.has(uiState);
+}
+
+function hasReachedState(targetState) {
+  return ROUND_SEQUENCE.indexOf(appState.uiState) >= ROUND_SEQUENCE.indexOf(targetState);
 }
 
 function setOverallStatus(text, pass) {

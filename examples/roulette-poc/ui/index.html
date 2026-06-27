@@ -9,11 +9,11 @@
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">ENV-079 interactive roulette UI flow prototype</p>
+        <p class="eyebrow">ENV-080 UI mock bet placement and reset flow</p>
         <h1>Kaspa Fair Roulette PoC</h1>
         <p class="subhead">
-          Interactive static flow prototype with intentionally minimal visual polish.
-          The UI demonstrates the round-state sequence and proof display while consuming deterministic engine JSON only.
+          Interactive static roulette prototype with visible mock bet placement, intentionally minimal visual polish,
+          and deterministic result/proof display from sample-round.json only.
         </p>
       </div>
       <div id="overall-status" class="status-pill status-loading">Loading deterministic round…</div>
@@ -29,9 +29,7 @@
         <div>
           <div class="label">Current round state</div>
           <div id="current-round-state" class="state-banner">BetsOpen</div>
-          <p class="note" id="state-description">
-            Bets are open. Mock display bets may still be changed in the UI.
-          </p>
+          <p class="note" id="state-description">Mock bets may be placed before wheel start.</p>
         </div>
         <div class="wheel-visual-panel">
           <div class="label">Wheel visual</div>
@@ -51,6 +49,7 @@
           <button id="reveal-result-button" type="button">Reveal Result</button>
           <button id="show-settlement-button" type="button">Show Settlement</button>
           <button id="publish-proof-button" type="button">Publish Proof</button>
+          <button id="reset-round-button" type="button">Reset Round</button>
         </div>
       </section>
 
@@ -70,38 +69,40 @@
       </section>
 
       <section class="panel wide" id="bet-editor-panel">
-        <h2>Mock bet display</h2>
+        <h2>Mock bet placement</h2>
         <p class="note">
-          This editor is visual-only and does not alter the deterministic result, settlement, or proof loaded from sample-round.json.
+          UI-added bets are mock-only. They do not alter the deterministic result, settlement, or proof loaded from sample-round.json.
         </p>
         <div class="bet-editor-grid">
           <label>
-            <span class="label">Bet type</span>
-            <select id="bet-type-select">
-              <option value="straight-number">straight-number</option>
-              <option value="colour">colour</option>
-              <option value="parity">parity</option>
-              <option value="range">range</option>
+            <span class="label">Bet choice</span>
+            <select id="bet-choice-select">
+              <option value="straight-number:17">straight number 17</option>
+              <option value="straight-number:21">straight number 21</option>
+              <option value="colour:red">red</option>
+              <option value="colour:black">black</option>
+              <option value="parity:odd">odd</option>
+              <option value="parity:even">even</option>
+              <option value="range:high">high</option>
+              <option value="range:low">low</option>
             </select>
           </label>
           <label>
-            <span class="label">Selection</span>
-            <input id="bet-selection-input" type="text" value="17" />
-          </label>
-          <label>
             <span class="label">Stake units</span>
-            <input id="bet-stake-input" type="number" min="1" step="1" value="10" />
+            <input id="bet-stake-input" type="number" min="1" step="1" value="5" />
           </label>
-          <button id="apply-bet-button" type="button">Add / Change Mock Bet</button>
+          <button id="place-mock-bet-button" type="button">Place Mock Bet</button>
         </div>
-        <div id="bet-status" class="bet-status bet-open">BetsOpen: mock display bets can be changed.</div>
+        <div id="bet-status" class="bet-status bet-open">BetsOpen: mock bets may be placed before wheel start.</div>
+        <div id="bet-placement-note" class="bet-placement-note">Straight number, red, black, odd, even, high, and low are supported mock choices.</div>
+        <h3>UI mock bet ledger</h3>
         <ul class="mock-bet-list" id="mock-bet-list"></ul>
       </section>
 
       <section class="panel wide" id="table-panel">
         <h2>Roulette table</h2>
         <div class="table-note">
-          Bets may remain visually open while the wheel is spinning. Highlighted result appears only after deterministic reveal.
+          Bets are still open while the wheel is visually spinning. Highlighted result appears only after deterministic reveal.
         </div>
         <div class="roulette-table" id="roulette-table"></div>
       </section>
@@ -146,6 +147,7 @@
       <section class="panel wide" id="settlement-panel">
         <h2>Settlement panel</h2>
         <div id="settlement-summary" class="settlement-summary">Settlement hidden until Show Settlement.</div>
+        <div id="ui-only-bet-note" class="prototype-note">UI-added bets are prototype display bets only; deterministic settlement is from the engine sample round.</div>
         <ul class="kv-list" id="settlement-list"></ul>
       </section>
 

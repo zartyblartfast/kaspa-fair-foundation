@@ -504,3 +504,41 @@ ENV-079 remains intentionally minimal and offline-safe:
 - the UI does not decide the result
 - the UI consumes deterministic engine JSON
 - there is no real betting, no real payouts, no wallet, no signing, no broadcasting, no backend custody, and no mainnet
+
+## 17. ENV-080 UI mock bet placement and reset flow
+
+ENV-080 adds mock UI bet placement and reset/new-round flow on top of the interactive static roulette UI.
+
+Primary readiness command:
+- `scripts/env080-roulette-ui-bet-flow-smoke.sh`
+
+Primary UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/sample-round.json`
+
+UI behavior now demonstrated:
+- visible `Place Mock Bet` control is available in the UI
+- mock choices include straight number, red, black, odd, even, high, and low
+- bets may be placed before wheel start in `BetsOpen`
+- bets may also be placed during `SpinVisualStarted`
+- bet placement is blocked only after `NoMoreBets`
+- after `No More Bets`, the UI shows `BETS_CLOSED_NO_MORE_BETS` and `No more bets — ledger locked.`
+- `Reset Round` returns the UI to `BetsOpen` without page refresh
+- reset clears UI-added mock bets and hides result, settlement, and proof again
+- result still loads from deterministic engine JSON in `sample-round.json` only
+- deterministic settlement still comes from the engine sample round only
+- UI-added bets are mock-only prototype display bets
+
+ENV-080 remains intentionally minimal and offline-safe:
+- visual polish is intentionally minimal
+- no real betting
+- no real payouts
+- no wallet
+- no backend custody
+- no signing
+- no broadcasting
+- no transaction creation
+- no mainnet
+- no production casino functionality
