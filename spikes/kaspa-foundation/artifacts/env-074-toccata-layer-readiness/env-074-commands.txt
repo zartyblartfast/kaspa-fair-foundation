@@ -1,0 +1,20 @@
+ENV-074 readiness gate commands
+
+Precheck:
+git status --short --untracked-files=all
+git log --oneline -5
+
+Readiness command:
+scripts/env074-toccata-layer-ready.sh
+
+Live JSON verifier command run by readiness gate:
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+
+Required verification suite:
+cargo fmt --check
+cargo test -p kaspa-fair-cli
+cargo test -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+git diff --check
+scripts/env074-toccata-layer-ready.sh

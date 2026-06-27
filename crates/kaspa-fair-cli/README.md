@@ -60,3 +60,18 @@ A convenience wrapper is available from the repository root:
 ```bash
 scripts/env072-live-tn10-verify.sh
 ```
+
+## Pre-roulette readiness gate
+
+Before the roulette PoC consumes the limited TN10 Toccata layer, run the
+repository readiness command:
+
+```bash
+scripts/env074-toccata-layer-ready.sh
+```
+
+`TOCCATA_LAYER_READY=PASS` means the live TN10 verifier JSON contract passed all
+readiness assertions and the limited read-only TN10 Toccata layer is ready to be
+consumed by the roulette PoC. The gate remains foundation-only: no signing, no
+transaction creation, no submitting/broadcasting, no wallet/private-key access,
+no mainnet, no roulette implementation, and no secrets.

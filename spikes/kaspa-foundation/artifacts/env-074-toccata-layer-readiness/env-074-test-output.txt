@@ -1,0 +1,21 @@
+$ cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical --json`
+
+$ python3 JSON readiness assertions
+PASS: schema == kaspa-fair-live-verification-result-v1
+PASS: network == testnet-10
+PASS: mainnet_supported == false
+PASS: verifier_result == PASS
+PASS: accepted == true
+PASS: input_relationship_confirmed == true
+PASS: continuing_output_confirmed == true
+PASS: continuing_output_value_sompi == 99700000
+PASS: continuing_output_value_confirmed == true
+PASS: covenant_id_confirmed == true
+PASS: readonly == true
+PASS: signing_used == false
+PASS: transaction_created == false
+PASS: broadcast_used == false
+PASS: wallet_access_used == false
+TOCCATA_LAYER_READY=PASS

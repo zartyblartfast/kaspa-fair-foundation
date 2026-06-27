@@ -1,0 +1,18 @@
+ENV-074 git status capture
+
+$ git status --short --untracked-files=all
+ M crates/kaspa-fair-cli/README.md
+?? scripts/env074-toccata-layer-ready.sh
+?? spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness/env-074-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness/env-074-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness/env-074-live-verification-result.json
+?? spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness/env-074-readiness-output.txt
+?? spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness/env-074-summary.md
+?? spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness/env-074-test-output.txt
+
+$ git log --oneline -5
+ee5be4e Add app-facing live TN10 verifier JSON output
+34efe50 Add developer live TN10 verifier command
+da422bc Add live TN10 read-only proof verifier
+b6b8623 Add offline proof transcript verifier
+43c1e90 Refine ENV-069 transcript safety semantics
