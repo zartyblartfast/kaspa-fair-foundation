@@ -1,0 +1,174 @@
+ENV-073R test output
+
+$ cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical --json`
+exit_status=0
+
+$ python3 -m json.tool spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-live-json-output.json
+{
+    "accepted": true,
+    "accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
+    "api_endpoint_used": "https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light",
+    "broadcast_used": false,
+    "continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+    "continuing_output_confirmed": true,
+    "continuing_output_value_confirmed": true,
+    "continuing_output_value_sompi": 99700000,
+    "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+    "covenant_id_confirmed": true,
+    "env063_spent_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+    "env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+    "input_relationship_confirmed": true,
+    "mainnet_supported": false,
+    "network": "testnet-10",
+    "readonly": true,
+    "schema": "kaspa-fair-live-verification-result-v1",
+    "signing_used": false,
+    "transaction_created": false,
+    "verifier_result": "PASS",
+    "wallet_access_used": false,
+    "wrpc_endpoint_observed": "wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh"
+}
+exit_status=0
+
+$ python3 - <<PY validate live JSON fields
+live JSON required fields validated
+exit_status=0
+
+$ cargo fmt --check
+exit_status=0
+
+$ cargo test -p kaspa-fair-cli
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running unittests src/main.rs (target/debug/deps/kaspa_fair_cli-132202689684337d)
+
+running 4 tests
+test tests::json_result_labels_match_app_contract ... ok
+test tests::command_parser_selects_live_verifier_command ... ok
+test tests::result_labels_match_cli_contract ... ok
+test tests::live_verifier_json_schema_and_safety_fields_are_stable ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit_status=0
+
+$ cargo test -p kaspa-foundation
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running unittests src/lib.rs (target/debug/deps/kaspa_foundation-ad4aa55bb2c949fb)
+
+running 4 tests
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
+test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+test safety::tests::defaults_are_safe ... ok
+test verifier::tests::canonical_sanity_passes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env068_canonical_recipe.rs (target/debug/deps/env068_canonical_recipe-98c45bed863f44f7)
+
+running 5 tests
+test canonical_env064_fixture_values_are_represented ... ok
+test corrected_recipe_identity_and_network_are_canonical ... ok
+test corrected_recipe_records_toccata_keyed_blake3_and_domain_policy ... ok
+test default_foundation_capabilities_do_not_expose_sign_or_submit ... ok
+test historical_env060c_recipe_is_not_canonical ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env069_proof_transcript.rs (target/debug/deps/env069_proof_transcript-e4eaa646c3499764)
+
+running 5 tests
+test canonical_transcript_is_offline_readonly_evidence_only_and_safe ... ok
+test canonical_env_sequence_is_exactly_env063_env064_env065 ... ok
+test canonical_transcript_links_to_fixture_paths_that_exist ... ok
+test canonical_transcript_records_proven_tn10_values ... ok
+test transcript_schema_versions_are_stable ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env070_offline_transcript_verifier.rs (target/debug/deps/env070_offline_transcript_verifier-c2e768c016600f1c)
+
+running 6 tests
+test mainnet_and_unsafe_requirements_are_rejected ... ok
+test canonical_transcript_verifies_successfully ... ok
+test wrong_canonical_values_are_rejected ... ok
+test missing_fixture_path_is_rejected ... ok
+test wrong_env_sequence_is_rejected ... ok
+test wrong_schema_versions_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env071_online_tn10_readonly_verifier.rs (target/debug/deps/env071_online_tn10_readonly_verifier-297eaac0ef6d3197)
+
+running 5 tests
+test live_tn10_readonly_verification_is_optional_and_gated ... ignored, optional live TN10 read-only integration test; requires explicit KASPA_FOUNDATION_RUN_LIVE_TN10=1
+test online_verifier_config_and_client_are_read_only ... ok
+test canonical_transcript_can_be_prepared_for_tn10_online_verification ... ok
+test online_verifier_report_represents_pass_fail_and_skipped_checks ... ok
+test online_verifier_refuses_mainnet_config ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kaspa_foundation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit_status=0
+
+$ cargo check -p kaspa-fair-cli
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s
+exit_status=0
+
+$ cargo check -p kaspa-foundation
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+exit_status=0
+
+$ git diff --check
+exit_status=0
+
+$ cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical`
+ENV-072 live TN10 canonical verifier
+result=PASS
+network=testnet-10
+wrpc_endpoint=wss://boson-10.kaspa.red/kaspa/testnet-10/wrpc/borsh
+transaction_detail_api_url=https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light
+transaction_detail_http_status=200 OK
+api_approach=kaspa_wrpc_client::KaspaRpcClient with WrpcEncoding::Borsh, Resolver::default(), NetworkId::with_suffix(NetworkType::Testnet, 10), ConnectStrategy::Fallback; read-only calls only
+offline_prerequisite_passed=true
+read_only=true
+mainnet_enabled=false
+server_network_id=testnet-10
+server_is_synced=true
+server_has_utxo_index=true
+mempool_entry_for_env064_observed=false
+covenant_address_utxo_count=1
+continuing_output_observed_in_utxo_set=true
+continuing_output_utxo_value_sompi=Some(99700000)
+ENV-064 accepted=true
+accepting_block_hash=e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190
+ENV-063 input relationship confirmed=true
+continuing_output_exists=true
+continuing_output_value_sompi=99700000
+covenant_id_confirmed=e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+final_verifier_result=PASS
+check name="network" status=Supported passed=Some(true) reason=None
+check name="node synced" status=Supported passed=Some(true) reason=None
+check name="utxo index" status=Supported passed=Some(true) reason=None
+check name="ENV-064 spend txid known" status=Supported passed=Some(true) reason=None
+check name="ENV-063 input spent by ENV-064" status=Supported passed=Some(true) reason=None
+check name="continuing output exists" status=Supported passed=Some(true) reason=None
+check name="continuing output value" status=Supported passed=Some(true) reason=None
+check name="covenant id" status=Supported passed=Some(true) reason=None
+check name="transcript network" status=Supported passed=Some(true) reason=None
+exit_status=0
+
+$ cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical --json`
+{"accepted":true,"accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","api_endpoint_used":"https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light","broadcast_used":false,"continuing_output":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0","continuing_output_confirmed":true,"continuing_output_value_confirmed":true,"continuing_output_value_sompi":99700000,"covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","covenant_id_confirmed":true,"env063_spent_outpoint":"2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0","env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","input_relationship_confirmed":true,"mainnet_supported":false,"network":"testnet-10","readonly":true,"schema":"kaspa-fair-live-verification-result-v1","signing_used":false,"transaction_created":false,"verifier_result":"PASS","wallet_access_used":false,"wrpc_endpoint_observed":"wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh"}
+exit_status=0

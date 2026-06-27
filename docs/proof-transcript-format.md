@@ -367,3 +367,58 @@ Exit behavior:
 Normal cargo tests remain deterministic and do not require TN10 availability. The offline verifier is a prerequisite/regression safety layer, not the main operational goal of ENV-072. The live CLI command is the explicit path for developers to confirm that the canonical transcript still matches public TN10 chain data.
 
 ENV-072 does not add signing, transaction creation, submission/broadcast, wallet/private-key access, secrets, mainnet support, or roulette logic. Mainnet remains disabled/not supported; roulette remains future app adapter work above the limited Toccata foundation verifier.
+
+## 15. ENV-073 app-facing live TN10 verifier contract
+
+ENV-073 keeps the ENV-072 human command working and adds a stable machine-readable mode for future app and dApp layers:
+
+```bash
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+```
+
+Both modes perform the same live read-only TN10 verification. The JSON mode emits schema `kaspa-fair-live-verification-result-v1`, exits 0 only when `verifier_result` is `PASS`, and exits non-zero for `FAIL` or `AMBIGUOUS`.
+
+Stable JSON top-level fields:
+
+```json
+{
+  "schema": "kaspa-fair-live-verification-result-v1",
+  "network": "testnet-10",
+  "mainnet_supported": false,
+  "verifier_result": "PASS",
+  "env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+  "env063_spent_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+  "continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+  "continuing_output_value_sompi": 99700000,
+  "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+  "accepted": true,
+  "accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
+  "input_relationship_confirmed": true,
+  "continuing_output_confirmed": true,
+  "continuing_output_value_confirmed": true,
+  "covenant_id_confirmed": true,
+  "readonly": true,
+  "signing_used": false,
+  "transaction_created": false,
+  "broadcast_used": false,
+  "wallet_access_used": false,
+  "api_endpoint_used": "https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light",
+  "wrpc_endpoint_observed": "..."
+}
+```
+
+The result enum is intentionally app-friendly: `PASS`, `FAIL`, or `AMBIGUOUS`. Human output may still render the ambiguous case as `PARTIAL`, but apps must consume the JSON `verifier_result` field.
+
+Safety boundary for ENV-073:
+
+- read-only TN10 queries only
+- no signing
+- no transaction creation
+- no submitting or broadcasting
+- no wallet or private-key access
+- no secrets
+- no mainnet
+- no roulette implementation
+
+Roulette remains future app adapter work. ENV-073 only defines the foundation verifier contract that the roulette PoC can call later without scraping human text.

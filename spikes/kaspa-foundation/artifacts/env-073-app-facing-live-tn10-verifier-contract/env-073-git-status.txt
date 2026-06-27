@@ -1,0 +1,9 @@
+ M crates/kaspa-fair-cli/README.md
+ M crates/kaspa-fair-cli/src/main.rs
+ M docs/kaspa-foundation-architecture.md
+ M docs/proof-transcript-format.md
+?? spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-live-json-output.json
+?? spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-summary.md
+?? spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-test-output.txt

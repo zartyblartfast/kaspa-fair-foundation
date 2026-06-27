@@ -1,0 +1,20 @@
+ENV-073R required commands
+
+Precheck:
+git status --short --untracked-files=all
+
+Live JSON deliverable:
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+python3 -m json.tool spikes/kaspa-foundation/artifacts/env-073-app-facing-live-tn10-verifier-contract/env-073-live-json-output.json
+
+Full verification suite:
+cargo fmt --check
+cargo test -p kaspa-fair-cli
+cargo test -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+git diff --check
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+
+git status --short --untracked-files=all

@@ -12,11 +12,16 @@ use kaspa_foundation::transcript::online_verifier::{
 };
 
 const COMMAND_VERIFY_LIVE_TN10_CANONICAL: &str = "verify-live-tn10-canonical";
+const FLAG_JSON: &str = "--json";
+const LIVE_VERIFICATION_SCHEMA_V1: &str = "kaspa-fair-live-verification-result-v1";
 const ENV063_COVENANT_OUTPOINT_TXID: &str =
     "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849";
 const ENV063_COVENANT_OUTPOINT_INDEX: u32 = 0;
 const ENV064_SPEND_TXID: &str = "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c";
 const ENV064_CONTINUING_OUTPUT_INDEX: u32 = 0;
+const ENV064_CONTINUING_OUTPUT_VALUE_SOMPI: u64 = 99_700_000;
+const ENV063_ENV064_COVENANT_ID: &str =
+    "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7";
 const ENV063_ENV064_COVENANT_ADDRESS: &str =
     "kaspatest:prn06m02u6aygczhzjuttgclymxlsrj7tdhy0ptye3u8gcdwl2grc0kk4fn7r";
 const PUBLIC_TN10_TRANSACTION_API_BASE: &str = "https://api-tn10.kaspa.org";
@@ -38,20 +43,36 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
             print_help();
             Ok(ExitCode::SUCCESS)
         }
-        CliCommand::VerifyLiveTn10Canonical => run_verify_live_tn10_canonical(),
+        CliCommand::VerifyLiveTn10Canonical { output } => run_verify_live_tn10_canonical(output),
     }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum CliCommand {
     Help,
-    VerifyLiveTn10Canonical,
+    VerifyLiveTn10Canonical { output: OutputMode },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum OutputMode {
+    Human,
+    Json,
 }
 
 fn parse_command(args: &[String]) -> CliCommand {
     match args.first().map(String::as_str) {
         None | Some("-h") | Some("--help") | Some("help") => CliCommand::Help,
-        Some(COMMAND_VERIFY_LIVE_TN10_CANONICAL) => CliCommand::VerifyLiveTn10Canonical,
+        Some(COMMAND_VERIFY_LIVE_TN10_CANONICAL) => {
+            if args.get(1).map(String::as_str) == Some(FLAG_JSON) {
+                CliCommand::VerifyLiveTn10Canonical {
+                    output: OutputMode::Json,
+                }
+            } else {
+                CliCommand::VerifyLiveTn10Canonical {
+                    output: OutputMode::Human,
+                }
+            }
+        }
         Some(_) => CliCommand::Help,
     }
 }
@@ -62,22 +83,70 @@ fn print_help() {
     println!("Commands:");
     println!("  {COMMAND_VERIFY_LIVE_TN10_CANONICAL}");
     println!("      Run the canonical ENV-063/064/065 proof transcript verifier against live TN10 read-only data.");
+    println!("  {COMMAND_VERIFY_LIVE_TN10_CANONICAL} {FLAG_JSON}");
+    println!("      Emit the stable {LIVE_VERIFICATION_SCHEMA_V1} machine-readable contract.");
     println!();
     println!("Safety:");
     println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
     println!("  no wallet/private-key access; no secrets; no mainnet; no roulette implementation.");
 }
 
-fn run_verify_live_tn10_canonical() -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+fn run_verify_live_tn10_canonical(
+    output: OutputMode,
+) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
     let runtime = tokio::runtime::Runtime::new()?;
     let summary = runtime.block_on(read_and_verify_live_tn10_canonical())?;
-    print_live_tn10_summary(&summary);
+    match output {
+        OutputMode::Human => print_live_tn10_summary(&summary),
+        OutputMode::Json => println!("{}", live_tn10_summary_json(&summary)),
+    }
 
     Ok(match summary.report.result {
         OnlineVerificationResult::Pass => ExitCode::SUCCESS,
         OnlineVerificationResult::Fail => ExitCode::from(2),
         OnlineVerificationResult::Ambiguous => ExitCode::from(3),
     })
+}
+
+fn canonical_env063_spent_outpoint() -> String {
+    format!("{ENV063_COVENANT_OUTPOINT_TXID}:{ENV063_COVENANT_OUTPOINT_INDEX}")
+}
+
+fn canonical_continuing_output() -> String {
+    format!("{ENV064_SPEND_TXID}:{ENV064_CONTINUING_OUTPUT_INDEX}")
+}
+
+fn live_tn10_summary_json(summary: &LiveTn10VerifierSummary) -> serde_json::Value {
+    let detail = &summary.readout.transaction_detail;
+    let mut value = serde_json::json!({
+        "schema": LIVE_VERIFICATION_SCHEMA_V1,
+        "network": "testnet-10",
+        "mainnet_supported": false,
+        "verifier_result": json_result_label(summary.report.result),
+        "env064_spend_txid": ENV064_SPEND_TXID,
+        "env063_spent_outpoint": canonical_env063_spent_outpoint(),
+        "continuing_output": canonical_continuing_output(),
+        "continuing_output_value_sompi": ENV064_CONTINUING_OUTPUT_VALUE_SOMPI,
+        "covenant_id": ENV063_ENV064_COVENANT_ID,
+        "accepted": detail.is_accepted,
+        "accepting_block_hash": detail.accepting_block_hash,
+        "input_relationship_confirmed": detail.input_relationship_confirmed,
+        "continuing_output_confirmed": detail.output0_exists,
+        "continuing_output_value_confirmed": detail.output0_value_sompi == Some(ENV064_CONTINUING_OUTPUT_VALUE_SOMPI),
+        "covenant_id_confirmed": detail.covenant_id.as_deref() == Some(ENV063_ENV064_COVENANT_ID),
+        "readonly": true,
+        "signing_used": false,
+        "transaction_created": false,
+        "broadcast_used": false,
+        "wallet_access_used": false,
+        "api_endpoint_used": detail.url,
+    });
+
+    if let Some(endpoint) = &summary.readout.connected_endpoint {
+        value["wrpc_endpoint_observed"] = serde_json::Value::String(endpoint.clone());
+    }
+
+    value
 }
 
 async fn read_and_verify_live_tn10_canonical(
@@ -448,6 +517,14 @@ fn result_label(result: OnlineVerificationResult) -> &'static str {
     }
 }
 
+fn json_result_label(result: OnlineVerificationResult) -> &'static str {
+    match result {
+        OnlineVerificationResult::Pass => "PASS",
+        OnlineVerificationResult::Fail => "FAIL",
+        OnlineVerificationResult::Ambiguous => "AMBIGUOUS",
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -456,7 +533,18 @@ mod tests {
     fn command_parser_selects_live_verifier_command() {
         assert_eq!(
             parse_command(&[COMMAND_VERIFY_LIVE_TN10_CANONICAL.to_string()]),
-            CliCommand::VerifyLiveTn10Canonical
+            CliCommand::VerifyLiveTn10Canonical {
+                output: OutputMode::Human
+            }
+        );
+        assert_eq!(
+            parse_command(&[
+                COMMAND_VERIFY_LIVE_TN10_CANONICAL.to_string(),
+                FLAG_JSON.to_string()
+            ]),
+            CliCommand::VerifyLiveTn10Canonical {
+                output: OutputMode::Json
+            }
         );
         assert_eq!(parse_command(&[]), CliCommand::Help);
         assert_eq!(parse_command(&["unknown".to_string()]), CliCommand::Help);
@@ -467,5 +555,108 @@ mod tests {
         assert_eq!(result_label(OnlineVerificationResult::Pass), "PASS");
         assert_eq!(result_label(OnlineVerificationResult::Fail), "FAIL");
         assert_eq!(result_label(OnlineVerificationResult::Ambiguous), "PARTIAL");
+    }
+
+    #[test]
+    fn json_result_labels_match_app_contract() {
+        assert_eq!(json_result_label(OnlineVerificationResult::Pass), "PASS");
+        assert_eq!(json_result_label(OnlineVerificationResult::Fail), "FAIL");
+        assert_eq!(
+            json_result_label(OnlineVerificationResult::Ambiguous),
+            "AMBIGUOUS"
+        );
+    }
+
+    #[test]
+    fn live_verifier_json_schema_and_safety_fields_are_stable() {
+        let summary = passing_summary_for_tests();
+        let value = live_tn10_summary_json(&summary);
+
+        assert_eq!(value["schema"], LIVE_VERIFICATION_SCHEMA_V1);
+        assert_eq!(value["network"], "testnet-10");
+        assert_eq!(value["mainnet_supported"], false);
+        assert_eq!(value["verifier_result"], "PASS");
+        assert_eq!(value["env064_spend_txid"], ENV064_SPEND_TXID);
+        assert_eq!(
+            value["env063_spent_outpoint"],
+            canonical_env063_spent_outpoint()
+        );
+        assert_eq!(value["continuing_output"], canonical_continuing_output());
+        assert_eq!(
+            value["continuing_output_value_sompi"],
+            ENV064_CONTINUING_OUTPUT_VALUE_SOMPI
+        );
+        assert_eq!(value["covenant_id"], ENV063_ENV064_COVENANT_ID);
+        assert_eq!(value["accepted"], true);
+        assert_eq!(value["input_relationship_confirmed"], true);
+        assert_eq!(value["continuing_output_confirmed"], true);
+        assert_eq!(value["continuing_output_value_confirmed"], true);
+        assert_eq!(value["covenant_id_confirmed"], true);
+        assert_eq!(value["readonly"], true);
+        assert_eq!(value["signing_used"], false);
+        assert_eq!(value["transaction_created"], false);
+        assert_eq!(value["broadcast_used"], false);
+        assert_eq!(value["wallet_access_used"], false);
+        assert_eq!(value["api_endpoint_used"], passing_transaction_api_url());
+        assert_eq!(value["wrpc_endpoint_observed"], "wss://example.testnet-10");
+    }
+
+    fn passing_summary_for_tests() -> LiveTn10VerifierSummary {
+        LiveTn10VerifierSummary {
+            readout: LiveTn10Readout {
+                connected_endpoint: Some("wss://example.testnet-10".to_string()),
+                server_network_id: "testnet-10".to_string(),
+                server_is_synced: true,
+                server_has_utxo_index: true,
+                mempool_entry_observed: false,
+                covenant_address_utxo_count: 1,
+                continuing_output_observed_in_utxo_set: true,
+                continuing_output_utxo_value_sompi: Some(ENV064_CONTINUING_OUTPUT_VALUE_SOMPI),
+                transaction_detail: PublicTn10TransactionDetail {
+                    url: passing_transaction_api_url(),
+                    http_status: reqwest::StatusCode::OK,
+                    is_accepted: true,
+                    accepting_block_hash: Some(
+                        "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190"
+                            .to_string(),
+                    ),
+                    input_relationship_confirmed: true,
+                    output0_exists: true,
+                    output0_value_sompi: Some(ENV064_CONTINUING_OUTPUT_VALUE_SOMPI),
+                    covenant_id: Some(ENV063_ENV064_COVENANT_ID.to_string()),
+                },
+                evidence: LiveTn10Evidence {
+                    network_id: Tn10ReadOnlyObservation::supported("testnet-10".to_string()),
+                    is_synced: Tn10ReadOnlyObservation::supported(true),
+                    has_utxo_index: Tn10ReadOnlyObservation::supported(true),
+                    env064_spend_txid_known: Tn10ReadOnlyObservation::supported(true),
+                    env063_input_spent_by_env064: Tn10ReadOnlyObservation::supported(true),
+                    continuing_output_exists: Tn10ReadOnlyObservation::supported(true),
+                    continuing_output_value_sompi: Tn10ReadOnlyObservation::supported(
+                        ENV064_CONTINUING_OUTPUT_VALUE_SOMPI,
+                    ),
+                    covenant_id: Tn10ReadOnlyObservation::supported(
+                        ENV063_ENV064_COVENANT_ID.to_string(),
+                    ),
+                },
+            },
+            report: OnlineVerificationReport {
+                transcript_id: "canonical-tn10-covenant-path",
+                network: "testnet-10".to_string(),
+                endpoint: None,
+                api_approach: "read-only test",
+                offline_prerequisite_passed: true,
+                read_only: true,
+                mainnet_enabled: false,
+                result: OnlineVerificationResult::Pass,
+                checks: vec![],
+            },
+        }
+    }
+
+    fn passing_transaction_api_url() -> String {
+        format!(
+            "{PUBLIC_TN10_TRANSACTION_API_BASE}/transactions/{ENV064_SPEND_TXID}?inputs=true&outputs=true&resolve_previous_outpoints=light"
+        )
     }
 }

@@ -726,6 +726,30 @@ The command is a thin CLI wrapper around the foundation online verifier library.
 
 This makes the limited Toccata layer operational for developers: offline/unit tests remain deterministic regression and safety checks, while the live command is the explicit way to confirm the canonical ENV-063/064/065 proof transcript against current TN10 chain data before any roulette PoC adapter is built.
 
+ENV-073 adds the app-facing contract for the same live read-only verifier:
+
+```bash
+cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+```
+
+The JSON mode emits schema `kaspa-fair-live-verification-result-v1`, keeps the result enum stable as `PASS`, `FAIL`, or `AMBIGUOUS`, and includes canonical txid/outpoint/output/value/covenant-id fields plus explicit safety fields:
+
+```json
+{
+  "schema": "kaspa-fair-live-verification-result-v1",
+  "network": "testnet-10",
+  "mainnet_supported": false,
+  "verifier_result": "PASS",
+  "readonly": true,
+  "signing_used": false,
+  "transaction_created": false,
+  "broadcast_used": false,
+  "wallet_access_used": false
+}
+```
+
+Apps, starting with the future roulette PoC adapter, can consume this contract without scraping human text. ENV-073 does not implement roulette; it only defines the stable foundation verifier output that app adapters can call later.
+
 The initial online verifier must stay narrow:
 
 - read-only TN10 queries only
