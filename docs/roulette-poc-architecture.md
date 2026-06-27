@@ -1,8 +1,8 @@
 # Roulette PoC Architecture
 
-Status: ENV-075 specification baseline
+Status: ENV-076 dry-run adapter skeleton on top of the foundation verifier contract
 
-Purpose: define a pre-implementation roulette proof-of-concept fairness specification that consumes the existing Kaspa Fair Foundation / TN10 Toccata trust layer without replacing it.
+Purpose: define and now demonstrate a dry-run roulette proof-of-concept adapter that consumes the existing Kaspa Fair Foundation / TN10 Toccata trust layer without replacing it.
 
 Safety boundary:
 - no roulette implementation
@@ -355,3 +355,39 @@ ENV-075 defines the roulette adapter boundary cleanly:
 - roulette fairness lives in a deterministic adapter specification above that layer
 - the operator cannot accept bets and then choose an outcome if the round follows the fixed close-first and seed-fixation controls in this document
 - published proof plus foundation verifier JSON enables independent round verification without claiming wallet, payout, signing, or mainnet support
+
+## 13. ENV-076 dry-run adapter skeleton
+
+ENV-076 adds the first non-web, no-wallet, dry-run roulette PoC adapter skeleton.
+
+Primary dry-run command:
+- `cargo run -p kaspa-fair-cli -- roulette-poc-dry-run --json`
+
+Persistent wrapper command:
+- `scripts/env076-roulette-poc-dry-run.sh`
+
+The adapter demonstrates the intended app boundary for future roulette work:
+- it consumes the live TN10 foundation verifier JSON contract
+- it requires `verifier_result = PASS`
+- it rejects unsafe verifier flags such as wallet access, signing, transaction creation, broadcasting, or mainnet support
+- it builds deterministic seed material from the round id, verifier covenant id, verifier ENV-064 spend txid, verifier accepting block hash, and final mock bet-ledger hash
+- it derives the roulette result with the ENV-075 BLAKE3 domain-separated rejection-sampling algorithm
+- it derives colour from the fixed European table
+- it calculates deterministic settlement over mock bets only
+- it emits stable machine-readable round JSON
+
+ENV-076 remains dry-run adapter work only.
+
+It does not implement:
+- real betting
+- player accounts
+- wallet custody
+- real payouts
+- signing
+- transaction creation
+- submitting or broadcasting
+- mainnet
+- a web app
+- production casino behavior
+
+The ENV-076 adapter proves that future roulette code can sit above the foundation verifier contract instead of replacing it.

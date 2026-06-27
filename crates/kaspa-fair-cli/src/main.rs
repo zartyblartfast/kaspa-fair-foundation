@@ -5,6 +5,9 @@ use std::process::ExitCode;
 use std::str::FromStr;
 use std::time::Duration;
 
+use num_bigint::BigUint;
+use serde_json::json;
+
 use kaspa_foundation::transcript::online_verifier::{
     verify_canonical_tn10_transcript_online, LiveTn10Evidence, OnlineVerificationReport,
     OnlineVerificationResult, ReadOnlyClientSafety, ReadOnlyTn10Client, Tn10ReadOnlyConfig,
@@ -12,8 +15,16 @@ use kaspa_foundation::transcript::online_verifier::{
 };
 
 const COMMAND_VERIFY_LIVE_TN10_CANONICAL: &str = "verify-live-tn10-canonical";
+const COMMAND_ROULETTE_POC_DRY_RUN: &str = "roulette-poc-dry-run";
 const FLAG_JSON: &str = "--json";
 const LIVE_VERIFICATION_SCHEMA_V1: &str = "kaspa-fair-live-verification-result-v1";
+const ROULETTE_POC_SCHEMA_V1: &str = "kaspa-fair-roulette-poc-round-v1";
+const ROULETTE_RESULT_ALGORITHM_V1: &str = "blake3-domain-separated-rejection-sampling-v1";
+const ROULETTE_VARIANT_EUROPEAN: &str = "european";
+const ROULETTE_CANDIDATE_DOMAIN_V1: &str = "kaspa-fair:roulette:candidate:v1";
+const ROULETTE_POC_RULE_VERSION: &str = "env-076-roulette-poc-rules-v1";
+const ROULETTE_POC_PAYOUT_TABLE_VERSION: &str = "env-076-roulette-poc-payouts-v1";
+const ROULETTE_POC_ROUND_ID: &str = "env-076-round-0001";
 const ENV063_COVENANT_OUTPOINT_TXID: &str =
     "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849";
 const ENV063_COVENANT_OUTPOINT_INDEX: u32 = 0;
@@ -44,6 +55,7 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
             Ok(ExitCode::SUCCESS)
         }
         CliCommand::VerifyLiveTn10Canonical { output } => run_verify_live_tn10_canonical(output),
+        CliCommand::RoulettePocDryRun { output } => run_roulette_poc_dry_run(output),
     }
 }
 
@@ -51,6 +63,7 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
 enum CliCommand {
     Help,
     VerifyLiveTn10Canonical { output: OutputMode },
+    RoulettePocDryRun { output: OutputMode },
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -73,6 +86,17 @@ fn parse_command(args: &[String]) -> CliCommand {
                 }
             }
         }
+        Some(COMMAND_ROULETTE_POC_DRY_RUN) => {
+            if args.get(1).map(String::as_str) == Some(FLAG_JSON) {
+                CliCommand::RoulettePocDryRun {
+                    output: OutputMode::Json,
+                }
+            } else {
+                CliCommand::RoulettePocDryRun {
+                    output: OutputMode::Human,
+                }
+            }
+        }
         Some(_) => CliCommand::Help,
     }
 }
@@ -85,10 +109,12 @@ fn print_help() {
     println!("      Run the canonical ENV-063/064/065 proof transcript verifier against live TN10 read-only data.");
     println!("  {COMMAND_VERIFY_LIVE_TN10_CANONICAL} {FLAG_JSON}");
     println!("      Emit the stable {LIVE_VERIFICATION_SCHEMA_V1} machine-readable contract.");
+    println!("  {COMMAND_ROULETTE_POC_DRY_RUN} {FLAG_JSON}");
+    println!("      Emit the stable {ROULETTE_POC_SCHEMA_V1} dry-run roulette adapter contract.");
     println!();
     println!("Safety:");
     println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
-    println!("  no wallet/private-key access; no secrets; no mainnet; no roulette implementation.");
+    println!("  no wallet/private-key access; no secrets; no mainnet; mock bets only; no web app.");
 }
 
 fn run_verify_live_tn10_canonical(
@@ -106,6 +132,398 @@ fn run_verify_live_tn10_canonical(
         OnlineVerificationResult::Fail => ExitCode::from(2),
         OnlineVerificationResult::Ambiguous => ExitCode::from(3),
     })
+}
+
+fn run_roulette_poc_dry_run(output: OutputMode) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+    let runtime = tokio::runtime::Runtime::new()?;
+    let summary = runtime.block_on(read_and_verify_live_tn10_canonical())?;
+    let foundation_value = live_tn10_summary_json(&summary);
+    let validated = validate_foundation_verifier_contract(&foundation_value)
+        .map_err(|err| format!("roulette PoC rejected foundation verifier contract: {err}"))?;
+    let round = roulette_poc_round_json(&validated)?;
+
+    match output {
+        OutputMode::Human => print_roulette_poc_round_summary(&round),
+        OutputMode::Json => println!("{round}"),
+    }
+
+    if round["final_result"] == "PASS" {
+        Ok(ExitCode::SUCCESS)
+    } else {
+        Ok(ExitCode::from(2))
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct ValidatedFoundationVerifierContract {
+    schema: String,
+    verifier_result: String,
+    network: String,
+    covenant_id: String,
+    env064_spend_txid: String,
+    accepting_block_hash: String,
+    readonly: bool,
+    mainnet_supported: bool,
+    wallet_access_used: bool,
+    signing_used: bool,
+    transaction_created: bool,
+    broadcast_used: bool,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct MockBet {
+    bet_id: &'static str,
+    selection_kind: &'static str,
+    selection_value: &'static str,
+    stake_units: u64,
+    payout_multiplier: u64,
+}
+
+fn validate_foundation_verifier_contract(
+    value: &serde_json::Value,
+) -> Result<ValidatedFoundationVerifierContract, String> {
+    let schema = required_string_field(value, "schema")?;
+    if schema != LIVE_VERIFICATION_SCHEMA_V1 {
+        return Err(format!(
+            "schema must be {LIVE_VERIFICATION_SCHEMA_V1}, got {schema}"
+        ));
+    }
+
+    let network = required_string_field(value, "network")?;
+    if network != "testnet-10" {
+        return Err(format!("network must be testnet-10, got {network}"));
+    }
+
+    let verifier_result = required_string_field(value, "verifier_result")?;
+    if verifier_result != "PASS" {
+        return Err(format!(
+            "verifier_result must be PASS, got {verifier_result}"
+        ));
+    }
+
+    for field in [
+        "accepted",
+        "input_relationship_confirmed",
+        "continuing_output_confirmed",
+        "continuing_output_value_confirmed",
+        "covenant_id_confirmed",
+        "readonly",
+    ] {
+        if !required_bool_field(value, field)? {
+            return Err(format!("{field} must be true"));
+        }
+    }
+
+    let continuing_output_value_sompi = required_u64_field(value, "continuing_output_value_sompi")?;
+    if continuing_output_value_sompi != ENV064_CONTINUING_OUTPUT_VALUE_SOMPI {
+        return Err(format!(
+            "continuing_output_value_sompi must be {ENV064_CONTINUING_OUTPUT_VALUE_SOMPI}, got {continuing_output_value_sompi}"
+        ));
+    }
+
+    let mainnet_supported = required_bool_field(value, "mainnet_supported")?;
+    let wallet_access_used = required_bool_field(value, "wallet_access_used")?;
+    let signing_used = required_bool_field(value, "signing_used")?;
+    let transaction_created = required_bool_field(value, "transaction_created")?;
+    let broadcast_used = required_bool_field(value, "broadcast_used")?;
+
+    for (field, current) in [
+        ("mainnet_supported", mainnet_supported),
+        ("wallet_access_used", wallet_access_used),
+        ("signing_used", signing_used),
+        ("transaction_created", transaction_created),
+        ("broadcast_used", broadcast_used),
+    ] {
+        if current {
+            return Err(format!("{field} must be false"));
+        }
+    }
+
+    Ok(ValidatedFoundationVerifierContract {
+        schema,
+        verifier_result,
+        network,
+        covenant_id: required_string_field(value, "covenant_id")?,
+        env064_spend_txid: required_string_field(value, "env064_spend_txid")?,
+        accepting_block_hash: required_string_field(value, "accepting_block_hash")?,
+        readonly: true,
+        mainnet_supported,
+        wallet_access_used,
+        signing_used,
+        transaction_created,
+        broadcast_used,
+    })
+}
+
+fn roulette_poc_round_json(
+    foundation: &ValidatedFoundationVerifierContract,
+) -> Result<serde_json::Value, Box<dyn Error + Send + Sync>> {
+    let bets = mock_bets();
+    let bet_ledger_hash = mock_bet_ledger_hash(&bets);
+    let seed_material = roulette_seed_material(foundation, &bet_ledger_hash);
+    let result_number = derive_roulette_number(&seed_material)?;
+    let result_colour = colour_for_number(result_number);
+    let settlement = settle_mock_bets(&bets, result_number, result_colour);
+
+    Ok(json!({
+        "schema": ROULETTE_POC_SCHEMA_V1,
+        "round_id": ROULETTE_POC_ROUND_ID,
+        "foundation_verifier_schema": foundation.schema,
+        "foundation_verifier_result": foundation.verifier_result,
+        "foundation_network": foundation.network,
+        "foundation_covenant_id": foundation.covenant_id,
+        "foundation_env064_spend_txid": foundation.env064_spend_txid,
+        "foundation_accepting_block_hash": foundation.accepting_block_hash,
+        "foundation_readonly": foundation.readonly,
+        "mainnet_supported": foundation.mainnet_supported,
+        "wallet_access_used": foundation.wallet_access_used,
+        "signing_used": foundation.signing_used,
+        "transaction_created": foundation.transaction_created,
+        "broadcast_used": foundation.broadcast_used,
+        "bet_ledger_hash": bet_ledger_hash,
+        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+        "seed_material_hex": hex_string(&seed_material),
+        "result_algorithm": ROULETTE_RESULT_ALGORITHM_V1,
+        "roulette_variant": ROULETTE_VARIANT_EUROPEAN,
+        "rule_version": ROULETTE_POC_RULE_VERSION,
+        "payout_table_version": ROULETTE_POC_PAYOUT_TABLE_VERSION,
+        "result_number": result_number,
+        "result_colour": result_colour,
+        "bets": bets_to_json(&bets),
+        "settlement": settlement,
+        "final_result": "PASS",
+    }))
+}
+
+fn required_string_field(value: &serde_json::Value, field: &str) -> Result<String, String> {
+    value
+        .get(field)
+        .and_then(serde_json::Value::as_str)
+        .map(str::to_string)
+        .ok_or_else(|| format!("missing or non-string field: {field}"))
+}
+
+fn required_bool_field(value: &serde_json::Value, field: &str) -> Result<bool, String> {
+    value
+        .get(field)
+        .and_then(serde_json::Value::as_bool)
+        .ok_or_else(|| format!("missing or non-bool field: {field}"))
+}
+
+fn required_u64_field(value: &serde_json::Value, field: &str) -> Result<u64, String> {
+    value
+        .get(field)
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| format!("missing or non-u64 field: {field}"))
+}
+
+fn mock_bets() -> Vec<MockBet> {
+    vec![
+        MockBet {
+            bet_id: "bet-001",
+            selection_kind: "straight-number",
+            selection_value: "17",
+            stake_units: 10,
+            payout_multiplier: 35,
+        },
+        MockBet {
+            bet_id: "bet-002",
+            selection_kind: "colour",
+            selection_value: "red",
+            stake_units: 5,
+            payout_multiplier: 1,
+        },
+        MockBet {
+            bet_id: "bet-003",
+            selection_kind: "parity",
+            selection_value: "odd",
+            stake_units: 7,
+            payout_multiplier: 1,
+        },
+        MockBet {
+            bet_id: "bet-004",
+            selection_kind: "range",
+            selection_value: "high",
+            stake_units: 9,
+            payout_multiplier: 1,
+        },
+    ]
+}
+
+fn bets_to_json(bets: &[MockBet]) -> Vec<serde_json::Value> {
+    bets.iter()
+        .map(|bet| {
+            json!({
+                "bet_id": bet.bet_id,
+                "selection_kind": bet.selection_kind,
+                "selection_value": bet.selection_value,
+                "stake_units": bet.stake_units,
+                "payout_multiplier": bet.payout_multiplier,
+            })
+        })
+        .collect()
+}
+
+fn mock_bet_ledger_hash(bets: &[MockBet]) -> String {
+    let mut canonical = String::new();
+    for bet in bets {
+        canonical.push_str(bet.bet_id);
+        canonical.push('|');
+        canonical.push_str(bet.selection_kind);
+        canonical.push('|');
+        canonical.push_str(bet.selection_value);
+        canonical.push('|');
+        canonical.push_str(&bet.stake_units.to_string());
+        canonical.push('|');
+        canonical.push_str(&bet.payout_multiplier.to_string());
+        canonical.push('\n');
+    }
+
+    hex_string(blake3::hash(canonical.as_bytes()).as_bytes())
+}
+
+fn roulette_seed_material(
+    foundation: &ValidatedFoundationVerifierContract,
+    bet_ledger_hash: &str,
+) -> Vec<u8> {
+    format!(
+        "round_id={ROULETTE_POC_ROUND_ID}\nfoundation_covenant_id={}\nfoundation_env064_spend_txid={}\nfoundation_accepting_block_hash={}\nfinal_mock_bet_ledger_hash={}\n",
+        foundation.covenant_id,
+        foundation.env064_spend_txid,
+        foundation.accepting_block_hash,
+        bet_ledger_hash,
+    )
+    .into_bytes()
+}
+
+fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, Box<dyn Error + Send + Sync>> {
+    let n = BigUint::from(37u32);
+    let modulus = BigUint::from(1u8) << 256usize;
+    let limit = &modulus - (&modulus % &n);
+
+    for counter in 0u32..u32::MAX {
+        let mut hasher = blake3::Hasher::new();
+        hasher.update(ROULETTE_CANDIDATE_DOMAIN_V1.as_bytes());
+        hasher.update(seed_material);
+        hasher.update(&counter.to_be_bytes());
+        let candidate_bytes = hasher.finalize();
+        let candidate = BigUint::from_bytes_be(candidate_bytes.as_bytes());
+        if candidate >= limit {
+            continue;
+        }
+
+        let reduced = candidate % &n;
+        let digits = reduced.to_u32_digits();
+        let number = digits.first().copied().unwrap_or(0) as u8;
+        return Ok(number);
+    }
+
+    Err("roulette result derivation exhausted u32 counter space".into())
+}
+
+fn colour_for_number(number: u8) -> &'static str {
+    match number {
+        0 => "green",
+        1 | 3 | 5 | 7 | 9 | 12 | 14 | 16 | 18 | 19 | 21 | 23 | 25 | 27 | 30 | 32 | 34 | 36 => "red",
+        2 | 4 | 6 | 8 | 10 | 11 | 13 | 15 | 17 | 20 | 22 | 24 | 26 | 28 | 29 | 31 | 33 | 35 => {
+            "black"
+        }
+        _ => "invalid",
+    }
+}
+
+fn settle_mock_bets(
+    bets: &[MockBet],
+    result_number: u8,
+    result_colour: &str,
+) -> Vec<serde_json::Value> {
+    bets.iter()
+        .map(|bet| {
+            let won = bet_wins(bet, result_number, result_colour);
+            let gross_payout_units = if won {
+                bet.stake_units * (bet.payout_multiplier + 1)
+            } else {
+                0
+            };
+            let net_payout_units = if won {
+                bet.stake_units * bet.payout_multiplier
+            } else {
+                0
+            };
+
+            json!({
+                "bet_id": bet.bet_id,
+                "selection_kind": bet.selection_kind,
+                "selection_value": bet.selection_value,
+                "stake_units": bet.stake_units,
+                "won": won,
+                "payout_multiplier": bet.payout_multiplier,
+                "gross_payout_units": gross_payout_units,
+                "net_payout_units": net_payout_units,
+                "result_number": result_number,
+                "result_colour": result_colour,
+            })
+        })
+        .collect()
+}
+
+fn bet_wins(bet: &MockBet, result_number: u8, result_colour: &str) -> bool {
+    match bet.selection_kind {
+        "straight-number" => bet.selection_value.parse::<u8>().ok() == Some(result_number),
+        "colour" => bet.selection_value == result_colour,
+        "parity" => match result_number {
+            0 => false,
+            n if n % 2 == 0 => bet.selection_value == "even",
+            _ => bet.selection_value == "odd",
+        },
+        "range" => match result_number {
+            0 => false,
+            1..=18 => bet.selection_value == "low",
+            19..=36 => bet.selection_value == "high",
+            _ => false,
+        },
+        _ => false,
+    }
+}
+
+fn hex_string(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn print_roulette_poc_round_summary(round: &serde_json::Value) {
+    println!("ENV-076 roulette PoC dry run");
+    println!(
+        "round_id={}",
+        round["round_id"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "foundation_verifier_result={}",
+        round["foundation_verifier_result"]
+            .as_str()
+            .unwrap_or("unavailable")
+    );
+    println!(
+        "foundation_network={}",
+        round["foundation_network"]
+            .as_str()
+            .unwrap_or("unavailable")
+    );
+    println!(
+        "bet_ledger_hash={}",
+        round["bet_ledger_hash"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "result_number={}",
+        round["result_number"].as_u64().unwrap_or_default()
+    );
+    println!(
+        "result_colour={}",
+        round["result_colour"].as_str().unwrap_or("unavailable")
+    );
+    println!(
+        "final_result={}",
+        round["final_result"].as_str().unwrap_or("unavailable")
+    );
 }
 
 fn canonical_env063_spent_outpoint() -> String {
@@ -546,6 +964,15 @@ mod tests {
                 output: OutputMode::Json
             }
         );
+        assert_eq!(
+            parse_command(&[
+                COMMAND_ROULETTE_POC_DRY_RUN.to_string(),
+                FLAG_JSON.to_string()
+            ]),
+            CliCommand::RoulettePocDryRun {
+                output: OutputMode::Json
+            }
+        );
         assert_eq!(parse_command(&[]), CliCommand::Help);
         assert_eq!(parse_command(&["unknown".to_string()]), CliCommand::Help);
     }
@@ -599,6 +1026,49 @@ mod tests {
         assert_eq!(value["wallet_access_used"], false);
         assert_eq!(value["api_endpoint_used"], passing_transaction_api_url());
         assert_eq!(value["wrpc_endpoint_observed"], "wss://example.testnet-10");
+    }
+
+    #[test]
+    fn roulette_poc_round_json_is_stable_for_passing_foundation_contract() {
+        let foundation = live_tn10_summary_json(&passing_summary_for_tests());
+        let validated = validate_foundation_verifier_contract(&foundation).unwrap();
+        let round = roulette_poc_round_json(&validated).unwrap();
+
+        assert_eq!(round["schema"], ROULETTE_POC_SCHEMA_V1);
+        assert_eq!(
+            round["foundation_verifier_schema"],
+            LIVE_VERIFICATION_SCHEMA_V1
+        );
+        assert_eq!(round["foundation_verifier_result"], "PASS");
+        assert_eq!(round["foundation_network"], "testnet-10");
+        assert_eq!(round["foundation_readonly"], true);
+        assert_eq!(round["mainnet_supported"], false);
+        assert_eq!(round["wallet_access_used"], false);
+        assert_eq!(round["signing_used"], false);
+        assert_eq!(round["transaction_created"], false);
+        assert_eq!(round["broadcast_used"], false);
+        assert_eq!(
+            round["result_algorithm"],
+            "blake3-domain-separated-rejection-sampling-v1"
+        );
+        assert_eq!(round["roulette_variant"], "european");
+        assert_eq!(
+            round["result_colour"],
+            colour_for_number(round["result_number"].as_u64().unwrap() as u8)
+        );
+        assert_eq!(round["final_result"], "PASS");
+        assert!(round["bet_ledger_hash"].as_str().unwrap().len() == 64);
+        assert!(round["bets"].as_array().unwrap().len() >= 4);
+        assert!(round["settlement"].as_array().unwrap().len() >= 4);
+    }
+
+    #[test]
+    fn roulette_poc_rejects_unsafe_foundation_contract() {
+        let mut foundation = live_tn10_summary_json(&passing_summary_for_tests());
+        foundation["wallet_access_used"] = serde_json::Value::Bool(true);
+
+        let error = validate_foundation_verifier_contract(&foundation).unwrap_err();
+        assert!(error.contains("wallet_access_used"));
     }
 
     fn passing_summary_for_tests() -> LiveTn10VerifierSummary {

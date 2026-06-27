@@ -75,3 +75,33 @@ readiness assertions and the limited read-only TN10 Toccata layer is ready to be
 consumed by the roulette PoC. The gate remains foundation-only: no signing, no
 transaction creation, no submitting/broadcasting, no wallet/private-key access,
 no mainnet, no roulette implementation, and no secrets.
+
+## Roulette PoC dry-run adapter skeleton
+
+ENV-076 adds the first roulette adapter skeleton above the foundation verifier
+contract.
+
+Adapter JSON command:
+
+```bash
+cargo run -p kaspa-fair-cli -- roulette-poc-dry-run --json
+```
+
+Persistent dry-run wrapper:
+
+```bash
+scripts/env076-roulette-poc-dry-run.sh
+```
+
+The adapter:
+- consumes the live TN10 verifier JSON contract
+- requires `verifier_result = PASS`
+- enforces the read-only/no-wallet/no-signing/no-broadcast/no-mainnet boundary
+- uses mock bets only
+- derives a deterministic European roulette result with domain-separated BLAKE3
+  rejection sampling
+- calculates deterministic mock settlement
+- emits the stable `kaspa-fair-roulette-poc-round-v1` JSON contract
+
+ENV-076 is not a web app, wallet integration, real betting flow, real payout
+system, signing flow, broadcasting flow, mainnet flow, or production roulette.

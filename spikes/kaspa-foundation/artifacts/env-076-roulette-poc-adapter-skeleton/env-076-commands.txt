@@ -1,0 +1,12 @@
+git status --short --untracked-files=all
+git log --oneline -5
+cargo test -p kaspa-fair-cli roulette_poc_round_json_is_stable_for_passing_foundation_contract -- --exact
+cargo fmt
+cargo fmt --check
+cargo test -p kaspa-fair-cli
+cargo test -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+git diff --check
+cargo run -p kaspa-fair-cli -- roulette-poc-dry-run --json
+scripts/env076-roulette-poc-dry-run.sh

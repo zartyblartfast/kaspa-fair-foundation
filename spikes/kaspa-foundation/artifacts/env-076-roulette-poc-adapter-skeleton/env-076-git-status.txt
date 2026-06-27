@@ -1,0 +1,23 @@
+$ git status --short --untracked-files=all
+ M crates/kaspa-fair-cli/Cargo.toml
+ M crates/kaspa-fair-cli/README.md
+ M crates/kaspa-fair-cli/src/main.rs
+ M docs/roulette-poc-architecture.md
+?? scripts/env076-roulette-poc-dry-run.sh
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-dry-run-output.txt
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-live-foundation-verifier.json
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-roulette-round-output.json
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-summary.md
+?? spikes/kaspa-foundation/artifacts/env-076-roulette-poc-adapter-skeleton/env-076-test-output.txt
+
+$ git log --oneline -5
+01202f2 Define roulette fairness sequence and trust mapping
+b19df1e Add limited Toccata layer readiness gate
+ee5be4e Add app-facing live TN10 verifier JSON output
+34efe50 Add developer live TN10 verifier command
+da422bc Add live TN10 read-only proof verifier
+
+$ git diff --check
+[exit 0]

@@ -1,0 +1,82 @@
+$ cargo test -p kaspa-fair-cli roulette_poc_round_json_is_stable_for_passing_foundation_contract -- --exact
+Compiling kaspa-fair-cli v0.1.0 (/root/kaspa-fair-foundation/crates/kaspa-fair-cli)
+error[E0599]: no variant named `RoulettePocDryRun` found for enum `CliCommand`
+error[E0425]: cannot find function `validate_foundation_verifier_contract` in this scope
+error[E0425]: cannot find function `roulette_poc_round_json` in this scope
+error[E0425]: cannot find function `colour_for_number` in this scope
+error[E0425]: cannot find function `validate_foundation_verifier_contract` in this scope
+[RED confirmed: missing ENV-076 adapter implementation]
+
+$ cargo fmt --check
+[exit 0]
+
+$ cargo test -p kaspa-fair-cli
+Compiling kaspa-fair-cli v0.1.0 (/root/kaspa-fair-foundation/crates/kaspa-fair-cli)
+Finished `test` profile [unoptimized + debuginfo] target(s) in 2.39s
+Running unittests src/main.rs (target/debug/deps/kaspa_fair_cli-78b2cb10bbc42005)
+
+running 6 tests
+test tests::command_parser_selects_live_verifier_command ... ok
+test tests::json_result_labels_match_app_contract ... ok
+test tests::live_verifier_json_schema_and_safety_fields_are_stable ... ok
+test tests::result_labels_match_cli_contract ... ok
+test tests::roulette_poc_rejects_unsafe_foundation_contract ... ok
+test tests::roulette_poc_round_json_is_stable_for_passing_foundation_contract ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo test -p kaspa-foundation
+Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+Running unittests src/lib.rs (target/debug/deps/kaspa_foundation-ad4aa55bb2c949fb)
+4 unit tests passed
+Running tests/env068_canonical_recipe.rs
+5 tests passed
+Running tests/env069_proof_transcript.rs
+5 tests passed
+Running tests/env070_offline_transcript_verifier.rs
+6 tests passed
+Running tests/env071_online_tn10_readonly_verifier.rs
+4 passed; 1 ignored by design
+Doc-tests kaspa_foundation: 0 passed
+
+$ cargo check -p kaspa-fair-cli
+Checking kaspa-fair-cli v0.1.0 (/root/kaspa-fair-foundation/crates/kaspa-fair-cli)
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.41s
+
+$ cargo check -p kaspa-foundation
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+
+$ git diff --check
+[exit 0]
+
+$ scripts/env076-roulette-poc-dry-run.sh
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s
+Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical --json`
+PASS: schema == kaspa-fair-live-verification-result-v1
+PASS: network == testnet-10
+PASS: mainnet_supported == false
+PASS: verifier_result == PASS
+PASS: accepted == true
+PASS: input_relationship_confirmed == true
+PASS: continuing_output_confirmed == true
+PASS: continuing_output_value_sompi == 99700000
+PASS: continuing_output_value_confirmed == true
+PASS: covenant_id_confirmed == true
+PASS: readonly == true
+PASS: signing_used == false
+PASS: transaction_created == false
+PASS: broadcast_used == false
+PASS: wallet_access_used == false
+TOCCATA_LAYER_READY=PASS
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s
+Running `target/debug/kaspa-fair-cli roulette-poc-dry-run --json`
+PASS: schema == kaspa-fair-roulette-poc-round-v1
+PASS: foundation_verifier_result == PASS
+PASS: foundation_network == testnet-10
+PASS: mainnet_supported == false
+PASS: wallet_access_used == false
+PASS: signing_used == false
+PASS: transaction_created == false
+PASS: broadcast_used == false
+PASS: final_result == PASS
+ROULETTE_POC_DRY_RUN=PASS
