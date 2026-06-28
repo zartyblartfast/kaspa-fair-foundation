@@ -347,6 +347,18 @@ A first-round proof payload must include at least:
 - readiness result snapshot
 - capability flags proving read-only TN10 mode only
 
+## Current Toccata fairness proof explanation milestone
+
+Rust verifier binds a roulette proof transcript to real TN10 Toccata covenant evidence. Live round-specific commitment/reveal transactions remain future work and require explicit authorisation.
+
+The UI explanation added in ENV-083D is intentionally user-facing copy only. It clarifies that the UI is not trusted, the spin animation is not the proof, and the displayed result must be checked by Rust verifier logic. The verifier checks commitment/reveal consistency, deterministic BLAKE3 result derivation, and binding to live TN10 Toccata covenant evidence.
+
+The two-tier thesis remains:
+- Tier 1: Kaspa improves on a private operator database because evidence can be checked against a public PoW DAG.
+- Tier 2: Toccata covenants add covenant lineage and state-transition evidence beyond a plain anchored hash.
+
+The PoC still does not create, sign, or broadcast live round-specific commitment/reveal transactions; it does not implement production randomness, real betting, real payouts, custody, wallets, or mainnet support. Commitment/reveal does not by itself prove production-grade unbiased randomness, and seed/entropy hardening remains future work.
+
 ## 12. ENV-075 conclusion
 
 ENV-075 defines the roulette adapter boundary cleanly:

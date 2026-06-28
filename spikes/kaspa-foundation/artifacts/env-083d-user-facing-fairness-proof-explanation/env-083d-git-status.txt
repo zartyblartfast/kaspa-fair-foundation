@@ -1,0 +1,15 @@
+ M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/index.html
+ M examples/roulette-poc/ui/styles.css
+?? scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083d-user-facing-fairness-proof-explanation/
+M	docs/roulette-poc-architecture.md
+M	examples/roulette-poc/README.md
+M	examples/roulette-poc/ui/index.html
+M	examples/roulette-poc/ui/styles.css
+ docs/roulette-poc-architecture.md   | 12 ++++++++++++
+ examples/roulette-poc/README.md     | 17 +++++++++++++++--
+ examples/roulette-poc/ui/index.html | 33 +++++++++++++++++++++++++++++++++
+ examples/roulette-poc/ui/styles.css | 31 +++++++++++++++++++++++++++----
+ 4 files changed, 87 insertions(+), 6 deletions(-)

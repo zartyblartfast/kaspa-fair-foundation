@@ -1,0 +1,92 @@
+# ENV-083D-RESUME-2 command results
+
+## Scope reconciliation
+
+$ git status --short
+M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/index.html
+ M examples/roulette-poc/ui/styles.css
+ M spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-git-status.txt
+?? scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083d-user-facing-fairness-proof-explanation/
+
+$ git diff --name-status
+M	docs/roulette-poc-architecture.md
+M	examples/roulette-poc/README.md
+M	examples/roulette-poc/ui/index.html
+M	examples/roulette-poc/ui/styles.css
+M	spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-git-status.txt
+
+$ git restore -- spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-git-status.txt
+RESULT: PASS
+
+$ git status --short
+M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/index.html
+ M examples/roulette-poc/ui/styles.css
+?? scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083d-user-facing-fairness-proof-explanation/
+
+$ git diff --name-status
+M	docs/roulette-poc-architecture.md
+M	examples/roulette-poc/README.md
+M	examples/roulette-poc/ui/index.html
+M	examples/roulette-poc/ui/styles.css
+
+$ git diff --stat
+docs/roulette-poc-architecture.md   | 12 ++++++++++++
+examples/roulette-poc/README.md     | 17 +++++++++++++++--
+examples/roulette-poc/ui/index.html | 33 +++++++++++++++++++++++++++++++++
+examples/roulette-poc/ui/styles.css | 31 +++++++++++++++++++++++++++----
+4 files changed, 87 insertions(+), 6 deletions(-)
+
+## Required checks
+
+$ cargo fmt --check
+RESULT: PASS
+
+$ cargo check -p kaspa-foundation
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+RESULT: PASS
+
+$ cargo check -p kaspa-fair-cli
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s
+RESULT: PASS
+
+$ cargo test -p kaspa-foundation
+4 lib tests passed; env068 5 passed; env069 5 passed; env070 6 passed; env071 4 passed, 1 ignored; env083c 2 passed; doc-tests 0 passed.
+RESULT: PASS
+
+$ cargo test -p kaspa-fair-cli
+18 passed; 0 failed; 0 ignored.
+RESULT: PASS
+
+$ node --check examples/roulette-poc/ui/app.js
+RESULT: PASS
+
+$ node --check examples/roulette-poc/ui/roulette-table-renderer.js
+RESULT: PASS
+
+$ git diff --check
+RESULT: PASS
+
+$ scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+RESULT: PASS
+
+$ scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+RESULT: PASS
+
+$ cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json
+verifier_output.verifier_result: PASS
+proof_artifact.future_live_round_transaction_evidence: not_created_not_claimed_future_work
+proof_artifact.live_tn10_anchor.verifier_result: PASS
+proof_artifact.safety_flags.transaction_created: false
+proof_artifact.safety_flags.signing_used: false
+proof_artifact.safety_flags.broadcast_used: false
+proof_artifact.safety_flags.wallet_access_used: false
+proof_artifact.safety_flags.mainnet_supported: false
+RESULT: PASS

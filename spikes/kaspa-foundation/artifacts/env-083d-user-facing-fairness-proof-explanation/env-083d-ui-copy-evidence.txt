@@ -1,0 +1,28 @@
+ENV-083D UI copy evidence
+
+Source: examples/roulette-poc/ui/index.html
+
+Section heading:
+How this result is verified
+
+Key user-facing proof copy:
+
+This page displays a mock roulette round from sample-round.json. The UI does not choose the result, the spin animation is not the proof, and the browser is not trusted to generate randomness.
+
+- Rust verifier logic checks the proof transcript instead of trusting the UI or operator.
+- The verifier checks commitment/reveal consistency: the revealed seed material must match the earlier commitment.
+- The verifier checks deterministic BLAKE3 result derivation, including domain-separated rejection sampling for the roulette number.
+- The verifier binds the proof transcript to live TN10 Toccata covenant evidence, including covenant ID and covenant lineage evidence.
+- Current round-specific commitment/reveal transaction creation is future work and requires explicit authorisation.
+
+Tier 1 — public Kaspa evidence:
+Kaspa beats a private operator database because users can check evidence against a public PoW DAG instead of trusting operator records.
+
+Tier 2 — Toccata covenant evidence:
+Toccata adds more than a plain anchored hash: covenant lineage and state-transition evidence can support the fairness lifecycle.
+
+Trust model:
+Do not trust the UI alone and do not trust the operator alone. Verify the proof. Commitment/reveal does not by itself prove production-grade unbiased randomness; seed and entropy hardening remain future work.
+
+Safety boundary:
+This is not real betting or production casino randomness. There are no real payouts, custody, wallets, private keys, signing, transaction creation, broadcasting, mainnet use, or live round-specific commitment/reveal transactions in this PoC.

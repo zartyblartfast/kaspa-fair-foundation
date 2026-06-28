@@ -191,7 +191,8 @@ h3 {
 }
 
 .mock-bet-list,
-.kv-list {
+.kv-list,
+.verification-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -272,7 +273,8 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.kv-list li {
+.kv-list li,
+.verification-list li {
   display: flex;
   justify-content: space-between;
   gap: 18px;
@@ -280,8 +282,28 @@ h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.kv-list li:last-child {
+.verification-list li {
+  display: block;
+  line-height: 1.5;
+}
+
+.kv-list li:last-child,
+.verification-list li:last-child {
   border-bottom: 0;
+}
+
+.thesis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.thesis-grid > div {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .kv-key {
@@ -469,7 +491,8 @@ td {
     flex-direction: column;
   }
 
-  .bet-toolbar {
+  .bet-toolbar,
+  .thesis-grid {
     grid-template-columns: 1fr;
   }
 }

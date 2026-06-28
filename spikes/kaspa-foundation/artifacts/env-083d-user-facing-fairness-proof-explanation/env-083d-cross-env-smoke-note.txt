@@ -1,0 +1,24 @@
+ENV-083D cross-ENV smoke note
+
+ENV-083C smoke has a dirty-UI guard:
+- `scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh` rejects modified roulette UI files.
+- That guard is correct for ENV-083C because ENV-083C did not modify UI files.
+
+ENV-083D intentionally modifies UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+
+Therefore, the ENV-083C smoke script is incompatible with expected ENV-083D UI diffs and was not re-run during ENV-083D-RESUME-2.
+
+ENV-083C verifier logic was still checked with:
+- `cargo test -p kaspa-foundation`
+- `cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json`
+
+Verifier-specific result:
+- ENV-083C Rust tests passed.
+- ENV-083C CLI verifier returned `verifier_output.verifier_result: PASS`.
+- No ENV-083C verifier regression was found.
+
+Scope cleanup:
+- The ENV-083C artifact file dirtied by the previous cross-ENV verification attempt was restored to HEAD:
+  `spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-git-status.txt`

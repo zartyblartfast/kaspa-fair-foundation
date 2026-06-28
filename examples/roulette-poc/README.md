@@ -1,6 +1,10 @@
 # Roulette PoC
 
-ENV-082 rebuilds the roulette PoC page flow so the roulette table is the first prominent object on the page and the controls are reduced to a simple Start Wheel / Reset Round workflow.
+ENV-083D adds a user-facing Toccata fairness proof explanation to the roulette PoC while preserving the ENV-082 table-first Start Wheel / Reset Round workflow.
+
+Current milestone:
+
+Rust verifier binds a roulette proof transcript to real TN10 Toccata covenant evidence. Live round-specific commitment/reveal transactions remain future work and require explicit authorisation.
 
 Primary UI files:
 - `examples/roulette-poc/ui/index.html`
@@ -23,6 +27,13 @@ What the current UI does:
 - uses a status label rather than status-like workflow buttons
 - automatically advances from wheel spin to no-more-bets, result reveal, settlement display, and proof publication
 - preserves the deterministic result, settlement, and proof from `sample-round.json` only
+- explains that the UI displays a mock roulette round and does not choose the result
+- explains that the proof is checked by Rust verifier logic
+- explains commitment/reveal consistency and deterministic BLAKE3 result derivation
+- explains that the proof transcript is bound to live TN10 Toccata covenant evidence
+- explains the two-tier thesis: Kaspa public PoW DAG evidence first, Toccata covenant lineage/state-transition evidence second
+- warns users not to trust the UI alone or the operator alone, and to verify the proof
+- discloses that commitment/reveal does not by itself prove production-grade unbiased randomness and that seed/entropy hardening remains future work
 
 What the current UI explicitly avoids:
 - manual result reveal controls
@@ -30,6 +41,7 @@ What the current UI explicitly avoids:
 - giant inside-zone lists
 - dropdown-only inside-zone betting
 - result generation or randomisation
+- live round-specific commitment/reveal transaction creation
 - real betting
 - real payouts
 - wallet integration
@@ -37,6 +49,7 @@ What the current UI explicitly avoids:
 - signing
 - transaction creation
 - submitting or broadcasting
+- faucet funds
 - mainnet
 - secrets
 - production casino functionality
@@ -44,5 +57,5 @@ What the current UI explicitly avoids:
 Readiness command:
 
 ```bash
-scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
 ```
