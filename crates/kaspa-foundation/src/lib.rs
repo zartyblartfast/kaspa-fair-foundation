@@ -4,6 +4,8 @@
 //! helpers for the proven corrected TN10 covenant path. It does not expose live
 //! signing or transaction submission APIs by default.
 
+#![recursion_limit = "256"]
+
 pub mod covenant;
 pub mod evidence;
 pub mod fairness;

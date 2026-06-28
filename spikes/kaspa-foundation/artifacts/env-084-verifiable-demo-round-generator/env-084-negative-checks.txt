@@ -1,0 +1,10 @@
+ENV-084 negative checks
+
+All are covered by crates/kaspa-foundation/tests/env084_verifiable_demo_round_generator.rs and cargo test -p kaspa-foundation:
+
+- tampered result_number rejected: yes
+- tampered result_colour rejected: yes
+- changed demo seed without recomputed proof rejected: yes
+- omitted live TN10 anchor rejected for Toccata-bound claim: yes
+- mismatched covenant_id rejected: yes
+- false live round transaction claim rejected: yes

@@ -5,7 +5,6 @@ UI="examples/roulette-poc/ui/index.html"
 APP_JS="examples/roulette-poc/ui/app.js"
 RENDERER_JS="examples/roulette-poc/ui/roulette-table-renderer.js"
 SAMPLE="examples/roulette-poc/ui/sample-round.json"
-EXPECTED_SAMPLE_SHA256="fb7536fd8a3ebf672c2b4789bdc384920ccbb832a9fb569cdf2c2087adc0df35"
 
 require_text() {
   local file="$1"
@@ -52,11 +51,21 @@ for file in "$UI" "$APP_JS" "$RENDERER_JS"; do
   reject_text "$file" 'wallet\.connect|connectWallet|privateKey|mnemonic|seedPhrase|faucet'
 done
 
-actual_sample_sha256="$(sha256sum "$SAMPLE" | awk '{print $1}')"
-if [[ "$actual_sample_sha256" != "$EXPECTED_SAMPLE_SHA256" ]]; then
-  printf 'sample-round.json sha256 changed: %s\n' "$actual_sample_sha256" >&2
-  exit 1
-fi
+python3 - <<'PY'
+import json
+from pathlib import Path
+sample = json.loads(Path('examples/roulette-poc/ui/sample-round.json').read_text())
+assert sample.get('final_result') == 'PASS'
+assert sample.get('round_state') == 'ProofPublished'
+assert sample.get('result_algorithm') == 'blake3-domain-separated-rejection-sampling-v1'
+assert isinstance(sample.get('result_number'), int) and 0 <= sample['result_number'] <= 36
+assert sample.get('result_colour') in {'green', 'red', 'black'}
+assert sample.get('foundation_verifier_result') == 'PASS'
+assert sample.get('foundation_network') == 'testnet-10'
+assert sample.get('foundation_readonly') is True
+for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+    assert sample.get(flag) is False
+PY
 
 require_text "$UI" '>Start Wheel<'
 require_text "$UI" '>Reset Round<'

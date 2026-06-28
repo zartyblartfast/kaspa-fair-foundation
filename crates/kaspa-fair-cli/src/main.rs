@@ -4,7 +4,7 @@ mod roulette;
 
 use std::env;
 use std::error::Error;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::str::FromStr;
 use std::time::Duration;
@@ -13,7 +13,8 @@ use num_bigint::BigUint;
 use serde_json::json;
 
 use kaspa_foundation::fairness::{
-    build_env083c_demo_proof_with_accepting_block_hash, verify_env083c_json_mirror,
+    build_env083c_demo_proof_with_accepting_block_hash, build_env084_verifiable_demo_round,
+    verify_env083c_json_mirror, verify_env084_generated_artifacts,
 };
 use kaspa_foundation::transcript::online_verifier::{
     verify_canonical_tn10_transcript_online, LiveTn10Evidence, OnlineVerificationReport,
@@ -26,6 +27,7 @@ const COMMAND_ROULETTE_POC_DRY_RUN: &str = "roulette-poc-dry-run";
 const COMMAND_ROULETTE_ENGINE_DRY_RUN: &str = "roulette-engine-dry-run";
 const COMMAND_ENV083C_EVIDENCE_BOUND_FAIRNESS_PROOF: &str =
     "env083c-toccata-evidence-bound-fairness-proof";
+const COMMAND_ENV084_GENERATE_VERIFIABLE_DEMO_ROUND: &str = "env084-generate-verifiable-demo-round";
 const FLAG_JSON: &str = "--json";
 const LIVE_VERIFICATION_SCHEMA_V1: &str = "kaspa-fair-live-verification-result-v1";
 const ROULETTE_POC_SCHEMA_V1: &str = "kaspa-fair-roulette-poc-round-v1";
@@ -70,16 +72,29 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
         CliCommand::Env083cEvidenceBoundFairnessProof { output } => {
             run_env083c_evidence_bound_fairness_proof(output)
         }
+        CliCommand::Env084GenerateVerifiableDemoRound(options) => {
+            run_env084_generate_verifiable_demo_round(options)
+        }
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 enum CliCommand {
     Help,
     VerifyLiveTn10Canonical { output: OutputMode },
     RoulettePocDryRun { output: OutputMode },
     RouletteEngineDryRun { output: OutputMode },
     Env083cEvidenceBoundFairnessProof { output: OutputMode },
+    Env084GenerateVerifiableDemoRound(Env084GenerateOptions),
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Env084GenerateOptions {
+    round_id: String,
+    demo_seed: String,
+    out_dir: Option<PathBuf>,
+    write_ui: bool,
+    output: OutputMode,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -136,8 +151,63 @@ fn parse_command(args: &[String]) -> CliCommand {
                 }
             }
         }
+        Some(COMMAND_ENV084_GENERATE_VERIFIABLE_DEMO_ROUND) => {
+            match parse_env084_generate_options(&args[1..]) {
+                Ok(options) => CliCommand::Env084GenerateVerifiableDemoRound(options),
+                Err(message) => {
+                    eprintln!("ERROR: {message}");
+                    CliCommand::Help
+                }
+            }
+        }
         Some(_) => CliCommand::Help,
     }
+}
+
+fn parse_env084_generate_options(args: &[String]) -> Result<Env084GenerateOptions, String> {
+    let mut round_id = None;
+    let mut demo_seed = None;
+    let mut out_dir = None;
+    let mut write_ui = false;
+    let mut output = OutputMode::Human;
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].as_str() {
+            "--round-id" => {
+                index += 1;
+                round_id = Some(
+                    args.get(index)
+                        .ok_or("--round-id requires a value")?
+                        .to_string(),
+                );
+            }
+            "--demo-seed" => {
+                index += 1;
+                demo_seed = Some(
+                    args.get(index)
+                        .ok_or("--demo-seed requires a value")?
+                        .to_string(),
+                );
+            }
+            "--out-dir" => {
+                index += 1;
+                out_dir = Some(PathBuf::from(
+                    args.get(index).ok_or("--out-dir requires a value")?,
+                ));
+            }
+            "--write-ui" => write_ui = true,
+            FLAG_JSON => output = OutputMode::Json,
+            unknown => return Err(format!("unknown ENV-084 option: {unknown}")),
+        }
+        index += 1;
+    }
+    Ok(Env084GenerateOptions {
+        round_id: round_id.ok_or("ENV-084 requires --round-id")?,
+        demo_seed: demo_seed.ok_or("ENV-084 requires --demo-seed")?,
+        out_dir,
+        write_ui,
+        output,
+    })
 }
 
 fn print_help() {
@@ -157,6 +227,8 @@ fn print_help() {
     );
     println!("  {COMMAND_ENV083C_EVIDENCE_BOUND_FAIRNESS_PROOF} {FLAG_JSON}");
     println!("      Emit the ENV-083C Rust-verified JSON mirror bound to live read-only TN10 covenant evidence.");
+    println!("  {COMMAND_ENV084_GENERATE_VERIFIABLE_DEMO_ROUND} --round-id <id> --demo-seed <seed> [--out-dir <dir>] [--write-ui] [{FLAG_JSON}]");
+    println!("      Rust-owned verifiable demo round generation from explicit demo seed material.");
     println!();
     println!("Safety:");
     println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
@@ -226,6 +298,94 @@ fn run_env083c_evidence_bound_fairness_proof(
     }
 
     Ok(ExitCode::SUCCESS)
+}
+
+fn run_env084_generate_verifiable_demo_round(
+    options: Env084GenerateOptions,
+) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+    let (sample_round, proof_artifact, verifier_output) =
+        build_env084_verifiable_demo_round(&options.round_id, &options.demo_seed)
+            .map_err(|err| format!("ENV-084 generation failed: {err}"))?;
+    verify_env084_generated_artifacts(&sample_round, &proof_artifact)
+        .map_err(|err| format!("ENV-084 verifier rejected generated artifacts: {err}"))?;
+
+    if let Some(out_dir) = &options.out_dir {
+        write_env084_artifacts(out_dir, &sample_round, &proof_artifact, &verifier_output)?;
+    }
+    if options.write_ui {
+        let ui_dir = repo_root().join("examples/roulette-poc/ui");
+        write_json_file(&ui_dir.join("sample-round.json"), &sample_round)?;
+        write_json_file(&ui_dir.join("toccata-fairness-proof.json"), &proof_artifact)?;
+    }
+
+    match options.output {
+        OutputMode::Human => {
+            println!("ENV-084 Rust-owned verifiable demo round generator");
+            println!("round_id={}", options.round_id);
+            println!(
+                "result_number={}",
+                sample_round["result_number"].as_u64().unwrap_or_default()
+            );
+            println!(
+                "result_colour={}",
+                sample_round["result_colour"]
+                    .as_str()
+                    .unwrap_or("unavailable")
+            );
+            println!(
+                "result_algorithm={}",
+                sample_round["result_algorithm"]
+                    .as_str()
+                    .unwrap_or("unavailable")
+            );
+            println!(
+                "verifier_result={}",
+                verifier_output["verifier_result"]
+                    .as_str()
+                    .unwrap_or("FAIL")
+            );
+            println!("evidence_mode=live_readonly_tn10");
+            println!("future_live_round_transaction_evidence=not_created_not_claimed_future_work");
+            println!("transaction_created=false");
+            println!("signing_used=false");
+            println!("broadcast_used=false");
+            println!("wallet_access_used=false");
+        }
+        OutputMode::Json => println!(
+            "{}",
+            json!({
+                "sample_round": sample_round,
+                "proof_artifact": proof_artifact,
+                "verifier_output": verifier_output,
+            })
+        ),
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
+fn write_env084_artifacts(
+    out_dir: &Path,
+    sample_round: &serde_json::Value,
+    proof_artifact: &serde_json::Value,
+    verifier_output: &serde_json::Value,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
+    std::fs::create_dir_all(out_dir)?;
+    write_json_file(&out_dir.join("sample-round.json"), sample_round)?;
+    write_json_file(&out_dir.join("toccata-fairness-proof.json"), proof_artifact)?;
+    write_json_file(&out_dir.join("verifier-output.json"), verifier_output)?;
+    Ok(())
+}
+
+fn write_json_file(
+    path: &Path,
+    value: &serde_json::Value,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    let bytes = serde_json::to_vec_pretty(value)?;
+    std::fs::write(path, [bytes, b"\n".to_vec()].concat())?;
+    Ok(())
 }
 
 fn run_roulette_poc_dry_run(output: OutputMode) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
@@ -1154,6 +1314,26 @@ mod tests {
             CliCommand::Env083cEvidenceBoundFairnessProof {
                 output: OutputMode::Json
             }
+        );
+        assert_eq!(
+            parse_command(&[
+                COMMAND_ENV084_GENERATE_VERIFIABLE_DEMO_ROUND.to_string(),
+                "--round-id".to_string(),
+                "env-084-demo-round-0001".to_string(),
+                "--demo-seed".to_string(),
+                "env084-demo-seed-0001".to_string(),
+                "--out-dir".to_string(),
+                "target/env084-test".to_string(),
+                "--write-ui".to_string(),
+                FLAG_JSON.to_string(),
+            ]),
+            CliCommand::Env084GenerateVerifiableDemoRound(Env084GenerateOptions {
+                round_id: "env-084-demo-round-0001".to_string(),
+                demo_seed: "env084-demo-seed-0001".to_string(),
+                out_dir: Some(PathBuf::from("target/env084-test")),
+                write_ui: true,
+                output: OutputMode::Json,
+            })
         );
         assert_eq!(parse_command(&[]), CliCommand::Help);
         assert_eq!(parse_command(&["unknown".to_string()]), CliCommand::Help);

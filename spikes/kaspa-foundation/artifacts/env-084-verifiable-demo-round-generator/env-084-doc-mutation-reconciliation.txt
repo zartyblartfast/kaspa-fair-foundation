@@ -1,0 +1,86 @@
+ENV-084-VERIFY — Doc mutation warning reconciliation
+
+Actual changed files from git diff --name-status:
+M	crates/kaspa-fair-cli/src/main.rs
+M	crates/kaspa-foundation/src/fairness.rs
+M	crates/kaspa-foundation/src/lib.rs
+M	docs/roulette-poc-architecture.md
+M	examples/roulette-poc/README.md
+M	examples/roulette-poc/ui/sample-round.json
+M	examples/roulette-poc/ui/toccata-fairness-proof.json
+M	scripts/env083a-roulette-randomness-source-audit.sh
+M	scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+M	scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+
+Doc status command:
+$ git status --short -- docs/roulette-poc-architecture.md examples/roulette-poc/README.md
+M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+
+Classification:
+- docs/roulette-poc-architecture.md is modified: yes
+- docs/roulette-poc-architecture.md classification: A. Actually modified and useful for ENV-084.
+- examples/roulette-poc/README.md is modified: yes
+- examples/roulette-poc/README.md classification: A. Actually modified and useful for ENV-084.
+- documentation defect found: no
+- minimal documentation fix needed during reconciliation: no
+- ENV-084 PASS claim remains valid: yes
+
+Doc diff summary:
+- docs/roulette-poc-architecture.md adds the ENV-084 generator section, exact generator commands, app-facing generated files, Rust verifier ownership, UI non-generation boundary, explicit demo seed material boundary, future-work list, and safety boundary.
+- examples/roulette-poc/README.md adds the ENV-084 smoke command, generator usage, out-dir usage, Rust verifier agreement contract, UI non-generation boundary, explicit demo seed material boundary, and future authorisation boundary.
+
+Generator confirmation:
+$ cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round --round-id env-084-demo-round-0001 --demo-seed "env084-demo-seed-0001" --out-dir spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check
+PASS
+result_number=15
+result_colour=black
+sample/proof result_number agreement=yes
+sample/proof result_colour agreement=yes
+sample/proof result_algorithm agreement=yes
+verifier_result=PASS
+evidence_mode=live_readonly_tn10
+future_live_round_transaction_evidence=not_created_not_claimed_future_work
+
+Exact command results:
+PASS git status --short
+PASS git diff --name-status
+PASS git diff --stat
+PASS git status --short -- docs/roulette-poc-architecture.md examples/roulette-poc/README.md
+PASS git diff -- docs/roulette-poc-architecture.md
+PASS git diff -- examples/roulette-poc/README.md
+PASS cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round --round-id env-084-demo-round-0001 --demo-seed "env084-demo-seed-0001" --out-dir spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check
+PASS cargo fmt --check
+PASS cargo check -p kaspa-foundation
+PASS cargo check -p kaspa-fair-cli
+PASS cargo test -p kaspa-foundation
+PASS cargo test -p kaspa-fair-cli
+PASS node --check examples/roulette-poc/ui/app.js
+PASS node --check examples/roulette-poc/ui/roulette-table-renderer.js
+PASS git diff --check
+PASS scripts/env082-roulette-ui-workflow-rebuild-smoke.sh -> ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+PASS scripts/env083a-roulette-randomness-source-audit.sh -> ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+PASS scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh -> USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+PASS scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh -> APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+PASS scripts/env083f-round-proof-consistency-smoke.sh -> ROUND_PROOF_CONSISTENCY_READY=PASS
+PASS scripts/env084-verifiable-demo-round-generator-smoke.sh -> VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+PASS cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json -> verifier_output.verifier_result=PASS
+
+Final status before artifact write:
+$ git status --short
+M crates/kaspa-fair-cli/src/main.rs
+ M crates/kaspa-foundation/src/fairness.rs
+ M crates/kaspa-foundation/src/lib.rs
+ M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/sample-round.json
+ M examples/roulette-poc/ui/toccata-fairness-proof.json
+ M scripts/env083a-roulette-randomness-source-audit.sh
+ M scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+ M scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+?? crates/kaspa-foundation/tests/env084_verifiable_demo_round_generator.rs
+?? scripts/env084-verifiable-demo-round-generator-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/
+
+$ git diff --check
+exit_status=0

@@ -62,4 +62,37 @@ Readiness commands:
 ```bash
 scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
 scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+scripts/env084-verifiable-demo-round-generator-smoke.sh
 ```
+
+## ENV-084 demo round generation
+
+ENV-084 adds Rust-owned verifiable demo round generation from explicit demo seed material.
+
+Generate the app-facing demo artifacts together:
+
+```bash
+cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round \
+  --round-id env-084-demo-round-0001 \
+  --demo-seed "env084-demo-seed-0001" \
+  --write-ui
+```
+
+Generate into a separate output directory for checks without changing the UI files:
+
+```bash
+cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round \
+  --round-id env-084-demo-round-0001 \
+  --demo-seed "env084-demo-seed-0001" \
+  --out-dir spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check
+```
+
+The command writes matching `sample-round.json` and `toccata-fairness-proof.json` from the same proof transcript. The Rust verifier confirms that the round ID, result number, result colour, result algorithm, commitment/reveal fields, live read-only TN10 anchor evidence, future-live-transaction status, and safety flags agree.
+
+The UI still does not choose or generate the result. It loads the generated JSON files and displays the result only from those files. The browser code must not use `Math.random` or browser crypto random APIs for roulette result selection.
+
+The `--demo-seed` value is explicit demo seed material. It is useful for repeatable verifiable demos, and a different explicit value may produce a different visible roulette result. It is not production randomness, does not prove unbiased seed selection, and does not remove seed-grinding risk.
+
+Round and proof artifacts must be generated together because JSON is only a mirror/export format. Rust verifier logic is the authority for whether the app-facing round and proof agree.
+
+Future work remains production entropy design, live round-specific TN10 commitment/reveal transactions, and any wallet/faucet/signing/broadcast flow. Those require explicit authorisation before implementation.

@@ -6,7 +6,6 @@ APP_JS="examples/roulette-poc/ui/app.js"
 RENDERER_JS="examples/roulette-poc/ui/roulette-table-renderer.js"
 PROOF="examples/roulette-poc/ui/toccata-fairness-proof.json"
 SAMPLE="examples/roulette-poc/ui/sample-round.json"
-EXPECTED_SAMPLE_SHA256="fb7536fd8a3ebf672c2b4789bdc384920ccbb832a9fb569cdf2c2087adc0df35"
 
 require_text() {
   local file="$1"
@@ -70,12 +69,25 @@ require_text "$APP_JS" 'future live round transaction evidence'
 require_text "$APP_JS" 'safety flags summary'
 require_text "$APP_JS" 'not_created_not_claimed_future_work'
 
-actual_sample_sha256="$(sha256sum "$SAMPLE" | awk '{print $1}')"
-if [[ "$actual_sample_sha256" != "$EXPECTED_SAMPLE_SHA256" ]]; then
-  printf 'sample-round.json sha256 changed: %s
-' "$actual_sample_sha256" >&2
-  exit 1
-fi
+python3 - <<'PY'
+import json
+from pathlib import Path
+sample = json.loads(Path('examples/roulette-poc/ui/sample-round.json').read_text())
+proof = json.loads(Path('examples/roulette-poc/ui/toccata-fairness-proof.json').read_text())
+reveal = proof.get('application_round_transcript', {}).get('reveal', {})
+assert sample.get('round_id') == proof.get('round_id') == reveal.get('round_id')
+assert sample.get('result_number') == proof.get('result_number') == reveal.get('result_number')
+assert sample.get('result_colour') == proof.get('result_colour') == reveal.get('result_colour')
+assert sample.get('result_algorithm') == proof.get('result_algorithm') == reveal.get('result_algorithm')
+assert sample.get('final_result') == 'PASS'
+assert proof.get('verifier_result') == 'PASS'
+assert proof.get('evidence_mode') == 'live_readonly_tn10'
+assert proof.get('future_live_round_transaction_evidence') == 'not_created_not_claimed_future_work'
+for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+    assert sample.get(flag) is False
+for flag in ['real_betting', 'real_payouts', 'backend_custody', 'wallet_access_used', 'private_key_access_used', 'signing_used', 'transaction_created', 'broadcast_used', 'mainnet_supported']:
+    assert proof.get('safety_flags', {}).get(flag) is False
+PY
 
 for file in "$UI" "$APP_JS" "$RENDERER_JS"; do
   reject_text "$file" 'Math\.random'

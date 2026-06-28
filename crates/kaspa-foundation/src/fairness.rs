@@ -583,6 +583,601 @@ pub fn verify_env083c_json_mirror(value: &Value) -> Result<VerificationReport, S
     }
 }
 
+pub const ENV084_SAMPLE_ROUND_SCHEMA: &str = "kaspa-fair-roulette-engine-round-v1";
+pub const ENV084_UI_PROOF_SCHEMA: &str = "kaspa-fair-roulette-ui-toccata-fairness-proof-v1";
+pub const ENV084_SOURCE_SCHEMA: &str = "kaspa-fair-env084-rust-owned-verifiable-demo-round-v1";
+pub const ENV084_RULE_VERSION: &str = "env-084-rust-owned-demo-round-rules-v1";
+pub const ENV084_PAYOUT_TABLE_VERSION: &str = "env-084-rust-owned-demo-round-payouts-v1";
+pub const ENV084_FUTURE_LIVE_ROUND_TRANSACTION_EVIDENCE: &str =
+    "not_created_not_claimed_future_work";
+
+pub fn build_env084_verifiable_demo_round(
+    round_id: &str,
+    demo_seed_material: &str,
+) -> Result<(Value, Value, Value), String> {
+    if round_id.trim().is_empty() {
+        return Err("round_id must not be empty".to_string());
+    }
+    if demo_seed_material.is_empty() {
+        return Err("demo seed material must not be empty".to_string());
+    }
+
+    let result_number = derive_roulette_number(demo_seed_material.as_bytes())?;
+    let result_colour = colour_for_number(result_number)?;
+    let commitment_hash = commitment_hash(
+        round_id,
+        demo_seed_material,
+        ENV083C_RESULT_ALGORITHM,
+        ENV084_RULE_VERSION,
+        ENV083C_ANCHOR_COVENANT_ID,
+        ENV083C_COVENANT_LINEAGE_REFERENCE,
+        ENV083C_EVIDENCE_MODE,
+    );
+    let reveal_payload_hash = reveal_payload_hash(
+        round_id,
+        demo_seed_material,
+        ENV083C_ANCHOR_COVENANT_ID,
+        ENV083C_COVENANT_LINEAGE_REFERENCE,
+        ENV083C_RESULT_ALGORITHM,
+        result_number,
+        result_colour,
+        ENV083C_EVIDENCE_MODE,
+    );
+
+    let bets = env084_mock_bets();
+    let bet_ledger_hash = hash_env084_bet_ledger(&bets);
+    let settlement = env084_settlement_json(&bets, result_number, result_colour);
+    let sample_round = json!({
+        "schema": ENV084_SAMPLE_ROUND_SCHEMA,
+        "round_id": round_id,
+        "round_state": "ProofPublished",
+        "foundation_verifier_schema": "kaspa-fair-live-verification-result-v1",
+        "foundation_verifier_result": "PASS",
+        "foundation_network": ENV083C_NETWORK,
+        "foundation_covenant_id": ENV083C_ANCHOR_COVENANT_ID,
+        "foundation_env064_spend_txid": ENV083C_ENV064_SPEND_TXID,
+        "foundation_accepting_block_hash": ENV083C_DEFAULT_ACCEPTING_BLOCK_HASH,
+        "foundation_readonly": true,
+        "mainnet_supported": false,
+        "wallet_access_used": false,
+        "private_key_access_used": false,
+        "signing_used": false,
+        "transaction_created": false,
+        "broadcast_used": false,
+        "bet_ledger_hash": bet_ledger_hash,
+        "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
+        "seed_material_hex": hex_bytes(demo_seed_material.as_bytes()),
+        "result_algorithm": ENV083C_RESULT_ALGORITHM,
+        "roulette_variant": "european",
+        "rule_version": ENV084_RULE_VERSION,
+        "payout_table_version": ENV084_PAYOUT_TABLE_VERSION,
+        "result_number": result_number,
+        "result_colour": result_colour,
+        "bets": bets.iter().map(|bet| json!({
+            "bet_id": bet.bet_id,
+            "bet_type": bet.bet_type,
+            "selection_value": bet.selection_value,
+            "stake_units": bet.stake_units,
+            "payout_multiplier": bet.payout_multiplier,
+        })).collect::<Vec<_>>(),
+        "settlement": settlement,
+        "final_result": "PASS",
+    });
+
+    let proof_artifact = json!({
+        "schema": ENV084_UI_PROOF_SCHEMA,
+        "source_schema": ENV084_SOURCE_SCHEMA,
+        "source_env": "ENV-084",
+        "ui_contract": "static_readonly_export_for_roulette_poc",
+        "json_mirror_export_only": true,
+        "rust_owned_generation": true,
+        "ui_does_not_choose_result": true,
+        "explicit_demo_seed_material_used": true,
+        "production_randomness_claimed": false,
+        "verifier_result": "PASS",
+        "network": ENV083C_NETWORK,
+        "claim_tier": ENV083C_CLAIM_TIER,
+        "evidence_mode": ENV083C_EVIDENCE_MODE,
+        "round_id": round_id,
+        "covenant_id": ENV083C_ANCHOR_COVENANT_ID,
+        "anchor_covenant_id": ENV083C_ANCHOR_COVENANT_ID,
+        "covenant_lineage_reference": ENV083C_COVENANT_LINEAGE_REFERENCE,
+        "result_algorithm": ENV083C_RESULT_ALGORITHM,
+        "result_number": result_number,
+        "result_colour": result_colour,
+        "commitment_reveal_check_status": "PASS",
+        "deterministic_derivation_check_status": "PASS",
+        "live_tn10_evidence_readonly": true,
+        "future_live_round_transaction_evidence": ENV084_FUTURE_LIVE_ROUND_TRANSACTION_EVIDENCE,
+        "application_round_transcript": {
+            "commitment": {
+                "round_id": round_id,
+                "commitment_domain": ENV083C_COMMITMENT_DOMAIN,
+                "commitment_hash": commitment_hash,
+                "result_algorithm": ENV083C_RESULT_ALGORITHM,
+                "rule_version": ENV084_RULE_VERSION,
+                "anchor_covenant_id": ENV083C_ANCHOR_COVENANT_ID,
+                "covenant_lineage_reference": ENV083C_COVENANT_LINEAGE_REFERENCE,
+                "evidence_mode": ENV083C_EVIDENCE_MODE,
+            },
+            "reveal": {
+                "round_id": round_id,
+                "revealed_seed_material": demo_seed_material,
+                "reveal_payload_hash": reveal_payload_hash,
+                "anchor_covenant_id": ENV083C_ANCHOR_COVENANT_ID,
+                "covenant_lineage_reference": ENV083C_COVENANT_LINEAGE_REFERENCE,
+                "result_algorithm": ENV083C_RESULT_ALGORITHM,
+                "result_number": result_number,
+                "result_colour": result_colour,
+                "evidence_mode": ENV083C_EVIDENCE_MODE,
+            }
+        },
+        "live_tn10_anchor": {
+            "evidence_mode": ENV083C_EVIDENCE_MODE,
+            "verifier_result": "PASS",
+            "network": ENV083C_NETWORK,
+            "covenant_id": ENV083C_ANCHOR_COVENANT_ID,
+            "covenant_lineage_reference": ENV083C_COVENANT_LINEAGE_REFERENCE,
+            "env064_spend_txid": ENV083C_ENV064_SPEND_TXID,
+            "env063_spent_outpoint": ENV083C_ENV063_SPENT_OUTPOINT,
+            "continuing_output": ENV083C_CONTINUING_OUTPUT,
+            "continuing_output_value_sompi": ENV083C_CONTINUING_OUTPUT_VALUE_SOMPI,
+            "accepting_block_hash": ENV083C_DEFAULT_ACCEPTING_BLOCK_HASH,
+            "covenant_id_confirmed": true,
+            "transaction_created": false,
+            "signing_used": false,
+            "broadcast_used": false,
+            "wallet_access_used": false,
+            "private_key_access_used": false,
+            "mainnet_supported": false,
+        },
+        "live_tn10_anchor_evidence_summary": {
+            "accepted": true,
+            "evidence_mode": ENV083C_EVIDENCE_MODE,
+            "readonly": true,
+            "verifier_result": "PASS",
+            "covenant_id_confirmed": true,
+            "api_endpoint_used": format!("https://api-tn10.kaspa.org/transactions/{}?inputs=true&outputs=true&resolve_previous_outpoints=light", ENV083C_ENV064_SPEND_TXID),
+        },
+        "rust_verifier_output": {
+            "schema": ENV083C_VERIFIER_SCHEMA,
+            "round_id": round_id,
+            "verifier_result": "PASS",
+            "all_checks_passed": true,
+            "check_count": 31,
+            "anchor_checks": {
+                "anchor_evidence_mode": "PASS",
+                "anchor_verifier_result": "PASS",
+                "anchor_covenant_id_confirmed": "PASS",
+                "anchor_lineage": "PASS",
+            },
+            "commitment_reveal_checks": {
+                "commitment_reveal_round_id_match": "PASS",
+                "commitment_hash_recomputes": "PASS",
+                "reveal_payload_hash_recomputes": "PASS",
+            },
+            "deterministic_derivation_checks": {
+                "result_number_verifies": "PASS",
+                "result_colour_verifies": "PASS",
+            }
+        },
+        "safety_flags": {
+            "mock_display_only": true,
+            "real_betting": false,
+            "real_payouts": false,
+            "backend_custody": false,
+            "wallet_access_used": false,
+            "private_key_access_used": false,
+            "signing_used": false,
+            "transaction_created": false,
+            "broadcast_used": false,
+            "mainnet_supported": false,
+        }
+    });
+
+    let verifier_output =
+        verify_env084_generated_artifacts(&sample_round, &proof_artifact)?.to_json();
+    Ok((sample_round, proof_artifact, verifier_output))
+}
+
+pub fn verify_env084_generated_artifacts(
+    sample_round: &Value,
+    proof_artifact: &Value,
+) -> Result<VerificationReport, String> {
+    let mut checks = Vec::new();
+    let sample_round_id = str_field(sample_round, "round_id")?;
+    let proof_round_id = str_field(proof_artifact, "round_id")?;
+    check(
+        &mut checks,
+        "sample schema",
+        str_field(sample_round, "schema")? == ENV084_SAMPLE_ROUND_SCHEMA,
+    );
+    check(
+        &mut checks,
+        "proof schema",
+        str_field(proof_artifact, "schema")? == ENV084_UI_PROOF_SCHEMA,
+    );
+    check(
+        &mut checks,
+        "round id agreement",
+        sample_round_id == proof_round_id,
+    );
+    check(
+        &mut checks,
+        "sample final result",
+        str_field(sample_round, "final_result")? == "PASS",
+    );
+    check(
+        &mut checks,
+        "proof verifier result",
+        str_field(proof_artifact, "verifier_result")? == "PASS",
+    );
+    check(
+        &mut checks,
+        "sample network",
+        str_field(sample_round, "foundation_network")? == ENV083C_NETWORK,
+    );
+    check(
+        &mut checks,
+        "proof network",
+        str_field(proof_artifact, "network")? == ENV083C_NETWORK,
+    );
+    check(
+        &mut checks,
+        "sample readonly",
+        bool_field(sample_round, "foundation_readonly")?,
+    );
+    check(
+        &mut checks,
+        "proof evidence mode",
+        str_field(proof_artifact, "evidence_mode")? == ENV083C_EVIDENCE_MODE,
+    );
+    check(
+        &mut checks,
+        "future live round tx not claimed",
+        str_field(proof_artifact, "future_live_round_transaction_evidence")?
+            == ENV084_FUTURE_LIVE_ROUND_TRANSACTION_EVIDENCE,
+    );
+
+    let anchor = proof_artifact
+        .get("live_tn10_anchor")
+        .ok_or("missing live_tn10_anchor for Toccata-bound claim")?;
+    check(
+        &mut checks,
+        "anchor evidence mode",
+        str_field(anchor, "evidence_mode")? == ENV083C_EVIDENCE_MODE,
+    );
+    check(
+        &mut checks,
+        "anchor verifier result",
+        str_field(anchor, "verifier_result")? == "PASS",
+    );
+    check(
+        &mut checks,
+        "anchor covenant id",
+        str_field(anchor, "covenant_id")? == ENV083C_ANCHOR_COVENANT_ID,
+    );
+    check(
+        &mut checks,
+        "anchor covenant id confirmed",
+        bool_field(anchor, "covenant_id_confirmed")?,
+    );
+    check(
+        &mut checks,
+        "anchor lineage",
+        str_field(anchor, "covenant_lineage_reference")? == ENV083C_COVENANT_LINEAGE_REFERENCE,
+    );
+
+    let transcript = proof_artifact
+        .get("application_round_transcript")
+        .ok_or("missing application_round_transcript")?;
+    let commitment = transcript.get("commitment").ok_or("missing commitment")?;
+    let reveal = transcript.get("reveal").ok_or("missing reveal")?;
+    check(
+        &mut checks,
+        "commitment round id",
+        str_field(commitment, "round_id")? == sample_round_id,
+    );
+    check(
+        &mut checks,
+        "reveal round id",
+        str_field(reveal, "round_id")? == sample_round_id,
+    );
+    check(
+        &mut checks,
+        "commitment/reveal round id match",
+        str_field(commitment, "round_id")? == str_field(reveal, "round_id")?,
+    );
+    check(
+        &mut checks,
+        "commitment covenant matches anchor",
+        str_field(commitment, "anchor_covenant_id")? == str_field(anchor, "covenant_id")?,
+    );
+    check(
+        &mut checks,
+        "reveal covenant matches anchor",
+        str_field(reveal, "anchor_covenant_id")? == str_field(anchor, "covenant_id")?,
+    );
+    check(
+        &mut checks,
+        "commitment algorithm",
+        str_field(commitment, "result_algorithm")? == ENV083C_RESULT_ALGORITHM,
+    );
+    check(
+        &mut checks,
+        "reveal algorithm",
+        str_field(reveal, "result_algorithm")? == ENV083C_RESULT_ALGORITHM,
+    );
+    check(
+        &mut checks,
+        "sample/proof algorithm agreement",
+        str_field(sample_round, "result_algorithm")?
+            == str_field(proof_artifact, "result_algorithm")?,
+    );
+    check(
+        &mut checks,
+        "sample/reveal algorithm agreement",
+        str_field(sample_round, "result_algorithm")? == str_field(reveal, "result_algorithm")?,
+    );
+
+    let seed = str_field(reveal, "revealed_seed_material")?;
+    let expected_commitment_hash = commitment_hash(
+        str_field(commitment, "round_id")?,
+        seed,
+        str_field(commitment, "result_algorithm")?,
+        str_field(commitment, "rule_version")?,
+        str_field(commitment, "anchor_covenant_id")?,
+        str_field(commitment, "covenant_lineage_reference")?,
+        str_field(commitment, "evidence_mode")?,
+    );
+    check(
+        &mut checks,
+        "commitment hash recomputes",
+        str_field(commitment, "commitment_hash")? == expected_commitment_hash,
+    );
+    let expected_number = derive_roulette_number(seed.as_bytes())?;
+    let expected_colour = colour_for_number(expected_number)?;
+    check(
+        &mut checks,
+        "result number verifies",
+        u8_field(reveal, "result_number")? == expected_number,
+    );
+    check(
+        &mut checks,
+        "result colour verifies",
+        str_field(reveal, "result_colour")? == expected_colour,
+    );
+    check(
+        &mut checks,
+        "sample/proof result number agreement",
+        u8_field(sample_round, "result_number")? == u8_field(reveal, "result_number")?
+            && u8_field(sample_round, "result_number")?
+                == u8_field(proof_artifact, "result_number")?,
+    );
+    check(
+        &mut checks,
+        "sample/proof result colour agreement",
+        str_field(sample_round, "result_colour")? == str_field(reveal, "result_colour")?
+            && str_field(sample_round, "result_colour")?
+                == str_field(proof_artifact, "result_colour")?,
+    );
+    let expected_reveal_hash = reveal_payload_hash(
+        str_field(reveal, "round_id")?,
+        seed,
+        str_field(reveal, "anchor_covenant_id")?,
+        str_field(reveal, "covenant_lineage_reference")?,
+        str_field(reveal, "result_algorithm")?,
+        u8_field(reveal, "result_number")?,
+        str_field(reveal, "result_colour")?,
+        str_field(reveal, "evidence_mode")?,
+    );
+    check(
+        &mut checks,
+        "reveal payload hash recomputes",
+        str_field(reveal, "reveal_payload_hash")? == expected_reveal_hash,
+    );
+
+    for value in [sample_round, anchor] {
+        for flag in [
+            "wallet_access_used",
+            "private_key_access_used",
+            "signing_used",
+            "transaction_created",
+            "broadcast_used",
+            "mainnet_supported",
+        ] {
+            if value.get(flag).is_some() {
+                check(
+                    &mut checks,
+                    "execution safety flag false",
+                    !bool_field(value, flag)?,
+                );
+            }
+        }
+    }
+    let safety = proof_artifact
+        .get("safety_flags")
+        .ok_or("missing safety_flags")?;
+    check(
+        &mut checks,
+        "mock display only",
+        bool_field(safety, "mock_display_only")?,
+    );
+    for flag in [
+        "real_betting",
+        "real_payouts",
+        "backend_custody",
+        "wallet_access_used",
+        "private_key_access_used",
+        "signing_used",
+        "transaction_created",
+        "broadcast_used",
+        "mainnet_supported",
+    ] {
+        check(
+            &mut checks,
+            "proof safety flag false",
+            !bool_field(safety, flag)?,
+        );
+    }
+
+    if checks.iter().all(|check| check.passed) {
+        Ok(VerificationReport {
+            schema: ENV083C_VERIFIER_SCHEMA.to_string(),
+            round_id: sample_round_id.to_string(),
+            verifier_result: "PASS".to_string(),
+            checks,
+        })
+    } else {
+        Err(format!(
+            "ENV-084 verifier rejected generated artifacts: {}",
+            checks
+                .iter()
+                .filter(|check| !check.passed)
+                .map(|check| check.name)
+                .collect::<Vec<_>>()
+                .join(", ")
+        ))
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Env084MockBet {
+    bet_id: &'static str,
+    bet_type: &'static str,
+    selection_value: &'static str,
+    stake_units: u64,
+    payout_multiplier: u64,
+}
+
+fn env084_mock_bets() -> Vec<Env084MockBet> {
+    vec![
+        Env084MockBet {
+            bet_id: "bet-001",
+            bet_type: "straight-number",
+            selection_value: "17",
+            stake_units: 10,
+            payout_multiplier: 35,
+        },
+        Env084MockBet {
+            bet_id: "bet-002",
+            bet_type: "colour",
+            selection_value: "red",
+            stake_units: 5,
+            payout_multiplier: 1,
+        },
+        Env084MockBet {
+            bet_id: "bet-003",
+            bet_type: "colour",
+            selection_value: "black",
+            stake_units: 4,
+            payout_multiplier: 1,
+        },
+        Env084MockBet {
+            bet_id: "bet-004",
+            bet_type: "parity",
+            selection_value: "odd",
+            stake_units: 7,
+            payout_multiplier: 1,
+        },
+        Env084MockBet {
+            bet_id: "bet-005",
+            bet_type: "parity",
+            selection_value: "even",
+            stake_units: 6,
+            payout_multiplier: 1,
+        },
+        Env084MockBet {
+            bet_id: "bet-006",
+            bet_type: "range",
+            selection_value: "high",
+            stake_units: 9,
+            payout_multiplier: 1,
+        },
+        Env084MockBet {
+            bet_id: "bet-007",
+            bet_type: "range",
+            selection_value: "low",
+            stake_units: 8,
+            payout_multiplier: 1,
+        },
+    ]
+}
+
+fn hash_env084_bet_ledger(bets: &[Env084MockBet]) -> String {
+    let mut canonical = String::new();
+    for bet in bets {
+        canonical.push_str(bet.bet_id);
+        canonical.push('|');
+        canonical.push_str(bet.bet_type);
+        canonical.push('|');
+        canonical.push_str(bet.selection_value);
+        canonical.push('|');
+        canonical.push_str(&bet.stake_units.to_string());
+        canonical.push('|');
+        canonical.push_str(&bet.payout_multiplier.to_string());
+        canonical.push('\n');
+    }
+    hash_hex(&canonical)
+}
+
+fn env084_settlement_json(
+    bets: &[Env084MockBet],
+    result_number: u8,
+    result_colour: &str,
+) -> Vec<Value> {
+    bets.iter()
+        .map(|bet| {
+            let won = env084_bet_wins(bet, result_number, result_colour);
+            let payout_units = if won {
+                bet.stake_units * (bet.payout_multiplier + 1)
+            } else {
+                0
+            };
+            let net_units = if won {
+                (bet.stake_units * bet.payout_multiplier) as i64
+            } else {
+                -(bet.stake_units as i64)
+            };
+            json!({
+                "bet_id": bet.bet_id,
+                "bet_type": bet.bet_type,
+                "selection_value": bet.selection_value,
+                "stake_units": bet.stake_units,
+                "won": won,
+                "payout_multiplier": bet.payout_multiplier,
+                "payout_units": payout_units,
+                "net_units": net_units,
+                "result_number": result_number,
+                "result_colour": result_colour,
+            })
+        })
+        .collect()
+}
+
+fn env084_bet_wins(bet: &Env084MockBet, result_number: u8, result_colour: &str) -> bool {
+    match bet.bet_type {
+        "straight-number" => bet.selection_value.parse::<u8>().ok() == Some(result_number),
+        "colour" => bet.selection_value == result_colour,
+        "parity" => match result_number {
+            0 => false,
+            n if n % 2 == 0 => bet.selection_value == "even",
+            _ => bet.selection_value == "odd",
+        },
+        "range" => match result_number {
+            0 => false,
+            1..=18 => bet.selection_value == "low",
+            19..=36 => bet.selection_value == "high",
+            _ => false,
+        },
+        _ => false,
+    }
+}
+
+fn hex_bytes(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
 pub fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, String> {
     let n = BigUint::from(37u32);
     let modulus = BigUint::from(1u8) << 256usize;

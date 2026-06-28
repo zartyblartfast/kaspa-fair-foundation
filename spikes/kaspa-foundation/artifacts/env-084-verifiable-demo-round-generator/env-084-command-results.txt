@@ -1,0 +1,19 @@
+ENV-084 command results
+
+PASS cargo fmt --check
+PASS cargo check -p kaspa-foundation
+PASS cargo check -p kaspa-fair-cli
+PASS cargo test -p kaspa-foundation
+PASS cargo test -p kaspa-fair-cli
+PASS node --check examples/roulette-poc/ui/app.js
+PASS node --check examples/roulette-poc/ui/roulette-table-renderer.js
+PASS git diff --check
+PASS scripts/env082-roulette-ui-workflow-rebuild-smoke.sh -> ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+PASS scripts/env083a-roulette-randomness-source-audit.sh -> ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+PASS scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh -> USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+PASS scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh -> APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+PASS scripts/env083f-round-proof-consistency-smoke.sh -> ROUND_PROOF_CONSISTENCY_READY=PASS
+PASS scripts/env084-verifiable-demo-round-generator-smoke.sh -> VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+PASS cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json -> verifier_output.verifier_result=PASS
+PASS cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round --round-id env-084-demo-round-0001 --demo-seed "env084-demo-seed-0001" --out-dir spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check -> verifier_result=PASS, result_number=15, result_colour=black
+PASS cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round --round-id env-084-demo-round-0001 --demo-seed "env084-demo-seed-0001" --write-ui --out-dir spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check -> verifier_result=PASS, app-facing JSON updated

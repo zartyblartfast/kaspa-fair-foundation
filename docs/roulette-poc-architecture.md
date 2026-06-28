@@ -713,3 +713,51 @@ The UI now distinguishes these layers:
 The verifier proof snapshot displays `verifier_result`, `live_readonly_tn10` evidence mode, `covenant_id_confirmed`, covenant lineage, result algorithm, commitment/reveal check status, deterministic BLAKE3 derivation check status, proof result number/colour, and safety flags. JSON remains a mirror/export only; Rust verifier logic remains the proof authority.
 
 ENV-083E remains strictly static/read-only and mock-only: no result generation in the UI, no production randomisation, no real betting, no real payouts, no backend custody, no wallet/private-key access, no signing, no transaction creation, no broadcast/submission, no faucet funds, and no mainnet.
+
+## 23. ENV-084 Rust-owned verifiable demo round generator
+
+ENV-084 replaces hand-maintained static roulette result fixtures with Rust-owned verifiable demo round generation from explicit demo seed material.
+
+Primary generator command:
+
+```bash
+cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round \
+  --round-id env-084-demo-round-0001 \
+  --demo-seed "env084-demo-seed-0001" \
+  --write-ui
+```
+
+The same command can write generated artifacts to a separate directory for verification without touching the app-facing files:
+
+```bash
+cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round \
+  --round-id env-084-demo-round-0001 \
+  --demo-seed "env084-demo-seed-0001" \
+  --out-dir spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check
+```
+
+Generated app-facing files:
+- `examples/roulette-poc/ui/sample-round.json`
+- `examples/roulette-poc/ui/toccata-fairness-proof.json`
+
+The generator produces both files from one proof transcript. The Rust verifier checks that round ID, result number, result colour, result algorithm, commitment/reveal fields, live read-only TN10 anchor evidence, future-live-transaction status, and safety flags agree.
+
+The UI still does not choose the result. It only loads `sample-round.json` and `toccata-fairness-proof.json`, validates their safety/status fields, and displays the result after the deterministic UI flow reaches result reveal. The UI does not call `Math.random`, browser crypto random APIs, wallet APIs, signing APIs, or transaction broadcast APIs.
+
+Explicit demo seed material is not production randomness. It lets an operator/test harness produce a different repeatable demo result while keeping result derivation verifiable. It does not prove unbiased seed selection and does not prevent seed grinding. Production entropy design remains future work.
+
+Round and proof artifacts must be generated together because neither JSON file is independently trusted. The sample round display and app-facing proof mirror are valid only when Rust verifies that both came from the same transcript and the same BLAKE3 domain-separated rejection-sampling derivation.
+
+Verification command:
+
+```bash
+scripts/env084-verifiable-demo-round-generator-smoke.sh
+```
+
+Future work remains:
+- production entropy design;
+- live round-specific TN10 commitment/reveal transactions;
+- wallet, faucet, signing, broadcast, and transaction authorisation;
+- real betting and payout execution only if explicitly authorised later.
+
+ENV-084 remains strictly demo/read-only and mock-only: no production randomisation, no UI result generation, no real betting, no real payouts, no backend custody, no wallet/private-key access, no signing, no transaction creation, no broadcast/submission, no faucet funds, and no mainnet.

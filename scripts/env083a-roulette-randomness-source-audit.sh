@@ -77,8 +77,12 @@ for key in [
     print(f'{p}:{key}={data.get(key)!r}')
 print(f'{p}:settlement_count={len(data.get("settlement", []))}')
 print(f'{p}:bets_count={len(data.get("bets", []))}')
-if data.get('result_number') != 18 or data.get('result_colour') != 'red':
-    raise SystemExit('sample-round.json does not contain expected current fixture result 18 red')
+if not isinstance(data.get('result_number'), int) or not 0 <= data.get('result_number') <= 36:
+    raise SystemExit('sample-round.json result_number is outside European roulette range')
+if data.get('result_colour') not in {'green', 'red', 'black'}:
+    raise SystemExit('sample-round.json result_colour is not a European roulette colour')
+if data.get('result_algorithm') != 'blake3-domain-separated-rejection-sampling-v1':
+    raise SystemExit('sample-round.json result_algorithm changed unexpectedly')
 PY
 
   echo
