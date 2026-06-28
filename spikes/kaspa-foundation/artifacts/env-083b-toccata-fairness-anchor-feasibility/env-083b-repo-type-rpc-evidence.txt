@@ -1,0 +1,557 @@
+ENV-083B local repo type/RPC evidence
+
+Suggested Toccata/covenant search
+docs/toccata-fairness-anchor-architecture.md:1:# Toccata Fairness Anchor Architecture
+docs/toccata-fairness-anchor-architecture.md:9:> Kaspa/Toccata can strengthen proof-of-fairness by anchoring round commitments, reveal evidence, and verifier data to a covenant-aware trust layer.
+docs/toccata-fairness-anchor-architecture.md:28:Kaspa/Toccata can help close:
+docs/toccata-fairness-anchor-architecture.md:36:Kaspa/Toccata does not automatically close:
+docs/toccata-fairness-anchor-architecture.md:52:* A limited TN10 Toccata read-only trust layer.
+docs/toccata-fairness-anchor-architecture.md:73:* Toccata covenant-backed round anchoring.
+docs/toccata-fairness-anchor-architecture.md:93:### Tier 2 — Covenant-enforced beats merely anchored
+docs/toccata-fairness-anchor-architecture.md:95:A bare commitment hash could be anchored to a blockchain without Toccata covenants. That would be useful, but it would still leave the round rules mostly enforced by off-chain verifier logic.
+docs/toccata-fairness-anchor-architecture.md:97:The Toccata thesis is stronger: covenant lineage, state transitions, transaction introspection, and covenant IDs should be used where possible so that the fairness lifecycle is not merely recorded, but constrained by the covenant flow.
+docs/toccata-fairness-anchor-architecture.md:101:Do not merely anchor a hash. Use Toccata to prove and constrain the fairness lifecycle.
+docs/toccata-fairness-anchor-architecture.md:103:This explains why the project should use Toccata features rather than a generic “hash on chain” pattern.
+docs/toccata-fairness-anchor-architecture.md:105:The engineering target is therefore not simply to publish proof data. The target is to show what Toccata adds over ordinary anchoring.
+docs/toccata-fairness-anchor-architecture.md:122:The round commitment is anchored through a Toccata-aware covenant flow. After the reveal, the verifier checks that the revealed seed matches the earlier commitment and that the public deterministic algorithm derives the displayed roulette result.
+docs/toccata-fairness-anchor-architecture.md:153:## Toccata opportunity
+docs/toccata-fairness-anchor-architecture.md:155:Toccata is relevant because it introduces features that can support a fairness anchor:
+docs/toccata-fairness-anchor-architecture.md:157:* Covenant-capable scripting.
+docs/toccata-fairness-anchor-architecture.md:165:* Covenant IDs / consensus-tracked covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:168:The most important missed opportunity is covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:179:A Toccata covenant model can aim to say:
+docs/toccata-fairness-anchor-architecture.md:182:Here is a round state anchored to a covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:186:Here is verifier evidence linking the app proof to the covenant flow.
+docs/toccata-fairness-anchor-architecture.md:202:Toccata covenant-state model
+docs/toccata-fairness-anchor-architecture.md:215:The Rust verifier owns the mapping between JSON mirror fields and covenant/TN10 evidence.
+docs/toccata-fairness-anchor-architecture.md:219:* the JSON round ID matches the covenant or anchor evidence
+docs/toccata-fairness-anchor-architecture.md:224:* the claimed Toccata evidence is present and correctly linked
+docs/toccata-fairness-anchor-architecture.md:242:* Covenant-state modelling.
+docs/toccata-fairness-anchor-architecture.md:243:* Covenant ID / payload / script evidence modelling.
+docs/toccata-fairness-anchor-architecture.md:258:* Toccata transaction field inspection.
+docs/toccata-fairness-anchor-architecture.md:259:* Covenant output / UTXO evidence where available.
+docs/toccata-fairness-anchor-architecture.md:260:* Later covenant UTXO lookup.
+docs/toccata-fairness-anchor-architecture.md:267:SilverScript should be treated as a covenant-authoring candidate, not the foundation of the PoC.
+docs/toccata-fairness-anchor-architecture.md:272:* It supports the required Toccata features.
+docs/toccata-fairness-anchor-architecture.md:276:If SilverScript is not compatible with the target network or exact covenant features, the PoC should proceed with Rust-native modelling and script construction.
+docs/toccata-fairness-anchor-architecture.md:320:## Toccata-backed fairness model
+docs/toccata-fairness-anchor-architecture.md:335:The covenant-backed version should aim for:
+docs/toccata-fairness-anchor-architecture.md:338:Covenant lineage exists.
+docs/toccata-fairness-anchor-architecture.md:342:Verifier confirms the app-facing result matches the covenant-backed proof evidence.
+docs/toccata-fairness-anchor-architecture.md:352:covenant_id
+docs/toccata-fairness-anchor-architecture.md:353:covenant_lineage_reference
+docs/toccata-fairness-anchor-architecture.md:388:## Toccata feature opportunities
+docs/toccata-fairness-anchor-architecture.md:390:### KIP-17 covenants
+docs/toccata-fairness-anchor-architecture.md:400:### KIP-20 covenant IDs
+docs/toccata-fairness-anchor-architecture.md:404:* Establish stable covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:405:* Prove that fairness states belong to a specific covenant instance.
+docs/toccata-fairness-anchor-architecture.md:407:* Make covenant-labelled state harder to forge.
+docs/toccata-fairness-anchor-architecture.md:409:This is probably the strongest immediate Toccata opportunity for the PoC.
+docs/toccata-fairness-anchor-architecture.md:411:### KIP-21 sequencing commitments
+docs/toccata-fairness-anchor-architecture.md:437:2. Verification visibly depends on at least one Toccata covenant feature that a plain anchored hash cannot provide.
+docs/toccata-fairness-anchor-architecture.md:438:3. A developer can read the proof transcript, inspect the covenant evidence, and reproduce the displayed result.
+docs/toccata-fairness-anchor-architecture.md:452:### ENV-083B — TN10 Toccata fairness-anchor architecture and toolchain sanity check
+docs/toccata-fairness-anchor-architecture.md:456:Define the correct Toccata-backed fairness architecture before implementing random demo rounds or deeper UI changes.
+docs/toccata-fairness-anchor-architecture.md:458:ENV-083B must treat KIP-20 covenant lineage feasibility as a hard gate.
+docs/toccata-fairness-anchor-architecture.md:460:If covenant IDs / covenant lineage cannot be verified read-only on TN10 with available tooling, ENV-083B must not pretend the architecture is proven.
+docs/toccata-fairness-anchor-architecture.md:464:* **Fallback A**: Use a bare TN10 commitment anchor plus Rust verifier while clearly labelling this as Tier 1 only, not a full Toccata covenant fairness proof.
+docs/toccata-fairness-anchor-architecture.md:465:* **Fallback B**: Use an offline Rust covenant-state model while deferring live TN10 covenant evidence until the necessary node/API/tooling support is confirmed.
+docs/toccata-fairness-anchor-architecture.md:466:* **Fallback C**: Use a local TN10 node or indexed node if public RPC cannot expose the required covenant evidence.
+docs/toccata-fairness-anchor-architecture.md:470:* Identify exact Toccata features relevant to fairness anchoring.
+docs/toccata-fairness-anchor-architecture.md:471:* Confirm whether KIP-17, KIP-20, KIP-21, and KIP-16 are applicable now, later, or not at all.
+docs/toccata-fairness-anchor-architecture.md:474:  * one covenant lineage for the app, with per-round state transitions, or
+docs/toccata-fairness-anchor-architecture.md:475:  * one covenant instance per roulette round.
+docs/toccata-fairness-anchor-architecture.md:476:* Decide the minimum useful covenant state fields.
+docs/toccata-fairness-anchor-architecture.md:492:No later ENV may claim “Toccata-backed covenant fairness” unless ENV-083B proves the required covenant evidence path.
+docs/toccata-fairness-anchor-architecture.md:494:### ENV-083C — Offline covenant-state artifact and verifier model
+docs/toccata-fairness-anchor-architecture.md:498:Implement a Rust-native model of the proposed covenant fairness lifecycle without signing or broadcasting transactions.
+docs/toccata-fairness-anchor-architecture.md:505:* Covenant-state model.
+docs/toccata-fairness-anchor-architecture.md:526:### ENV-084 — Authorised TN10 covenant transaction spike
+docs/toccata-fairness-anchor-architecture.md:530:Only if explicitly authorised, create/sign/broadcast a minimal TN10 testnet covenant transaction flow.
+docs/toccata-fairness-anchor-architecture.md:597:2. Toccata is not decoration.
+docs/toccata-fairness-anchor-architecture.md:598:   The PoC must use Toccata where it genuinely improves fairness evidence.
+docs/toccata-fairness-anchor-architecture.md:600:3. Toccata must add something beyond bare hash anchoring.
+docs/toccata-fairness-anchor-architecture.md:601:   Toccata-specific claims must describe what is impossible with a plain anchor model.
+docs/toccata-fairness-anchor-architecture.md:603:4. Covenant evidence claims must be proven, not assumed.
+docs/toccata-fairness-anchor-architecture.md:604:   If covenant IDs/lineage claims are made, read-only validation must exist and be explicitly documented.
+docs/toccata-fairness-anchor-architecture.md:607:   A JSON proof file is valid only when the Rust verifier proves the mapping to covenant evidence.
+docs/toccata-fairness-anchor-architecture.md:615:8. If Toccata evidence is unavailable, the PoC must say so plainly.
+docs/roulette-poc-architecture.md:21:- readiness command: `scripts/env074-toccata-layer-ready.sh`
+docs/roulette-poc-architecture.md:34:- `covenant_id_confirmed = true`
+docs/roulette-poc-architecture.md:46:- covenant id: `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7`
+docs/roulette-poc-architecture.md:49:- live TN10 covenant evidence exists
+docs/roulette-poc-architecture.md:52:- the continuing output, value, and covenant id match expected values
+docs/roulette-poc-architecture.md:64:- generic all-Toccata feature coverage
+docs/roulette-poc-architecture.md:247:## 8. Mapping current Toccata/foundation features to roulette
+docs/roulette-poc-architecture.md:252:- proof that the TN10 covenant evidence exists live
+docs/roulette-poc-architecture.md:255:- proof that the continuing output, continuing output value, and covenant id match expected values
+docs/roulette-poc-architecture.md:274:- generic all-Toccata feature support
+docs/roulette-poc-architecture.md:372:- it builds deterministic seed material from the round id, verifier covenant id, verifier ENV-064 spend txid, verifier accepting block hash, and final mock bet-ledger hash
+docs/roulette-poc-architecture.md:464:- it displays proof fields including covenant id, ENV-064 txid, accepting block hash, and bet ledger hash
+docs/kaspa-foundation-architecture.md:5:This document defines the proposed technical foundation for building applications on Kaspa Toccata features, starting with a roulette proof-of-concept but designed for reuse across future apps and dApps.
+docs/kaspa-foundation-architecture.md:9:- covenant transaction construction
+docs/kaspa-foundation-architecture.md:10:- local covenant verification
+docs/kaspa-foundation-architecture.md:11:- live TN10 covenant submission workflows using Toccata features
+docs/kaspa-foundation-architecture.md:24:Kaspa covenant mechanics
+docs/kaspa-foundation-architecture.md:35:The covenant layer must not know anything about roulette.
+docs/kaspa-foundation-architecture.md:37:The roulette layer must not manually reimplement covenant mechanics.
+docs/kaspa-foundation-architecture.md:53:        covenant/
+docs/kaspa-foundation-architecture.md:90:    tn12-minimal-covenant/
+docs/kaspa-foundation-architecture.md:99:This does not need to be implemented all at once. The first refactor can simply move the proven TN10 covenant code into clearer internal modules.
+docs/kaspa-foundation-architecture.md:124:### 4.2 Covenant Layer
+docs/kaspa-foundation-architecture.md:128:- building corrected v1 covenant scripts
+docs/kaspa-foundation-architecture.md:132:- applying covenant bindings correctly
+docs/kaspa-foundation-architecture.md:133:- constructing covenant create transactions
+docs/kaspa-foundation-architecture.md:134:- constructing covenant spend transactions
+docs/kaspa-foundation-architecture.md:135:- preserving covenant id/state invariants
+docs/kaspa-foundation-architecture.md:144:spikes/tn12-minimal-covenant/artifacts/env-063-corrected-live-covenant-create/
+docs/kaspa-foundation-architecture.md:145:spikes/tn12-minimal-covenant/artifacts/env-064-live-corrected-covenant-spend/
+docs/kaspa-foundation-architecture.md:146:spikes/tn12-minimal-covenant/artifacts/env-065-readonly-env064-spend-confirmation/
+docs/kaspa-foundation-architecture.md:175:    pub covenant_recipe_id: Option<String>,
+docs/kaspa-foundation-architecture.md:183:For covenant spends, this means:
+docs/kaspa-foundation-architecture.md:188:- confirm covenant id
+docs/kaspa-foundation-architecture.md:216:- check value and covenant id where observable
+docs/kaspa-foundation-architecture.md:221:## 5. Covenant Recipe Abstraction
+docs/kaspa-foundation-architecture.md:223:The foundation should introduce a recipe abstraction so future apps do not hand-code covenant details.
+docs/kaspa-foundation-architecture.md:228:pub struct CovenantRecipe {
+docs/kaspa-foundation-architecture.md:243:toccata-v1-keyed-blake3-state-transition
+docs/kaspa-foundation-architecture.md:250:- covenant id preserved across transition
+docs/kaspa-foundation-architecture.md:275:- covenant state transition mismatch
+docs/kaspa-foundation-architecture.md:291:These are product, operational, regulatory, and UX concerns outside the low-level covenant foundation.
+docs/kaspa-foundation-architecture.md:308:- calls foundation for covenant create/spend/verify
+docs/kaspa-foundation-architecture.md:352:The foundation verifies the Kaspa/covenant side.
+docs/kaspa-foundation-architecture.md:362:- who funds covenant create
+docs/kaspa-foundation-architecture.md:406:3. Covenant locks the round state.
+docs/kaspa-foundation-architecture.md:475:covenant_create_txid = canonical 32-byte transaction id
+docs/kaspa-foundation-architecture.md:487:    covenant_create_txid ||
+docs/kaspa-foundation-architecture.md:572:- covenant recipe id
+docs/kaspa-foundation-architecture.md:579:- covenant id
+docs/kaspa-foundation-architecture.md:595:- was the covenant transaction accepted/confirmed?
+docs/kaspa-foundation-architecture.md:695:- covenant recipe id
+docs/kaspa-foundation-architecture.md:715:ENV-071B proved the wRPC path with an explicitly gated live read-only test. Public rusty-kaspa wRPC confirmed the ENV-064 continuing output outpoint and value from the live UTXO set, but left accepted transaction input details and covenant id unsupported through that model alone.
+docs/kaspa-foundation-architecture.md:717:ENV-071C closes that gap with the public TN10 transaction-detail API at `https://api-tn10.kaspa.org/transactions/<txid>?inputs=true&outputs=true&resolve_previous_outpoints=light`. That read-only response exposes mined/accepted ENV-064 transaction structure, including `is_accepted`, accepting block hash, previous outpoint hash/index, output 0 value, and covenant id. The live verifier now reaches `Pass` when those fields match the canonical transcript and still fails closed on contradictions.
+docs/kaspa-foundation-architecture.md:727:This makes the limited Toccata layer operational for developers: offline/unit tests remain deterministic regression and safety checks, while the live command is the explicit way to confirm the canonical ENV-063/064/065 proof transcript against current TN10 chain data before any roulette PoC adapter is built.
+docs/kaspa-foundation-architecture.md:735:The JSON mode emits schema `kaspa-fair-live-verification-result-v1`, keeps the result enum stable as `PASS`, `FAIL`, or `AMBIGUOUS`, and includes canonical txid/outpoint/output/value/covenant-id fields plus explicit safety fields:
+docs/kaspa-foundation-architecture.md:783:old incompatible covenant paths guarded
+docs/kaspa-foundation-architecture.md:843:- builds corrected v1 covenant script
+docs/kaspa-foundation-architecture.md:888:pub fn create_covenant_plan(...)
+docs/kaspa-foundation-architecture.md:889:    -> Result<CovenantCreatePlan, FoundationError>;
+docs/kaspa-foundation-architecture.md:891:pub fn verify_covenant_create_plan(...)
+docs/kaspa-foundation-architecture.md:894:pub fn submit_covenant_create_once(...)
+docs/kaspa-foundation-architecture.md:897:pub fn create_covenant_spend_plan(...)
+docs/kaspa-foundation-architecture.md:898:    -> Result<CovenantSpendPlan, FoundationError>;
+docs/kaspa-foundation-architecture.md:900:pub fn verify_covenant_spend_plan(...)
+docs/kaspa-foundation-architecture.md:903:pub fn submit_covenant_spend_once(...)
+docs/kaspa-foundation-architecture.md:960:kaspa-fair covenant create-plan
+docs/kaspa-foundation-architecture.md:961:kaspa-fair covenant create-submit
+docs/kaspa-foundation-architecture.md:962:kaspa-fair covenant spend-plan
+docs/kaspa-foundation-architecture.md:963:kaspa-fair covenant spend-submit
+docs/kaspa-foundation-architecture.md:964:kaspa-fair covenant confirm
+docs/kaspa-foundation-architecture.md:1025:Covenant create tx
+docs/kaspa-foundation-architecture.md:1026:Covenant spend tx
+docs/kaspa-foundation-architecture.md:1039:The Kaspa foundation layer is not gambling-specific. It may be reusable for many applications that need covenant state transitions, proof transcripts, and independent verification.
+docs/kaspa-foundation-architecture.md:1073:### ENV-068 — Extract Covenant Core
+docs/kaspa-foundation-architecture.md:1077:Move corrected v1 covenant construction/proof code into reusable internal module.
+docs/kaspa-foundation-architecture.md:1093:Convert the proven covenant create/spend/confirmation path into stable verification fixtures.
+docs/kaspa-foundation-architecture.md:1134:A future app can use the Kaspa foundation without copying low-level covenant code.
+docs/kaspa-foundation-architecture.md:1152:The project can add new apps without compromising the proven covenant foundation.
+docs/kaspa-foundation-architecture.md:1162:recipe id: toccata-v1-keyed-blake3-state-transition
+docs/env083b-toccata-fairness-anchor-feasibility.md:1:# ENV-083B — TN10 Toccata fairness-anchor feasibility and toolchain gate
+docs/env083b-toccata-fairness-anchor-feasibility.md:5:ENV-083B is a feasibility/design gate only. It does not implement roulette randomisation, covenant transactions, transaction creation, signing, broadcasting, wallet access, real betting, payouts, custody, UI changes, or mainnet support.
+docs/env083b-toccata-fairness-anchor-feasibility.md:9:Hard-gate claim result: Toccata covenant fairness anchor is allowed as the next design claim because a concrete read-only TN10 evidence path is available for the canonical covenant lineage fields already proven in this repository:
+docs/env083b-toccata-fairness-anchor-feasibility.md:11:- transaction output covenant binding: `outputs[0].covenant_id` and `outputs[0].covenant_authorizing_input`
+docs/env083b-toccata-fairness-anchor-feasibility.md:12:- transaction input covenant lineage evidence: `inputs[0].covenant_id`
+docs/env083b-toccata-fairness-anchor-feasibility.md:18:This is not a live roulette anchor implementation. It is a feasibility gate proving that the required covenant-id / lineage evidence can be observed read-only on TN10 for the canonical covenant path and can be used as the evidence pattern for the next offline covenant-state model.
+docs/env083b-toccata-fairness-anchor-feasibility.md:24:- `docs/toccata-fairness-anchor-architecture.md`
+docs/env083b-toccata-fairness-anchor-feasibility.md:29:- rusty-kaspa Toccata guide: `https://raw.githubusercontent.com/kaspanet/rusty-kaspa/master/docs/toccata-guide.md`
+docs/env083b-toccata-fairness-anchor-feasibility.md:31:- KIP-17: `https://raw.githubusercontent.com/kaspanet/kips/master/kip-0017.md`
+docs/env083b-toccata-fairness-anchor-feasibility.md:32:- KIP-20: `https://raw.githubusercontent.com/kaspanet/kips/master/kip-0020.md`
+docs/env083b-toccata-fairness-anchor-feasibility.md:33:- KIP-21: `https://raw.githubusercontent.com/kaspanet/kips/master/kip-0021.md`
+docs/env083b-toccata-fairness-anchor-feasibility.md:40:- `crates/kaspa-foundation/src/covenant/constants.rs`
+docs/env083b-toccata-fairness-anchor-feasibility.md:41:- `crates/kaspa-foundation/src/covenant/recipe.rs`
+docs/env083b-toccata-fairness-anchor-feasibility.md:49:- Tier 2: Toccata covenant enforcement/lineage adds more than a bare anchored hash by making covenant-labelled state membership consensus-tracked and by exposing covenant bindings/IDs for verifier evidence.
+docs/env083b-toccata-fairness-anchor-feasibility.md:59:### Recommendation: KIP-20 covenant IDs / covenant lineage, backed by KIP-17 transition modelling
+docs/env083b-toccata-fairness-anchor-feasibility.md:61:KIP-20 is the strongest immediate fairness-anchor candidate because it introduces consensus-tracked covenant identifiers carried by UTXOs and declared by transaction outputs. For fairness anchoring, this gives the verifier a stable covenant lineage reference that a JSON proof cannot forge by itself and that a bare payload hash cannot enforce.
+docs/env083b-toccata-fairness-anchor-feasibility.md:63:KIP-17 is required as the covenant transition mechanism: transaction introspection and payload/output inspection can model or enforce commitment-to-reveal state transitions. But KIP-17 alone leaves lineage identity more dependent on script logic and witness structure. KIP-20 turns the lineage/member identity into a first-class consensus field.
+docs/env083b-toccata-fairness-anchor-feasibility.md:65:KIP-21 and KIP-16 are useful later, not first:
+docs/env083b-toccata-fairness-anchor-feasibility.md:67:- KIP-21 sequencing commitments/lane proofs may later strengthen ordering/inclusion proofs, especially for proving commitment-before-reveal activity in an app lane.
+docs/env083b-toccata-fairness-anchor-feasibility.md:70:## 2. What Toccata adds beyond a bare anchored hash
+docs/env083b-toccata-fairness-anchor-feasibility.md:74:- prove that later reveal evidence belongs to the same covenant/application lineage as the earlier commitment;
+docs/env083b-toccata-fairness-anchor-feasibility.md:77:- expose consensus-level covenant membership for verifier checks;
+docs/env083b-toccata-fairness-anchor-feasibility.md:78:- prove that a continuing output preserves the same covenant identity;
+docs/env083b-toccata-fairness-anchor-feasibility.md:79:- provide native covenant-introspection hooks for scripts to inspect input/output covenant membership.
+docs/env083b-toccata-fairness-anchor-feasibility.md:81:Toccata adds the following specific evidence and constraints:
+docs/env083b-toccata-fairness-anchor-feasibility.md:83:- KIP-20 output covenant binding: an output may declare `covenant_id` and `authorizing_input`.
+docs/env083b-toccata-fairness-anchor-feasibility.md:84:- KIP-20 UTXO covenant ID: accepted covenant-bound UTXOs carry `covenant_id`.
+docs/env083b-toccata-fairness-anchor-feasibility.md:85:- KIP-20 non-forgeability: covenant-labelled UTXOs are valid only as authorized continuations or genesis initializations.
+docs/env083b-toccata-fairness-anchor-feasibility.md:86:- KIP-20 lineage: commitment and reveal states can be linked to one covenant instance rather than merely to unrelated payload hashes.
+docs/env083b-toccata-fairness-anchor-feasibility.md:87:- KIP-17 introspection: scripts can inspect transaction fields, inputs, outputs, payload substrings, and covenant-related fields to constrain valid transitions.
+docs/env083b-toccata-fairness-anchor-feasibility.md:91:> The proof is not just a hash in a payload. The commitment/reveal evidence is linked to a TN10 Toccata covenant lineage with observable covenant IDs and output/input covenant bindings, and the Rust verifier checks that the app-facing JSON mirror matches that evidence.
+docs/env083b-toccata-fairness-anchor-feasibility.md:93:## 3. Hard gate: covenant lineage / covenant IDs read-only on TN10
+docs/env083b-toccata-fairness-anchor-feasibility.md:97:`kip20_covenant_lineage_readonly_tn10_verified`: true
+docs/env083b-toccata-fairness-anchor-feasibility.md:99:The available tooling can verify covenant lineage/covenant IDs read-only on TN10 for the canonical covenant path already present in the repository.
+docs/env083b-toccata-fairness-anchor-feasibility.md:103:1. Official Toccata guide states Toccata RPC/protobuf changes include `RpcTransactionOutput.covenant` and `RpcUtxoEntry.covenant_id`.
+docs/env083b-toccata-fairness-anchor-feasibility.md:104:2. KIP-20 specifies transaction output covenant binding and UTXO entry covenant IDs.
+docs/env083b-toccata-fairness-anchor-feasibility.md:105:3. The local Rust verifier already models `LiveTn10Evidence.covenant_id` and checks it against the canonical transcript.
+docs/env083b-toccata-fairness-anchor-feasibility.md:106:4. The local CLI public TN10 transaction-detail adapter extracts `outputs[0].covenant_id`, `outputs[0].covenant_authorizing_input`, and fallback `inputs[0].covenant_id` from the public transaction-detail API.
+docs/env083b-toccata-fairness-anchor-feasibility.md:107:5. A live read-only command returned `verifier_result: PASS`, `readonly: true`, `transaction_created: false`, `signing_used: false`, `broadcast_used: false`, `wallet_access_used: false`, and `covenant_id_confirmed: true`.
+docs/env083b-toccata-fairness-anchor-feasibility.md:108:6. Direct public TN10 transaction-detail API evidence exposes `inputs[0].covenant_id`, `outputs[0].covenant_authorizing_input`, and `outputs[0].covenant_id` for the canonical ENV-064 transaction.
+docs/env083b-toccata-fairness-anchor-feasibility.md:112:`public_tn10_rpc_sufficient`: true for the current canonical read-only covenant lineage evidence path.
+docs/env083b-toccata-fairness-anchor-feasibility.md:117:- public TN10 transaction-detail REST API for accepted transaction structure and covenant ID fields.
+docs/env083b-toccata-fairness-anchor-feasibility.md:119:This combination is sufficient for the ENV-083B hard gate. A future per-round covenant anchoring implementation must re-check whether the same public endpoints expose the required fields for the new round transactions.
+docs/env083b-toccata-fairness-anchor-feasibility.md:123:`local_tn10_utxoindex_required`: false for this gate; unknown/conditional for future custom per-round covenant workflows.
+docs/env083b-toccata-fairness-anchor-feasibility.md:125:Public wRPC reports UTXO-index status and public transaction-detail API exposes covenant IDs for the canonical evidence. A local `kaspad --utxoindex --testnet` remains a fallback if public endpoints stop exposing covenant fields, if historical indexing is needed beyond public API retention, or if future verifier checks need richer raw RPC/protobuf fields than the public API provides.
+docs/env083b-toccata-fairness-anchor-feasibility.md:131:| Rust | Truth layer. Covenant-state model, commitment/reveal model, deterministic result derivation, verifier checks, JSON mirror validation, tests. | Offline covenant-state model in ENV-083C; future transaction construction modelling only if authorized. | UI-generated proof truth; wallet/signing/broadcast in this ENV. |
+docs/env083b-toccata-fairness-anchor-feasibility.md:132:| RPC / gRPC / node API | Read-only evidence transport. Fetch TN10 readiness, UTXO visibility, accepted transaction detail, output covenant fields, input/UTXO covenant IDs. | Lane proof / sequencing evidence if KIP-21 APIs are needed; local indexed node fallback. | Core proof logic; private database substitute; transaction submission. |
+docs/env083b-toccata-fairness-anchor-feasibility.md:133:| SilverScript | Candidate covenant-authoring tool only. Not a dependency for TN10 PoC now. | Separate compatibility spike if it targets TN10 and emits inspectable scripts compatible with rusty-kaspa/TN10. | Required build dependency; proof source; TN10 dependency before compatibility is proven. |
+docs/env083b-toccata-fairness-anchor-feasibility.md:135:| JSON mirror files | Export/mirror of Rust-verified proof and TN10 evidence. Useful for UI and audit readability. | Stable app-facing proof format after Rust verifier owns mappings. | Proof source; independent authority; substitute for covenant evidence. |
+docs/env083b-toccata-fairness-anchor-feasibility.md:136:| Optional local TN10 indexed node | Not required for ENV-083B because public read-only path is sufficient. | Fallback if public RPC/API cannot expose covenant IDs, UTXO lineage, or future lane evidence. | Default dependency; wallet/signing/broadcast/mainnet. |
+docs/env083b-toccata-fairness-anchor-feasibility.md:148:Because the PoC target is TN10, SilverScript must remain optional. The next step should use Rust-native covenant-state modelling and existing rusty-kaspa/TN10 evidence types. SilverScript can be revisited only after a separate compatibility ENV proves TN10 support and inspectable output compatibility.
+docs/env083b-toccata-fairness-anchor-feasibility.md:150:## 6. Minimum viable Toccata-backed fairness anchor
+docs/env083b-toccata-fairness-anchor-feasibility.md:152:### Minimum covenant-state model
+docs/env083b-toccata-fairness-anchor-feasibility.md:154:One covenant lineage representing the application/fairness anchor, with per-round states represented as covenant-state transitions or modelled state records under that lineage:
+docs/env083b-toccata-fairness-anchor-feasibility.md:157:AppFairnessLineage(covenant_id)
+docs/env083b-toccata-fairness-anchor-feasibility.md:159:  -> CommitmentAnchored(commitment_txid, output_index, covenant_id)
+docs/env083b-toccata-fairness-anchor-feasibility.md:170:- `covenant_id`
+docs/env083b-toccata-fairness-anchor-feasibility.md:171:- `covenant_lineage_reference`
+docs/env083b-toccata-fairness-anchor-feasibility.md:190:- `commitment_covenant_id`
+docs/env083b-toccata-fairness-anchor-feasibility.md:200:- `reveal_covenant_id`
+docs/env083b-toccata-fairness-anchor-feasibility.md:212:- commitment and reveal references carry the expected `covenant_id`;
+docs/env083b-toccata-fairness-anchor-feasibility.md:213:- covenant ID matches the expected app lineage;
+docs/env083b-toccata-fairness-anchor-feasibility.md:215:- output covenant binding and/or input covenant ID are present where the claim requires them;
+docs/env083b-toccata-fairness-anchor-feasibility.md:216:- no claim upgrades from Tier 1 to Toccata covenant fairness unless covenant evidence is present.
+docs/env083b-toccata-fairness-anchor-feasibility.md:223:- output covenant binding: `covenant_id` and `covenant_authorizing_input`;
+docs/env083b-toccata-fairness-anchor-feasibility.md:224:- input/UTXO covenant ID evidence where available;
+docs/env083b-toccata-fairness-anchor-feasibility.md:230:Recommendation: A. one covenant lineage for the app with per-round state transitions.
+docs/env083b-toccata-fairness-anchor-feasibility.md:235:- It aligns with KIP-20 covenant IDs as lineage/membership identifiers.
+docs/env083b-toccata-fairness-anchor-feasibility.md:236:- It reduces proof fragmentation versus one covenant instance per round.
+docs/env083b-toccata-fairness-anchor-feasibility.md:240:One covenant instance per roulette round is a later option for isolation or scalability experiments, but it weakens the immediate app-lineage story and creates more indexing/proof-management overhead. For the first PoC, per-round state under one app lineage is the clearer architecture.
+docs/env083b-toccata-fairness-anchor-feasibility.md:246:If KIP-20 covenant lineage cannot be verified for future round transactions, continue with a bare TN10 commitment anchor and Rust verifier. Label the claim as Tier 1 only: Kaspa public anchor plus commitment/reveal verification, not full Toccata covenant fairness.
+docs/env083b-toccata-fairness-anchor-feasibility.md:248:### Fallback B — Offline Rust covenant-state model pending live evidence
+docs/env083b-toccata-fairness-anchor-feasibility.md:250:Build the covenant-state lifecycle in Rust without transaction creation/signing/broadcasting. Use deterministic artifacts and tests to define the expected covenant fields, state transitions, and verifier checks. Label this as offline covenant model only until live TN10 evidence exists.
+docs/env083b-toccata-fairness-anchor-feasibility.md:254:Run a local TN10 node with UTXO index, following the rusty-kaspa Toccata guide pattern (`kaspad --utxoindex --testnet`), if public RPC/API cannot expose covenant IDs, covenant bindings, UTXO lineage, or future KIP-21 evidence. Still keep it read-only unless explicit authorization is granted.
+docs/env083b-toccata-fairness-anchor-feasibility.md:269:- covenant transaction creation/signing/broadcasting;
+docs/env083b-toccata-fairness-anchor-feasibility.md:275:ENV-083C — Offline covenant-state artifact and verifier model.
+docs/env083b-toccata-fairness-anchor-feasibility.md:277:The next ENV should implement only Rust-native offline modelling of the fairness lifecycle and verifier checks. It should not create, sign, or broadcast transactions. It should produce a modelled commitment artifact, reveal artifact, derivation transcript, covenant-state transition model, verifier checks, and JSON mirror mapping.
+docs/env083b-toccata-fairness-anchor-feasibility.md:283:`spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-hard-gate-result.json`
+docs/proof-transcript-format.md:5:Target result: stable versioned transcript schema for the canonical TN10 covenant evidence path
+docs/proof-transcript-format.md:9:The proof transcript format turns the already-proven corrected TN10 covenant path into a stable, app-agnostic artifact that later tools can verify without re-running live workflow steps.
+docs/proof-transcript-format.md:15:- keep covenant proof data separate from roulette or any future app adapter
+docs/proof-transcript-format.md:29:- canonical txid / outpoint / continuing output / value / covenant id fields
+docs/proof-transcript-format.md:85:ENV-069 defines the first canonical foundation transcript around the corrected TN10 covenant path proven earlier.
+docs/proof-transcript-format.md:98:- ENV-063 covenant input spent by ENV-064:
+docs/proof-transcript-format.md:104:- covenant id:
+docs/proof-transcript-format.md:124:     `fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/`
+docs/proof-transcript-format.md:131:     `fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/`
+docs/proof-transcript-format.md:138:     `fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/`
+docs/proof-transcript-format.md:166:- expected txid / input outpoint / continuing output / value / covenant id where relevant
+docs/proof-transcript-format.md:219:- the transcript names covenant facts, not roulette round logic
+docs/proof-transcript-format.md:233:  "transcript_id": "canonical-tn10-covenant-path",
+docs/proof-transcript-format.md:253:    "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+docs/proof-transcript-format.md:258:      "purpose": "covenant-create",
+docs/proof-transcript-format.md:259:      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/"
+docs/proof-transcript-format.md:263:      "purpose": "covenant-spend",
+docs/proof-transcript-format.md:264:      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/"
+docs/proof-transcript-format.md:269:      "fixture_path": "fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/"
+docs/proof-transcript-format.md:298:- canonical ENV-064 spend txid, ENV-063 input outpoint, continuing output, continuing output value, and covenant id match the proven TN10 values
+docs/proof-transcript-format.md:312:The online verifier is the operational direction for a limited Toccata layer on TN10. It is intended to answer whether a transcript/evidence bundle matches live chain state without trusting the app server and without replaying historical live actions.
+docs/proof-transcript-format.md:324:ENV-071C live status: public rusty-kaspa wRPC confirmed TN10 node readiness and continuing UTXO visibility, and the public TN10 transaction-detail API confirmed ENV-064 is accepted, has accepting block `e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190`, spends ENV-063 outpoint `2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0`, creates output `4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0` with value `99700000` sompi, and exposes covenant id `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7`. With these fields supported, the live online verifier result is `Pass`.
+docs/proof-transcript-format.md:344:- ENV-063 covenant input outpoint is spent by ENV-064 where available
+docs/proof-transcript-format.md:347:- covenant id is `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7` where available
+docs/proof-transcript-format.md:359:The command calls the foundation online verifier library directly. It performs only read-only TN10 queries, then prints a clear `PASS`, `PARTIAL`, or `FAIL` result with the wRPC endpoint, transaction-detail API URL, ENV-064 acceptance status, accepting block hash, ENV-063 input relationship, continuing output existence/value, covenant id, and final verifier result.
+docs/proof-transcript-format.md:369:ENV-072 does not add signing, transaction creation, submission/broadcast, wallet/private-key access, secrets, mainnet support, or roulette logic. Mainnet remains disabled/not supported; roulette remains future app adapter work above the limited Toccata foundation verifier.
+docs/proof-transcript-format.md:394:  "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+docs/proof-transcript-format.md:400:  "covenant_id_confirmed": true,
+crates/kaspa-foundation/tests/env069_proof_transcript.rs:28:    assert_eq!(transcript.steps[0].purpose, StepPurpose::CovenantCreate);
+crates/kaspa-foundation/tests/env069_proof_transcript.rs:29:    assert_eq!(transcript.steps[1].purpose, StepPurpose::CovenantSpend);
+crates/kaspa-foundation/tests/env069_proof_transcript.rs:60:        transcript.canonical.covenant_id,
+crates/kaspa-foundation/tests/env069_proof_transcript.rs:72:        "fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/"
+crates/kaspa-foundation/tests/env069_proof_transcript.rs:76:        "fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/"
+crates/kaspa-foundation/tests/env069_proof_transcript.rs:80:        "fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/"
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:16:    purpose: StepPurpose::CovenantCreate,
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:17:    fixture_path: "fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/",
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:26:    expected_covenant_id: Some("e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"),
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:32:    purpose: StepPurpose::CovenantSpend,
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:33:    fixture_path: "fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/",
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:46:    expected_covenant_id: Some("e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"),
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:54:        "fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/",
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:67:    expected_covenant_id: Some("e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"),
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:89:    assert_eq!(report.transcript_id, "canonical-tn10-covenant-path");
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:182:                covenant_id: "bad-covenant-id",
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:187:        VerificationError::WrongCovenantId,
+crates/kaspa-foundation/tests/env070_offline_transcript_verifier.rs:195:            fixture_path: "fixtures/tn10-canonical-covenant-path/does-not-exist/",
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:69:        covenant_id: Tn10ReadOnlyObservation::supported(
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:138:    skipped_evidence.covenant_id = Tn10ReadOnlyObservation::not_yet_supported(
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:139:        "current public read-only adapter does not expose covenant id directly",
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:246:    let covenant_input_txid = Hash::from_str(ENV063_COVENANT_OUTPOINT_TXID)?;
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:257:    let covenant_address = Address::try_from(ENV063_ENV064_COVENANT_ADDRESS)?;
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:258:    let covenant_utxos = client
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:259:        .get_utxos_by_addresses(vec![covenant_address])
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:261:    println!("covenant_address_utxo_count={}", covenant_utxos.len());
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:263:    let continuing_utxo = covenant_utxos.iter().find(|entry| {
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:273:            input.previous_outpoint.transaction_id == covenant_input_txid
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:312:    println!("transaction_detail_covenant_id={:?}", tx_detail.covenant_id);
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:346:        covenant_id: match tx_detail.covenant_id {
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:347:            Some(covenant_id) => Tn10ReadOnlyObservation::supported(covenant_id),
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:349:                "public TN10 transaction detail API did not expose Toccata covenant_id",
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:364:    covenant_id: Option<String>,
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:427:    let covenant_id = output0
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:428:        .and_then(|output| output.get("covenant_id"))
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:435:                .and_then(|input| input.get("covenant_id"))
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:448:        covenant_id,
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:1:use kaspa_foundation::covenant::constants::{
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:6:use kaspa_foundation::covenant::recipe::{corrected_tn10_recipe, historical_env060c_recipe};
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:14:    assert_eq!(recipe.id, "toccata-v1-keyed-blake3-state-transition");
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:21:fn corrected_recipe_records_toccata_keyed_blake3_and_domain_policy() {
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:62:        fixtures.covenant_id,
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:65:    assert_eq!(fixtures.covenant_id, CANONICAL_COVENANT_ID);
+crates/kaspa-foundation/src/evidence/canonical_fixtures.rs:3:use crate::covenant::constants::{
+crates/kaspa-foundation/src/evidence/canonical_fixtures.rs:16:    pub covenant_id: &'static str,
+crates/kaspa-foundation/src/evidence/canonical_fixtures.rs:26:        covenant_id: CANONICAL_COVENANT_ID,
+crates/kaspa-foundation/src/evidence/canonical_fixtures.rs:36:        && fixtures.covenant_id.len() == 64
+crates/kaspa-foundation/src/verifier/mod.rs:6:use crate::covenant::recipe::corrected_tn10_recipe;
+crates/kaspa-foundation/src/lib.rs:4://! helpers for the proven corrected TN10 covenant path. It does not expose live
+crates/kaspa-foundation/src/lib.rs:7:pub mod covenant;
+crates/kaspa-foundation/src/transcript/canonical.rs:3:use crate::covenant::constants::{
+crates/kaspa-foundation/src/transcript/canonical.rs:15:pub const CANONICAL_TRANSCRIPT_ID: &str = "canonical-tn10-covenant-path";
+crates/kaspa-foundation/src/transcript/canonical.rs:25:    pub covenant_id: &'static str,
+crates/kaspa-foundation/src/transcript/canonical.rs:28:/// Stable foundation transcript for the proven TN10 corrected covenant path.
+crates/kaspa-foundation/src/transcript/canonical.rs:49:        purpose: StepPurpose::CovenantCreate,
+crates/kaspa-foundation/src/transcript/canonical.rs:51:            "fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/",
+crates/kaspa-foundation/src/transcript/canonical.rs:60:        expected_covenant_id: Some(CANONICAL_COVENANT_ID),
+crates/kaspa-foundation/src/transcript/canonical.rs:65:        purpose: StepPurpose::CovenantSpend,
+crates/kaspa-foundation/src/transcript/canonical.rs:67:            "fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/",
+crates/kaspa-foundation/src/transcript/canonical.rs:76:        expected_covenant_id: Some(CANONICAL_COVENANT_ID),
+crates/kaspa-foundation/src/transcript/canonical.rs:83:            "fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/",
+crates/kaspa-foundation/src/transcript/canonical.rs:92:        expected_covenant_id: Some(CANONICAL_COVENANT_ID),
+crates/kaspa-foundation/src/transcript/canonical.rs:123:            covenant_id: fixtures.covenant_id,
+crates/kaspa-foundation/src/transcript/verifier.rs:9:use crate::covenant::constants::{
+crates/kaspa-foundation/src/transcript/verifier.rs:42:    WrongCovenantId,
+crates/kaspa-foundation/src/transcript/verifier.rs:139:        ("ENV-063", StepPurpose::CovenantCreate, StepMode::Live),
+crates/kaspa-foundation/src/transcript/verifier.rs:140:        ("ENV-064", StepPurpose::CovenantSpend, StepMode::Live),
+crates/kaspa-foundation/src/transcript/verifier.rs:177:    if canonical.covenant_id != CANONICAL_COVENANT_ID {
+crates/kaspa-foundation/src/transcript/verifier.rs:178:        return Err(VerificationError::WrongCovenantId);
+crates/kaspa-foundation/src/transcript/verifier.rs:206:        if let Some(covenant_id) = step.expected_covenant_id {
+crates/kaspa-foundation/src/transcript/verifier.rs:207:            if covenant_id != CANONICAL_COVENANT_ID {
+crates/kaspa-foundation/src/transcript/online_verifier.rs:33:    /// TN10 covenant spike; no endpoint secret is required.
+crates/kaspa-foundation/src/transcript/online_verifier.rs:115:    pub covenant_id: Tn10ReadOnlyObservation<String>,
+crates/kaspa-foundation/src/transcript/online_verifier.rs:274:            "covenant id",
+crates/kaspa-foundation/src/transcript/online_verifier.rs:275:            evidence.covenant_id,
+crates/kaspa-foundation/src/transcript/online_verifier.rs:276:            transcript.canonical.covenant_id.to_string(),
+crates/kaspa-foundation/src/transcript/schema.rs:23:    CovenantCreate,
+crates/kaspa-foundation/src/transcript/schema.rs:24:    CovenantSpend,
+crates/kaspa-foundation/src/transcript/schema.rs:55:    pub expected_covenant_id: Option<&'static str>,
+crates/kaspa-foundation/src/covenant/mod.rs:1://! Covenant recipes and constants.
+crates/kaspa-foundation/src/covenant/mod.rs:6:pub use recipe::{corrected_tn10_recipe, historical_env060c_recipe, CovenantRecipe};
+crates/kaspa-foundation/src/covenant/constants.rs:1://! Constants for the proven corrected TN10 covenant path.
+crates/kaspa-foundation/src/covenant/constants.rs:4://! `fixtures/tn10-canonical-covenant-path/`, not from live RPC, wallet files, or
+crates/kaspa-foundation/src/covenant/constants.rs:8:pub const CORRECTED_TN10_RECIPE_ID: &str = "toccata-v1-keyed-blake3-state-transition";
+crates/kaspa-foundation/src/covenant/constants.rs:14:/// Name used by rusty-kaspa for Toccata transaction version support.
+crates/kaspa-foundation/src/covenant/constants.rs:17:/// Observed Toccata transaction version in the corrected TN10 fixtures.
+crates/kaspa-foundation/src/covenant/constants.rs:34:/// ENV-063 covenant outpoint spent by the canonical ENV-064 spend.
+crates/kaspa-foundation/src/covenant/constants.rs:38:/// Continuing covenant output created by the canonical ENV-064 spend.
+crates/kaspa-foundation/src/covenant/constants.rs:45:/// Covenant id preserved through the canonical corrected TN10 transition.
+crates/kaspa-foundation/src/covenant/recipe.rs:1://! Small recipe abstraction for the corrected TN10 covenant path.
+crates/kaspa-foundation/src/covenant/recipe.rs:8:/// Describes a reusable covenant construction recipe without exposing live
+crates/kaspa-foundation/src/covenant/recipe.rs:11:pub struct CovenantRecipe {
+crates/kaspa-foundation/src/covenant/recipe.rs:23:pub const fn corrected_tn10_recipe() -> CovenantRecipe {
+crates/kaspa-foundation/src/covenant/recipe.rs:24:    CovenantRecipe {
+crates/kaspa-foundation/src/covenant/recipe.rs:30:        script_path: "corrected v1 covenant script path from ENV-062B/ENV-063/ENV-064",
+crates/kaspa-foundation/src/covenant/recipe.rs:32:        notes: "Canonical corrected path: TX_VERSION_TOCCATA, OpBlake3WithKey, 32-byte padded domain keys, continuing output preserves the covenant id.",
+crates/kaspa-foundation/src/covenant/recipe.rs:37:pub const fn historical_env060c_recipe() -> CovenantRecipe {
+crates/kaspa-foundation/src/covenant/recipe.rs:38:    CovenantRecipe {
+crates/kaspa-foundation/src/covenant/recipe.rs:46:        notes: "historical, superseded, non-canonical: do not use as the canonical covenant implementation",
+crates/kaspa-fair-cli/README.md:33:  "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+crates/kaspa-fair-cli/README.md:39:  "covenant_id_confirmed": true,
+crates/kaspa-fair-cli/README.md:66:Before the roulette PoC consumes the limited TN10 Toccata layer, run the
+crates/kaspa-fair-cli/README.md:70:scripts/env074-toccata-layer-ready.sh
+crates/kaspa-fair-cli/README.md:74:readiness assertions and the limited read-only TN10 Toccata layer is ready to be
+crates/kaspa-fair-cli/src/roulette.rs:22:    pub covenant_id: String,
+crates/kaspa-fair-cli/src/roulette.rs:327:            "foundation_covenant_id": self.foundation.covenant_id,
+crates/kaspa-fair-cli/src/roulette.rs:337:            "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/roulette.rs:391:        "covenant_id_confirmed",
+crates/kaspa-fair-cli/src/roulette.rs:428:        covenant_id: required_string_field(value, "covenant_id")?,
+crates/kaspa-fair-cli/src/roulette.rs:457:        "foundation_covenant_id": foundation.covenant_id,
+crates/kaspa-fair-cli/src/roulette.rs:467:        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/roulette.rs:684:        "round_id={round_id}\nfoundation_covenant_id={}\nfoundation_env064_spend_txid={}\nfoundation_accepting_block_hash={}\nfinal_mock_bet_ledger_hash={}\n",
+crates/kaspa-fair-cli/src/roulette.rs:685:        foundation.covenant_id,
+crates/kaspa-fair-cli/src/roulette.rs:747:            covenant_id: "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+crates/kaspa-fair-cli/src/roulette.rs:773:            "covenant_id_confirmed": true,
+crates/kaspa-fair-cli/src/roulette.rs:779:            "covenant_id": foundation_fixture().covenant_id,
+crates/kaspa-fair-cli/src/main.rs:213:    covenant_id: String,
+crates/kaspa-fair-cli/src/main.rs:260:        "covenant_id_confirmed",
+crates/kaspa-fair-cli/src/main.rs:297:        covenant_id: required_string_field(value, "covenant_id")?,
+crates/kaspa-fair-cli/src/main.rs:325:        "foundation_covenant_id": foundation.covenant_id,
+crates/kaspa-fair-cli/src/main.rs:335:        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/main.rs:441:        "round_id={ROULETTE_POC_ROUND_ID}\nfoundation_covenant_id={}\nfoundation_env064_spend_txid={}\nfoundation_accepting_block_hash={}\nfinal_mock_bet_ledger_hash={}\n",
+crates/kaspa-fair-cli/src/main.rs:442:        foundation.covenant_id,
+crates/kaspa-fair-cli/src/main.rs:639:        "covenant_id": ENV063_ENV064_COVENANT_ID,
+crates/kaspa-fair-cli/src/main.rs:645:        "covenant_id_confirmed": detail.covenant_id.as_deref() == Some(ENV063_ENV064_COVENANT_ID),
+crates/kaspa-fair-cli/src/main.rs:715:    covenant_address_utxo_count: usize,
+crates/kaspa-fair-cli/src/main.rs:731:    covenant_id: Option<String>,
+crates/kaspa-fair-cli/src/main.rs:762:    let covenant_input_txid = Hash::from_str(ENV063_COVENANT_OUTPOINT_TXID)?;
+crates/kaspa-fair-cli/src/main.rs:765:    let covenant_address = Address::try_from(ENV063_ENV064_COVENANT_ADDRESS)?;
+crates/kaspa-fair-cli/src/main.rs:766:    let covenant_utxos = client
+crates/kaspa-fair-cli/src/main.rs:767:        .get_utxos_by_addresses(vec![covenant_address])
+crates/kaspa-fair-cli/src/main.rs:770:    let continuing_utxo = covenant_utxos.iter().find(|entry| {
+crates/kaspa-fair-cli/src/main.rs:778:            input.previous_outpoint.transaction_id == covenant_input_txid
+crates/kaspa-fair-cli/src/main.rs:831:        covenant_id: match transaction_detail.covenant_id.clone() {
+crates/kaspa-fair-cli/src/main.rs:832:            Some(covenant_id) => Tn10ReadOnlyObservation::supported(covenant_id),
+crates/kaspa-fair-cli/src/main.rs:834:                "public TN10 transaction detail API did not expose Toccata covenant_id",
+crates/kaspa-fair-cli/src/main.rs:845:        covenant_address_utxo_count: covenant_utxos.len(),
+crates/kaspa-fair-cli/src/main.rs:910:    let covenant_id = output0
+crates/kaspa-fair-cli/src/main.rs:911:        .and_then(|output| output.get("covenant_id"))
+crates/kaspa-fair-cli/src/main.rs:918:                .and_then(|input| input.get("covenant_id"))
+crates/kaspa-fair-cli/src/main.rs:931:        covenant_id,
+crates/kaspa-fair-cli/src/main.rs:974:        "covenant_address_utxo_count={}",
+crates/kaspa-fair-cli/src/main.rs:975:        summary.readout.covenant_address_utxo_count
+crates/kaspa-fair-cli/src/main.rs:1006:        "covenant_id_confirmed={}",
+crates/kaspa-fair-cli/src/main.rs:1007:        detail.covenant_id.as_deref().unwrap_or("unavailable")
+crates/kaspa-fair-cli/src/main.rs:1116:        assert_eq!(value["covenant_id"], ENV063_ENV064_COVENANT_ID);
+crates/kaspa-fair-cli/src/main.rs:1121:        assert_eq!(value["covenant_id_confirmed"], true);
+crates/kaspa-fair-cli/src/main.rs:1182:                covenant_address_utxo_count: 1,
+crates/kaspa-fair-cli/src/main.rs:1196:                    covenant_id: Some(ENV063_ENV064_COVENANT_ID.to_string()),
+crates/kaspa-fair-cli/src/main.rs:1208:                    covenant_id: Tn10ReadOnlyObservation::supported(
+crates/kaspa-fair-cli/src/main.rs:1214:                transcript_id: "canonical-tn10-covenant-path",
+examples/roulette-poc/ui/sample-round.json:1:{"bet_ledger_hash":"6b5e009eb78a505626c14840d3eeb79848c4926bcd6f597295dce9162d95e0fd","bets":[{"bet_id":"bet-001","bet_type":"straight-number","payout_multiplier":35,"selection_value":"17","stake_units":10},{"bet_id":"bet-002","bet_type":"colour","payout_multiplier":1,"selection_value":"red","stake_units":5},{"bet_id":"bet-003","bet_type":"colour","payout_multiplier":1,"selection_value":"black","stake_units":4},{"bet_id":"bet-004","bet_type":"parity","payout_multiplier":1,"selection_value":"odd","stake_units":7},{"bet_id":"bet-005","bet_type":"parity","payout_multiplier":1,"selection_value":"even","stake_units":6},{"bet_id":"bet-006","bet_type":"range","payout_multiplier":1,"selection_value":"high","stake_units":9},{"bet_id":"bet-007","bet_type":"range","payout_multiplier":1,"selection_value":"low","stake_units":8}],"broadcast_used":false,"final_result":"PASS","foundation_accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","foundation_covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","foundation_env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","foundation_network":"testnet-10","foundation_readonly":true,"foundation_verifier_result":"PASS","foundation_verifier_schema":"kaspa-fair-live-verification-result-v1","mainnet_supported":false,"payout_table_version":"env-077-roulette-engine-payouts-v1","result_algorithm":"blake3-domain-separated-rejection-sampling-v1","result_colour":"red","result_number":21,"roulette_variant":"european","round_id":"env-077-round-0001","round_state":"ProofPublished","rule_version":"env-077-roulette-engine-rules-v1","schema":"kaspa-fair-roulette-engine-round-v1","seed_material_description":"utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash","seed_material_hex":"726f756e645f69643d656e762d3037372d726f756e642d303030310a666f756e646174696f6e5f636f76656e616e745f69643d653262646438373461646438316562636462613464306639656636353039363764646164663130383563653461623135663565623239666464626637396666370a666f756e646174696f6e5f656e763036345f7370656e645f747869643d346362333164626164343436353636356239373862613365633565656563623231383234613365613638366635303835623436613937303636343436343636630a666f756e646174696f6e5f616363657074696e675f626c6f636b5f686173683d653064363265616432343161353231373736393236366463393665383035356335383933633239303734656432633530626132336465316139626137353139300a66696e616c5f6d6f636b5f6265745f6c65646765725f686173683d366235653030396562373861353035363236633134383430643365656237393834386334393236626364366635393732393564636539313632643935653066640a","settlement":[{"bet_id":"bet-001","bet_type":"straight-number","net_units":-10,"payout_units":0,"selection_value":"17","stake_units":10,"won":false},{"bet_id":"bet-002","bet_type":"colour","net_units":5,"payout_units":10,"selection_value":"red","stake_units":5,"won":true},{"bet_id":"bet-003","bet_type":"colour","net_units":-4,"payout_units":0,"selection_value":"black","stake_units":4,"won":false},{"bet_id":"bet-004","bet_type":"parity","net_units":7,"payout_units":14,"selection_value":"odd","stake_units":7,"won":true},{"bet_id":"bet-005","bet_type":"parity","net_units":-6,"payout_units":0,"selection_value":"even","stake_units":6,"won":false},{"bet_id":"bet-006","bet_type":"range","net_units":9,"payout_units":18,"selection_value":"high","stake_units":9,"won":true},{"bet_id":"bet-007","bet_type":"range","net_units":-8,"payout_units":0,"selection_value":"low","stake_units":8,"won":false}],"signing_used":false,"transaction_created":false,"wallet_access_used":false}
+examples/roulette-poc/ui/app.js:371:    ["foundation covenant id", round.foundation_covenant_id],
+scripts/env076-roulette-poc-dry-run.sh:34:    ("covenant_id_confirmed == true", foundation.get("covenant_id_confirmed") is True),
+scripts/env074-toccata-layer-ready.sh:7:artifact_dir="spikes/kaspa-foundation/artifacts/env-074-toccata-layer-readiness"
+scripts/env074-toccata-layer-ready.sh:26:scripts/env074-toccata-layer-ready.sh
+scripts/env074-toccata-layer-ready.sh:38:scripts/env074-toccata-layer-ready.sh
+scripts/env074-toccata-layer-ready.sh:77:    ("covenant_id_confirmed == true", data.get("covenant_id_confirmed") is True),
+scripts/env074-toccata-layer-ready.sh:104:# ENV-074 — Limited Toccata layer readiness gate
+scripts/env074-toccata-layer-ready.sh:111:scripts/env074-toccata-layer-ready.sh
+scripts/env074-toccata-layer-ready.sh:147:- covenant_id_confirmed == true
+scripts/env077-roulette-engine-check.sh:33:    ("covenant_id_confirmed == true", foundation.get("covenant_id_confirmed") is True),
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:5:artifact_dir="spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:6:feasibility_doc="docs/env083b-toccata-fairness-anchor-feasibility.md"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:32:if [[ ! -s docs/toccata-fairness-anchor-architecture.md ]]; then
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:45:  echo "Primary project guidance inspected: docs/toccata-fairness-anchor-architecture.md"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:46:  grep -nE 'Tier 1|Tier 2|covenant lineage|JSON|Rust|RPC|SilverScript|UI|wallet|signing|broadcast|mainnet|ENV-083B|KIP-17|KIP-20|KIP-21|KIP-16' docs/toccata-fairness-anchor-architecture.md || true
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:64:      grep -nEi 'Status:|covenant|covenant_id|RpcTransactionOutput|RpcUtxoEntry|OpInputCovenantId|OpOutputCovenantId|OpCov|sequencing|seqcommit|lane|OpZkPrecompile|Testnet-10|Testnet 12|Experimental|unstable|valid only' "$tmpdir/$file" | head -n 120 || true
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:69:  fetch_source 'https://raw.githubusercontent.com/kaspanet/rusty-kaspa/master/docs/toccata-guide.md' 'toccata-guide.md'
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:80:  echo "Suggested Toccata/covenant search"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:82:    -E 'Toccata|toccata|covenant|covenant_id|Covenant|KIP-17|KIP-20|KIP-21|seqcommit|SeqCommit|GetSeqCommitLaneProof|storageMass|storage_mass|computeBudget|RpcTransactionOutput|RpcUtxoEntry' \
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:92:    -E 'silverscript|SilverScript|.sil|script_public_key|ScriptPublicKey|txscript|opcode|OpInputCovenantId|OpOutputCovenantId|OpAuthOutput|OpCov' \
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:101:| Rust | Use now | Truth layer: covenant-state model, commitment/reveal verifier, deterministic derivation, JSON mirror validation, tests. | No wallet/signing/broadcast in ENV-083B. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:102:| RPC / gRPC / node API | Use now as read-only transport | TN10 readiness, UTXO visibility, transaction-detail evidence, covenant IDs and output bindings. | Not proof logic and not transaction submission. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:103:| SilverScript | Do not depend on now | Candidate covenant authoring tool for a later compatibility spike. | Experimental and README says compiled scripts are valid only on Testnet 12, not assumed TN10-compatible. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:106:| Optional local TN10 indexed node | Fallback only | Use if public endpoints cannot expose covenant/UTXO/lane evidence. | Read-only unless explicitly authorized. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:111:  "kip20_covenant_lineage_readonly_tn10_verified": true,
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:114:  "recommended_next_step": "ENV-083C offline Rust covenant-state artifact and verifier model; no transaction creation, signing, broadcast, wallet, or mainnet.",
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:115:  "claim_allowed": "Toccata covenant fairness anchor",
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:116:  "reason": "Official Toccata/KIP-20 sources define output covenant bindings and UTXO covenant IDs; local Rust/CLI verifier exposes and checks covenant_id read-only; public TN10 transaction-detail API exposes input covenant_id, output covenant_authorizing_input, and output covenant_id for the canonical accepted TN10 covenant transition; the live read-only CLI verifier returns covenant_id_confirmed=true and verifier_result=PASS."
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:129:Hard gate: KIP-20 covenant lineage read-only TN10 evidence path verified for the canonical covenant path using public TN10 read-only tooling.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:131:Allowed claim after ENV-083B: Toccata covenant fairness anchor.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:133:Recommended next ENV: ENV-083C offline Rust covenant-state artifact and verifier model.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:135:No implementation was added for roulette randomisation, covenant transactions, wallet access, signing, broadcasting, real betting, payouts, custody, UI behaviour, or mainnet.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:157:    'covenant_id_confirmed': data.get('covenant_id_confirmed') is True,
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:206:    'kip20_covenant_lineage_readonly_tn10_verified',
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:216:if data['claim_allowed'] not in {'Toccata covenant fairness anchor', 'Tier-1 TN10 anchor only', 'offline covenant model only'}:
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:218:if not isinstance(data['kip20_covenant_lineage_readonly_tn10_verified'], bool):
+
+Suggested RPC/API search
+docs/env083b-toccata-fairness-anchor-feasibility.md:103:1. Official Toccata guide states Toccata RPC/protobuf changes include `RpcTransactionOutput.covenant` and `RpcUtxoEntry.covenant_id`.
+docs/env083b-toccata-fairness-anchor-feasibility.md:112:`public_tn10_rpc_sufficient`: true for the current canonical read-only covenant lineage evidence path.
+docs/env083b-toccata-fairness-anchor-feasibility.md:121:### Local TN10 `--utxoindex` requirement
+docs/env083b-toccata-fairness-anchor-feasibility.md:123:`local_tn10_utxoindex_required`: false for this gate; unknown/conditional for future custom per-round covenant workflows.
+docs/env083b-toccata-fairness-anchor-feasibility.md:125:Public wRPC reports UTXO-index status and public transaction-detail API exposes covenant IDs for the canonical evidence. A local `kaspad --utxoindex --testnet` remains a fallback if public endpoints stop exposing covenant fields, if historical indexing is needed beyond public API retention, or if future verifier checks need richer raw RPC/protobuf fields than the public API provides.
+docs/env083b-toccata-fairness-anchor-feasibility.md:254:Run a local TN10 node with UTXO index, following the rusty-kaspa Toccata guide pattern (`kaspad --utxoindex --testnet`), if public RPC/API cannot expose covenant IDs, covenant bindings, UTXO lineage, or future KIP-21 evidence. Still keep it read-only unless explicit authorization is granted.
+docs/proof-transcript-format.md:322:The configured public TN10 approach is the one already used by the reference spike: rusty-kaspa wRPC via `kaspa_wrpc_client::KaspaRpcClient` with `WrpcEncoding::Borsh`, `Resolver::default()`, `NetworkId::with_suffix(NetworkType::Testnet, 10)`, and `ConnectStrategy::Fallback`. ENV-071B exercised that path from an ignored, explicitly gated live integration test while the default verifier path remained deterministic/offline. ENV-071C adds a second read-only transaction-detail source, `https://api-tn10.kaspa.org/transactions/<txid>?inputs=true&outputs=true&resolve_previous_outpoints=light`, to retrieve accepted mined transaction structure by txid. The live adapter imports only read-only calls; it does not import signing, wallet, transaction creation, or submit paths into the default verifier flow.
+docs/proof-transcript-format.md:407:  "wrpc_endpoint_observed": "..."
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:221:    use kaspa_rpc_core::api::rpc::RpcApi;
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:222:    use kaspa_wrpc_client::{
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:225:        KaspaRpcClient, Resolver, WrpcEncoding,
+crates/kaspa-foundation/tests/env071_online_tn10_readonly_verifier.rs:229:        WrpcEncoding::Borsh,
+crates/kaspa-foundation/Cargo.toml:17:kaspa-rpc-core = "0.15.0"
+crates/kaspa-foundation/Cargo.toml:18:kaspa-wrpc-client = "0.15.0"
+crates/kaspa-foundation/src/transcript/online_verifier.rs:6://! nodes using `kaspa_wrpc_client` resolver defaults.
+crates/kaspa-foundation/src/transcript/online_verifier.rs:16:    "kaspa_wrpc_client::KaspaRpcClient with WrpcEncoding::Borsh, ",
+crates/kaspa-fair-cli/README.md:46:  "wrpc_endpoint_observed": "..."
+crates/kaspa-fair-cli/Cargo.toml:11:kaspa-rpc-core = "0.15.0"
+crates/kaspa-fair-cli/Cargo.toml:12:kaspa-wrpc-client = "0.15.0"
+crates/kaspa-fair-cli/src/main.rs:655:        value["wrpc_endpoint_observed"] = serde_json::Value::String(endpoint.clone());
+crates/kaspa-fair-cli/src/main.rs:737:    use kaspa_rpc_core::api::rpc::RpcApi;
+crates/kaspa-fair-cli/src/main.rs:738:    use kaspa_wrpc_client::{
+crates/kaspa-fair-cli/src/main.rs:741:        KaspaRpcClient, Resolver, WrpcEncoding,
+crates/kaspa-fair-cli/src/main.rs:745:        WrpcEncoding::Borsh,
+crates/kaspa-fair-cli/src/main.rs:947:        "wrpc_endpoint={}",
+crates/kaspa-fair-cli/src/main.rs:1128:        assert_eq!(value["wrpc_endpoint_observed"], "wss://example.testnet-10");
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:10:repo_evidence="$artifact_dir/env-083b-repo-type-rpc-evidence.txt"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:87:    -E 'getUtxos|GetUtxos|getVirtualChain|GetVirtualChain|getBlock|getBlocks|getTransaction|getTransactions|utxoindex|rpc|grpc|protobuf|borsh' \
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:112:  "public_tn10_rpc_sufficient": true,
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:113:  "local_tn10_utxoindex_required": false,
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:207:    'public_tn10_rpc_sufficient',
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:208:    'local_tn10_utxoindex_required',
+Cargo.lock:296:name = "borsh"
+Cargo.lock:301: "borsh-derive",
+Cargo.lock:307:name = "borsh-derive"
+Cargo.lock:1321: "borsh",
+Cargo.lock:1368: "borsh",
+Cargo.lock:1473: "kaspa-rpc-core",
+Cargo.lock:1474: "kaspa-wrpc-client",
+Cargo.lock:1491: "kaspa-rpc-core",
+Cargo.lock:1492: "kaspa-wrpc-client",
+Cargo.lock:1508: "borsh",
+Cargo.lock:1548: "borsh",
+Cargo.lock:1602: "borsh",
+Cargo.lock:1628:name = "kaspa-rpc-core"
+Cargo.lock:1635: "borsh",
+Cargo.lock:1653: "kaspa-rpc-macros",
+Cargo.lock:1671:name = "kaspa-rpc-macros"
+Cargo.lock:1691: "borsh",
+Cargo.lock:1734: "borsh",
+Cargo.lock:1771:name = "kaspa-wrpc-client"
+Cargo.lock:1778: "borsh",
+Cargo.lock:1786: "kaspa-rpc-core",
+Cargo.lock:1787: "kaspa-rpc-macros",
+Cargo.lock:1803: "workflow-rpc",
+Cargo.lock:4036: "borsh",
+Cargo.lock:4153:name = "workflow-rpc"
+Cargo.lock:4161: "borsh",
+Cargo.lock:4176: "workflow-rpc-macros",
+Cargo.lock:4183:name = "workflow-rpc-macros"
+Cargo.lock:4202: "borsh",
+
+Suggested SilverScript/script search
+docs/toccata-fairness-anchor-architecture.md:161:* BLAKE3 hash opcodes.
+docs/toccata-fairness-anchor-architecture.md:230:RPC, Rust, and SilverScript are not competing choices. They should have separate roles.
+docs/toccata-fairness-anchor-architecture.md:265:### SilverScript
+docs/toccata-fairness-anchor-architecture.md:267:SilverScript should be treated as a covenant-authoring candidate, not the foundation of the PoC.
+docs/toccata-fairness-anchor-architecture.md:269:Use SilverScript only if a separate feasibility ENV confirms:
+docs/toccata-fairness-anchor-architecture.md:276:If SilverScript is not compatible with the target network or exact covenant features, the PoC should proceed with Rust-native modelling and script construction.
+docs/toccata-fairness-anchor-architecture.md:397:* Use BLAKE3 hash opcodes where appropriate.
+docs/toccata-fairness-anchor-architecture.md:481:* Evaluate SilverScript compatibility but do not depend on it.
+docs/toccata-fairness-anchor-architecture.md:621:10. No silent scope expansion.
+docs/kaspa-foundation-architecture.md:276:- historical proof artifacts being silently altered
+docs/kaspa-foundation-architecture.md:660:If a correction is required, create a new artifact folder rather than silently rewriting historical evidence.
+docs/kaspa-foundation-architecture.md:1165:hash opcode: OpBlake3WithKey
+docs/env083b-toccata-fairness-anchor-feasibility.md:34:- SilverScript README: `https://raw.githubusercontent.com/kaspanet/silverscript/master/README.md`
+docs/env083b-toccata-fairness-anchor-feasibility.md:53:- SilverScript is optional until proven compatible.
+docs/env083b-toccata-fairness-anchor-feasibility.md:133:| SilverScript | Candidate covenant-authoring tool only. Not a dependency for TN10 PoC now. | Separate compatibility spike if it targets TN10 and emits inspectable scripts compatible with rusty-kaspa/TN10. | Required build dependency; proof source; TN10 dependency before compatibility is proven. |
+docs/env083b-toccata-fairness-anchor-feasibility.md:138:## 5. SilverScript suitability for this TN10 PoC now
+docs/env083b-toccata-fairness-anchor-feasibility.md:140:SilverScript is not suitable as a required dependency for this TN10 PoC today.
+docs/env083b-toccata-fairness-anchor-feasibility.md:142:Official SilverScript README evidence:
+docs/env083b-toccata-fairness-anchor-feasibility.md:148:Because the PoC target is TN10, SilverScript must remain optional. The next step should use Rust-native covenant-state modelling and existing rusty-kaspa/TN10 evidence types. SilverScript can be revisited only after a separate compatibility ENV proves TN10 support and inspectable output compatibility.
+docs/env083b-toccata-fairness-anchor-feasibility.md:268:- SilverScript dependency unless TN10 compatibility is proven;
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:26:    assert_eq!(recipe.hash_opcode_name, HASH_OPCODE_NAME);
+crates/kaspa-foundation/tests/env068_canonical_recipe.rs:27:    assert!(recipe.hash_opcode_name.contains("OpBlake3WithKey"));
+crates/kaspa-foundation/src/covenant/recipe.rs:15:    pub hash_opcode_name: &'static str,
+crates/kaspa-foundation/src/covenant/recipe.rs:28:        hash_opcode_name: HASH_OPCODE_NAME,
+crates/kaspa-foundation/src/covenant/recipe.rs:42:        hash_opcode_name: "OpBlake2bWithKey",
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:46:  grep -nE 'Tier 1|Tier 2|covenant lineage|JSON|Rust|RPC|SilverScript|UI|wallet|signing|broadcast|mainnet|ENV-083B|KIP-17|KIP-20|KIP-21|KIP-16' docs/toccata-fairness-anchor-architecture.md || true
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:64:      grep -nEi 'Status:|covenant|covenant_id|RpcTransactionOutput|RpcUtxoEntry|OpInputCovenantId|OpOutputCovenantId|OpCov|sequencing|seqcommit|lane|OpZkPrecompile|Testnet-10|Testnet 12|Experimental|unstable|valid only' "$tmpdir/$file" | head -n 120 || true
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:74:  fetch_source 'https://raw.githubusercontent.com/kaspanet/silverscript/master/README.md' 'silverscript-README.md'
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:90:  echo "Suggested SilverScript/script search"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:92:    -E 'silverscript|SilverScript|.sil|script_public_key|ScriptPublicKey|txscript|opcode|OpInputCovenantId|OpOutputCovenantId|OpAuthOutput|OpCov' \
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:103:| SilverScript | Do not depend on now | Candidate covenant authoring tool for a later compatibility spike. | Experimental and README says compiled scripts are valid only on Testnet 12, not assumed TN10-compatible. |
+Cargo.lock:1347: "kaspa-txscript",
+Cargo.lock:1381: "kaspa-txscript-errors",
+Cargo.lock:1431: "kaspa-txscript",
+Cargo.lock:1612: "kaspa-txscript",
+Cargo.lock:1613: "kaspa-txscript-errors",
+Cargo.lock:1654: "kaspa-txscript",
+Cargo.lock:1685:name = "kaspa-txscript"
+Cargo.lock:1699: "kaspa-txscript-errors",
+Cargo.lock:1717:name = "kaspa-txscript-errors"

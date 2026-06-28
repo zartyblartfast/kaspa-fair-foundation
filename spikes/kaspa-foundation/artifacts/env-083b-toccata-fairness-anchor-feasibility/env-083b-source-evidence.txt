@@ -1,0 +1,390 @@
+ENV-083B source evidence
+
+Primary project guidance inspected: docs/toccata-fairness-anchor-architecture.md
+7:The project must not drift into a generic roulette UI with JSON proof files. The core product thesis is:
+15:This PoC assumes the roulette UI and operator are not trusted.
+22:* present a UI result that does not match the actual proof data
+26:The project goal is not to make the UI trusted. The goal is to make the fairness evidence independently checkable.
+41:* misleading UI copy
+42:* real-money betting, custody, payout, wallet, or regulatory risks
+54:* An app-facing JSON verifier.
+57:* A simple static roulette UI.
+69:* Transaction broadcasting.
+75:The current JSON path is useful as a scaffold, but it must not become the centre of the PoC.
+81:### Tier 1 — Trustless beats trusted
+87:The Tier 1 message is:
+93:### Tier 2 — Covenant-enforced beats merely anchored
+97:The Toccata thesis is stronger: covenant lineage, state transitions, transaction introspection, and covenant IDs should be used where possible so that the fairness lifecycle is not merely recorded, but constrained by the covenant flow.
+99:The Tier 2 message is:
+112:Trust this roulette UI.
+118:Do not trust the roulette UI.
+120:The UI displays a result, but the fairness proof can be independently checked.
+165:* Covenant IDs / consensus-tracked covenant lineage.
+168:The most important missed opportunity is covenant lineage.
+170:A plain JSON proof can say:
+182:Here is a round state anchored to a covenant lineage.
+196:Static Roulette UI
+198:App-facing proof JSON
+200:Rust verifier / deterministic proof model
+206:Later, only if authorised: TN10 testnet transaction creation/broadcast
+209:The JSON file should be treated as a mirror/export of proof evidence, not as the source of truth.
+211:## JSON mirror ownership
+213:The app-facing JSON is not independently trusted.
+215:The Rust verifier owns the mapping between JSON mirror fields and covenant/TN10 evidence.
+217:A JSON proof file is valid only if the Rust verifier can prove that:
+219:* the JSON round ID matches the covenant or anchor evidence
+226:The JSON file is therefore an export/mirror format, not the source of truth.
+230:RPC, Rust, and SilverScript are not competing choices. They should have separate roles.
+232:### Rust
+234:Rust should be the canonical truth layer.
+236:Use Rust for:
+244:* App-facing proof JSON validation.
+248:Rust should not be bypassed by UI-generated result logic.
+250:### RPC / node API
+252:RPC should be the read-only evidence transport layer.
+254:Use RPC for:
+263:RPC should not become the core proof logic layer.
+265:### SilverScript
+267:SilverScript should be treated as a covenant-authoring candidate, not the foundation of the PoC.
+269:Use SilverScript only if a separate feasibility ENV confirms:
+276:If SilverScript is not compatible with the target network or exact covenant features, the PoC should proceed with Rust-native modelling and script construction.
+278:### UI
+280:The UI should remain a static mock display and explanation layer.
+282:Use the UI for:
+292:The UI must not:
+297:* Access wallets.
+314:* Transaction submission/broadcast.
+318:Any ENV that crosses into faucet, wallet, signing, transaction creation, or broadcast must ask for explicit authorisation first.
+371:Not all of these need to exist immediately. ENV-083B should determine the minimum useful set.
+390:### KIP-17 covenants
+400:### KIP-20 covenant IDs
+404:* Establish stable covenant lineage.
+406:* Avoid arbitrary JSON files masquerading as proof.
+411:### KIP-21 sequencing commitments
+422:### KIP-16 ZK precompile
+436:1. An independent party can verify a roulette round end-to-end without trusting the UI or operator.
+444:   * no wallet/private key access
+445:   * no signing
+447:   * no broadcasting
+448:   * no mainnet
+452:### ENV-083B — TN10 Toccata fairness-anchor architecture and toolchain sanity check
+456:Define the correct Toccata-backed fairness architecture before implementing random demo rounds or deeper UI changes.
+458:ENV-083B must treat KIP-20 covenant lineage feasibility as a hard gate.
+460:If covenant IDs / covenant lineage cannot be verified read-only on TN10 with available tooling, ENV-083B must not pretend the architecture is proven.
+464:* **Fallback A**: Use a bare TN10 commitment anchor plus Rust verifier while clearly labelling this as Tier 1 only, not a full Toccata covenant fairness proof.
+465:* **Fallback B**: Use an offline Rust covenant-state model while deferring live TN10 covenant evidence until the necessary node/API/tooling support is confirmed.
+466:* **Fallback C**: Use a local TN10 node or indexed node if public RPC cannot expose the required covenant evidence.
+471:* Confirm whether KIP-17, KIP-20, KIP-21, and KIP-16 are applicable now, later, or not at all.
+474:  * one covenant lineage for the app, with per-round state transitions, or
+477:* Decide which fields remain off-chain JSON mirror fields.
+480:* Identify what public RPC can and cannot provide.
+481:* Evaluate SilverScript compatibility but do not depend on it.
+482:* Produce a no-wallet/no-signing/no-broadcast implementation plan.
+492:No later ENV may claim “Toccata-backed covenant fairness” unless ENV-083B proves the required covenant evidence path.
+498:Implement a Rust-native model of the proposed covenant fairness lifecycle without signing or broadcasting transactions.
+507:* App-facing JSON mirror.
+510:No wallet, signing, broadcast, or mainnet.
+512:### ENV-083D — UI explanation and proof narrative
+516:Update the UI/docs so users can understand “random but verifiable”.
+522:* Clear statement that the UI does not choose the result.
+530:Only if explicitly authorised, create/sign/broadcast a minimal TN10 testnet covenant transaction flow.
+532:This ENV must not start without user approval because it crosses into transaction creation/signing/broadcasting.
+580:* no wallet/private key access
+581:* no signing
+583:* no submitting/broadcasting
+584:* no mainnet
+606:5. JSON mirrors evidence; Rust verifies the mirror.
+607:   A JSON proof file is valid only when the Rust verifier proves the mapping to covenant evidence.
+622:   Wallet, signing, broadcasting, faucet, custody, and mainnet work require explicit authorisation.
+
+Threat model status: present
+# threat-model
+
+status: placeholder
+planned in future ENV step
+no live TN10 action
+no mainnet
+no secrets
+
+Official upstream source snippets
+
+===== https://raw.githubusercontent.com/kaspanet/rusty-kaspa/master/docs/toccata-guide.md =====
+FETCH_OK toccata-guide.md
+3:Kaspa is about to take a significant leap with the **Toccata Hardfork**, as detailed in [KIP16](https://github.com/kaspanet/kips/blob/master/kip-0016.md), [KIP17](https://github.com/kaspanet/kips/blob/master/kip-0017.md), [KIP20](https://github.com/kaspanet/kips/blob/master/kip-0020.md), and [KIP21](https://github.com/kaspanet/kips/blob/master/kip-0021.md), bringing native L1 covenant programming and infrastructure for based ZK applications to Kaspa. The hard fork is scheduled to activate on mainnet at DAA score `474,165,565`, roughly on June 30, 2026, at 16:15 UTC.
+98:## Test Against Testnet-10 Before Activation
+100:Exchanges, miners, pools, explorers, wallet operators, and other service providers should test their full infrastructure against Testnet-10 before Toccata activates on mainnet.
+102:Ideally, this includes deposit and withdrawal flows, block template handling, mined block submission, transaction parsing, indexing, wallet balance tracking, fee estimation, and any internal services that depend on transaction or block formats. Testing on Testnet-10 is the recommended way to verify that your systems handle the Toccata transaction fields before mainnet activation.
+124:- `RpcTransactionOutput.covenant` was added.
+125:- UTXO entries can carry covenant IDs: `RpcUtxoEntry.covenant_id`.
+144:- Test deposit, withdrawal, indexing, balance tracking, and fee-estimation flows against Testnet-10.
+153:- Test your mining path against Testnet-10 before mainnet activation where possible.
+159:- Update pool, job-generation, and block-submission code to preserve post-Toccata template fields while building the solved block. In particular, do not drop or overwrite `RpcBlockHeader.version`, transaction version `1`, `RpcTransaction.storage_mass`, `RpcTransactionInput.computeBudget`, or `RpcTransactionOutput.covenant`.
+161:- Test `GetBlockTemplate` -> mining work distribution -> solved block reconstruction -> `SubmitBlock` on Testnet-10 with post-activation templates. After Toccata activates, blocks that strip the new fields can be invalid.
+165:- Update your SDKs, or regenerate RPC bindings after reviewing [gRPC/protobuf Changes](#grpcprotobuf-changes), so transaction version `1`, input `computeBudget`, output `covenant`, UTXO `covenant_id`, and `storageMass` / `storage_mass` are handled correctly.
+166:- If your storage schema records full transaction, output, or UTXO data, make sure it can store covenant bindings and covenant IDs.
+167:- Review `GetBlockRewardInfo` and `GetSeqCommitLaneProof` if your integration needs reward-accounting, block-color, or KIP-21 lane-proof data.
+
+===== https://raw.githubusercontent.com/kaspanet/kips/master/kip-0016.md =====
+FETCH_OK kip-0016.md
+6:  Status: Proposed, Implemented and activated in TN10
+11:This KIP introduces a new zero-knowledge (ZK) proof verification opcode: `OpZkPrecompile` to the Kaspa scripting language. It's name refers to the ability to execute ZK "precompiles", i.e. predefined specific programs meant to alleviate some of the complexities that are involved in designing ZK proof verification systems. The addition of this opcode is the first to enable verifiable computation on the Kaspa network, providing a concrete foundation for Layer 2 solutions and other advanced applications.
+35:This proposal introduces a single new opcode: `OpZkPrecompile` (opcode value: `0xa6`).
+39:The `OpZkPrecompile` opcode operates as a generic ZK precompile execution interface that dispatches to specific proof system implementations based on a tag identifier. A tag identifier is merely a hexadecimal value identifying the opcode to be executed. The opcode expects a tag as its first argument, followed by additional parameters specific to the selected precompile, which usually manifests as a proof system.
+71:**STWO Status:** StarkWare's STWO prover shows promise as a next-generation STARK system, but appears to face current limitations for production integration. The project, at the time of evaluation required nightly Rust compiler features, did not support compilation for Apple Silicon targets, and documentation indicated the prover remains under active development. An attempt to integrate STWO encountered repository stability issues and lack of response from maintainers. The ongoing audit activity observed in the repository suggests the system may not yet be ready for production deployment. During the further discussions with the STWO team, it was deemed that the project had not yet reached the maturity needed in order to be considered for this initial implementation. However, it should be noted, that the STWO is the most promising candidate for an upcoming expansion/addition of the `OpZkPrecompile` opcode.
+209:Complete reference implementation of the proposed OpZkPrecompile opcode, RISC0-Groth16 and RISC0-Succinct precompiles, benchmarking infrastructure, and test cases.
+
+===== https://raw.githubusercontent.com/kaspanet/kips/master/kip-0017.md =====
+FETCH_OK kip-0017.md
+4:Title: Covenants and Improved Scripting Capabilities
+6:Status: Implemented and activated in TN10
+12:This proposal is a continuation of KIP 10 [1], introducing full covenant support to Kaspa by extending the scripting language with introspection opcodes to all transaction fields, along with byte-string manipulation primitives. These additions enable scripts to inspect and constrain properties of the spending transaction, allowing validation of stateful transitions encoded implicitly or explicitly in UTXOs.
+87:10. `OpZkPrecompile` (0xa6): Verifies a zero-knowledge proof (KIP-16).
+119:For example, we can implement a simple covenant that requires us to increase a counter stored in the transaction payload every time the UTXO is spent, and forces us to send the new transaction to the same scriptPubKey:
+150:Many covenant constructions require the spender to provide a full copy of the previous transaction as witness data in order to validate that `tx.inputs[idx].prev_tx_id = hash(prev_tx)`.
+152:As a result, the transaction ID hashing algorithm implicitly defines a canonical transaction encoding that scripts can rely on. Covenant scripts may reconstruct or inspect this encoding to verify that a provided previous transaction matches the referenced outpoint.
+158:Covenants enable a variety of use cases, including but not limited to:
+160:1. **Fungible and non-fungible tokens** [4]: Enforce token rules through covenant-constrained UTXOs.
+163:4. **L1-L2 trustless bridges** [8]: Combine KIP-16's ZK proof verification with covenant scripts to enable trustless cross-chain asset movement.
+164:5. **Stateful applications**: Encode application state in UTXOs and enforce transitions through covenant scripts.
+181:4. Cat Protocol for covenants based tokens: https://catprotocol.org/
+184:7. More covenants use cases: https://utxos.org/uses/, https://github.com/sCrypt-Inc/awesome-op-cat#op_cat-use-cases, https://covenants.info/use-cases/
+
+===== https://raw.githubusercontent.com/kaspanet/kips/master/kip-0020.md =====
+FETCH_OK kip-0020.md
+4:Title: Covenant IDs
+6:Status: Proposed, Implemented and activated in TN10
+12:This KIP introduces *covenant identifiers* (`covenant_id`)---consensus-tracked, 32-byte identifiers carried by UTXOs and declared by transaction outputs. This establishes a stable **covenant lineage** for state and membership across UTXO transitions.
+15:- A stable covenant lineage identifier for covenant instance membership and off-chain indexing.
+16:- A consensus-level non-forgeability property: an output can only carry a `covenant_id` if it continues an existing covenant, or if it correctly *genesis-initializes* that covenant id from a unique outpoint and a committed set of authorized outputs.
+17:- Script-engine introspection opcodes for efficiently reasoning about covenant-related inputs/outputs within the spending transaction, without requiring parent/grandparent transactions as witness data.
+23:Idea: add an optional 32-byte `covenant_id` field to the UTXO entry.
+25:Consensus rule (external to the script engine): allow an output to carry `covenant_id = id` only in one of the following two cases:
+26:1. (recursion) its authorizing input spends a UTXO with `covenant_id = id`
+27:2. (genesis) `id = covenant_id(in[a].previous_outpoint, auth_outputs)` for the output set it declares (Section 4.3)
+29:To make the mechanism complete, the covenant script itself should validate that both the output `script_public_key` and the output covenant binding (including `covenant_id`) match the covenant’s expected transition.
+31:This means that a covenant-labeled UTXO cannot be forged “out of thin air”. In contrast, parent/grandparent-witness schemes can only ensure that a forged covenant UTXO is *unspendable*, whereas covenant ids make it *uncreatable* in the first place.
+33:Proof sketch: argument by induction on the first forged covenant-labeled UTXO. Trying to create a forged covenant UTXO from a valid covenant UTXO would fail the covenant script’s transition check spending the valid UTXO; a forge must thus already appear in an input. In the genesis case, the `covenant_id` is a cryptographic hash digest that includes a specific authorizing `input.outpoint`, and outpoints never repeat, so covenant membership is not freely choosable.
+37:KIP-17 enables covenants via transaction introspection. However, establishing a continuous "application identity" or lineage solely via script logic often requires recursive proofs. Validating that a referenced outpoint corresponds to a specific prior transaction structure forces spending transactions to carry parent (and often grandparent) transactions as witness data.
+39:This imposes overhead in witness size and forces covenant logic to depend on canonical transaction encoding and hashing within the execution layer.
+42:- **First-Class Covenants:** Provide a native covenant lineage/membership primitive, avoiding recursive transaction-witness workarounds and the resulting canonical-encoding and hashing burden.
+43:- **Prevent State Forgery:** Make covenant-labeled UTXOs *uncreatable* unless they are valid continuations or valid genesis initializations.
+44:- **P2SH State:** Strengthen the case for storing covenant state under P2SH rather than in ancestor transaction payloads: lineage no longer requires parent/grandparent witnesses, and the stable `covenant_id` decouples covenant identity from an evolving `script_public_key`.
+46:Importantly, the consensus rules introduced here must be complemented by correctly-designed covenant scripts which enforce output continuation (e.g., that outputs' `script_public_key` and covenant binding match the covenant's expected next state and transition shape).
+52:- `covenant_id`: A 32-byte hash identifying a covenant protocol instance.
+53:- Covenant-bound output: A transaction output that includes a covenant binding (Section 2), declaring a `covenant_id` and an `authorizing_input`.
+54:- Covenant UTXO: A UTXO whose `UtxoEntry` carries `covenant_id = Some(id)`.
+55:- Continuation output: A covenant-bound output whose `authorizing_input` spends a covenant UTXO with the *same* `covenant_id`.
+56:- Genesis output: A covenant-bound output that is *not* a continuation output, and whose `covenant_id` must be validated via the genesis hashing rule (Section 3).
+60:#### 2.1 Transaction Output Covenant Binding
+62:Each transaction output is extended with an optional covenant binding:
+68:    covenant: Option<CovenantBinding>,
+71:CovenantBinding {
+73:    covenant_id: Hash32,
+78:- If `covenant` is `None`, the output is not covenant-bound.
+79:- If `covenant` is `Some(binding)`, the output declares that it belongs to `binding.covenant_id` and that the input at index `binding.authorizing_input` authorizes its creation.
+81:#### 2.2 UTXO Entry Covenant ID
+83:Each UTXO entry is extended with an optional covenant identifier:
+91:    covenant_id: Option<Hash32>,
+96:- When a transaction output is accepted into the UTXO set, the resulting `UtxoEntry.covenant_id` is set to `output.covenant.map(|b| b.covenant_id)`.
+100:Covenant bindings are only defined for transaction versions that support them.
+102:- A transaction with `version < 1` MUST NOT contain any output with `covenant.is_some()`.
+104:### 3. Covenant ID Genesis Hashing
+106:This section defines how a covenant id is *genesis-initialized*.
+110:Define `CovenantIDHash` as BLAKE2b-256 with domain separation tag `"CovenantID"`.
+122:Unlike a minimal genesis rule based on hashing only the authorizing outpoint, the genesis `covenant_id` here commits also to the initial authorized output set (indices, amounts, and script public keys). This anchors the covenant’s initial rules and state while excluding the covenant binding itself to avoid self-reference.
+127:covenant_id(O, auth_outputs) =
+128:    CovenantIDHash(
+143:- The covenant binding itself is *not* included in the genesis hash (to avoid self-reference).
+147:The rules below are evaluated when covenant functionality is active.
+152:- If `out[i].covenant` is `None`: no covenant validation is performed for this output.
+153:- If `out[i].covenant = Some({ covenant_id, authorizing_input })`:
+161:If `utxo(authorizing_input).covenant_id == Some(covenant_id)` then `out[i]` is a **continuation output**.
+165:#### 4.3 Genesis Covenant ID Validation (Grouped)
+167:Genesis outputs are validated in groups keyed by `(authorizing_input, covenant_id)`:
+169:For each group `G = (authorizing_input = a, covenant_id = id)`:
+172:  - have `out[i].covenant = Some({ covenant_id = id, authorizing_input = a })`, and
+174:- Consensus MUST reject the transaction unless `covenant_id(O, auth_outputs) == id`.
+178:When covenant functionality is active, the script engine is provided with a pre-computed *covenants context* derived from the transaction and the spent input UTXOs.
+180:The covenants context construction algorithm, the corresponding opcodes, and the genesis covenant-id hashing operations are designed such that the overall work is linear in transaction size (up to expected constant factors), avoiding per-opcode scans over the transaction and thus avoiding quadratic (or worse) costs.
+184:#### 5.1 `OpInputCovenantId` (0xcf)
+189:  - If `tx.utxo(idx).covenant_id` is `None`, pushes `ZERO_HASH`.
+190:  - Otherwise, pushes the 32-byte `covenant_id`.
+195:[..., idx] -> [..., (ZERO_HASH | covenant_id[32])]
+204:  - `out[j].covenant = Some({ covenant_id, authorizing_input = input_idx })`, and
+205:  - `tx.utxo(input_idx).covenant_id == Some(covenant_id)` (i.e., it is a continuation output).
+218:#### 5.3 Shared Covenant Context (Per Covenant ID)
+220:The following opcodes expose covenant participant indices for a given `covenant_id` `id`:
+223:- Covenant input indices: all input indices `i` such that `tx.utxo(i).covenant_id == Some(id)`.
+224:- Covenant output indices: all output indices `j` such that `out[j].covenant = Some({ covenant_id = id, authorizing_input = a })` for some `a`, and `tx.utxo(a).covenant_id == Some(id)`.
+227:- `OpCovInputCount` (0xd0): Input `covenant_id`, output `count`.
+228:- `OpCovInputIdx` (0xd1): Input `covenant_id k`, output `input_idx`.
+229:- `OpCovOutputCount` (0xd2): Input `covenant_id`, output `count`.
+230:- `OpCovOutputIdx` (0xd3): Input `covenant_id k`, output `out_idx`.
+235:[..., covenant_id[32]   ] -> [..., count    ]
+236:[..., covenant_id[32], k] -> [..., input_idx]
+237:[..., covenant_id[32]   ] -> [..., count    ]
+238:[..., covenant_id[32], k] -> [..., out_idx  ]
+242:- Genesis outputs are validated by consensus (Section 4.3) but are not included in the covenant contexts above.
+244:#### 5.4 Output Covenant Binding Introspection
+246:The following opcodes expose the covenant binding declared by a transaction output. Unlike the authorized-output and shared covenant contexts above, these opcodes inspect the output binding directly and therefore apply to both continuation and genesis outputs.
+249:- `OpOutputCovenantId` (0xd5): Input `out_idx`, output the 32-byte `covenant_id` declared by `out[out_idx]`, or `ZERO_HASH` if the output has no covenant binding.
+250:- `OpOutputAuthorizingInput` (0xd6): Input `out_idx`, output the `authorizing_input` declared by `out[out_idx]`, or `-1` if the output has no covenant binding.
+255:[..., out_idx] -> [..., (ZERO_HASH | covenant_id[32])]
+265:  - For transaction versions that include covenant bindings, the `TransactionOutput.covenant` field is committed to by the transaction ID and signature hash.
+267:  - `UtxoEntry.covenant_id`, when present, is committed to by the UTXO set commitment.
+269:  - A covenant UTXO is treated as carrying an additional 32 bytes for storage accounting purposes.
+273:### Covenant Lineage & Identity
+275:`covenant_id` provides a stable handle for covenant lineage, instance identification, and off-chain state tracking, independent of frequently changing script public keys (e.g., when state is encoded in P2SH preimages or otherwise changes per transition).
+277:### Covenant Authoring Tooling
+279:For safe covenant development, the covenant id rules and the introspection opcodes should be paired with covenant authoring tools that reduce footguns.
+281:One example is a parallel compiler effort (Silverscript) intended to make it easy to write secure covenants (including correct authorized-output validation) and hard to write insecure covenants, by expressing covenant type/shape declaratively and generating the required validation code.
+285:This section is non-normative. It describes typical covenant scheme patterns intended to be correctly implemented using the covenant id rules and the introspection opcodes standardized above.
+289:A common pattern is a single covenant input authorizing one or many covenant outputs in the spending transaction.
+293:- Since the script engine has no general loops, the covenant script should:
+298:- A single transaction may include multiple isolated authorization groups with the same `covenant_id`, because authorization validation is local to an authorizing input context.
+304:This pattern is relevant for covenant schemes that maintain a single state UTXO per covenant id (e.g., a zk-based rollup/app covenant), and has the property that the UTXO set maintains exactly one UTXO with the covenant id.
+308:For covenant schemes where many covenant inputs and outputs participate in a single state transition (e.g., native assets), the recommended standard is a delegation pattern:
+310:- Other covenant inputs act as “delegators”, validating only that the leader is correctly selected and is taking responsibility for validation.
+323:This KIP relies on the security properties of the hash function used in `covenant_id` genesis initialization:
+324:- Hash-function resistance: preimage/second-preimage/collision resistance prevents constructing a genesis definition `(O, auth_outputs)` that matches a targeted existing `covenant_id`, and prevents ambiguous covenant identity across distinct genesis definitions.
+325:- Domain separation: `CovenantIDHash` is domain separated from other protocol hashes.
+329:Parent/grandparent-witness covenant constructions can only ensure that a forged covenant UTXO is *unspendable*. Covenant ids shift this to consensus: a forged covenant-labeled UTXO should thus be *uncreatable* in the first place.
+331:Consider an output `U` that is a covenant UTXO with id `id`.
+335:- Or `U` is a genesis output, in which case `id` is defined by an outpoint `O` (which never repeats) and the committed set of authorized outputs via `covenant_id(O, auth_outputs)`.
+337:Therefore, creating a covenant UTXO with id `id` that violates the covenant’s intended transition rules requires either:
+338:- Creating it from an already-existing covenant UTXO while passing the covenant’s script checks, or
+339:- Finding a genesis preimage `(O, auth_outputs)` that hashes to a targeted `id` under `CovenantIDHash` (preimage attack).
+343:This proposal introduces new consensus rules, new transaction fields (for versions that include covenant bindings), changes to the UTXO commitment, and new script opcodes. It therefore requires a hard fork.
+345:Transactions and UTXOs that do not use covenant bindings are unaffected in structure and semantics (except for activation gating of transaction versions and opcode validity).
+349:- Consensus and context construction: `crypto/txscript/src/covenants.rs`
+350:- Covenant id hashing: `consensus/core/src/hashing/covenant_id.rs`
+351:- Covenant-related opcodes: `crypto/txscript/src/opcodes/mod.rs`
+
+===== https://raw.githubusercontent.com/kaspanet/kips/master/kip-0021.md =====
+FETCH_OK kip-0021.md
+4:Title: Partitioned Sequencing Commitment with O(activity) Proving
+6:Status: Implemented and activated in TN10
+13:This KIP replaces the current per-chain-block linear sequencing commitment recurrence with a partitioned sequencing commitment scheme.
+15:Instead of committing to all accepted transactions in every chain block as one global append-only stream, consensus maintains a commitment over the tips of active application lanes (defined in Section 1). Each active lane has its own recursive tip hash and last-touch blue score. Global order remains reconstructible via `merge_idx` (Section 10.1), but is no longer directly committed as one monolithic per-block list. The block header continues to expose a single `accepted_id_merkle_root` value (consumed by `OpChainblockSeqCommit`), but post-activation it commits to (i) the active-lanes sparse Merkle tree (SMT) root and (ii) per-block context and mergeset miner payloads, chained through selected-parent recursion.
+17:The primary goal is prover cost proportional to relevant lane activity (`O(activity)`) for zk proving systems that consume chain-block sequencing commitments as anchors, while preserving global anchoring and enabling bounded-memory eviction of inactive lanes. In addition, `SeqStateRoot(B)` commits block-level context needed by based zk systems (selected-parent timestamp, DAA score, and blue score) and mergeset miner payloads, under the same chained commitment, and touched lane-tip updates include the same context hash.
+21:ZK provers for application-level state machines, based computation lanes, and other “app-local” systems often need to prove statements that are naturally scoped to a single application lane.
+23:Under the current linear per-block recurrence, proving correctness for lane-specific execution can require processing or committing to global activity in every block, even if a prover only cares about one lane. This creates prover cost proportional to global throughput.
+25:By committing to lane tips (and lane-local block activity digests) rather than to the entire global stream, this KIP makes lane proofs proportional to lane activity, enabling `O(activity)`-style proving.
+27:This scheme does not assume a fixed bound on historical lane-ID diversity. The committed active set is bounded by recent admitted lane activity within the activity window `F`, and `F` is strictly less than pruning depth. Therefore, node storage is not increased asymptotically: the “hot” commitment set scales with recent activity, not with historical diversity of lane IDs.
+31:1. Keep a single 32-byte header commitment consumable by `OpChainblockSeqCommit`.
+32:2. Make per-lane proving scale with that lane’s own activity.
+40:* Remain forward-compatible with future vProg-based lanes and richer lane-local update rules without replacing the core recurrence.
+49:* [Seqcommit Accessor](kip-0021/seqcommit-accessor.md): `OpChainblockSeqCommit`, selected-parent point of view, depth thresholds, reorg handling, and headers-proof interaction.
+50:* [Proving Spec](kip-0021/proving-spec.md): lane proofs, inactivity proofs, guest algorithms, and witness formats.
+59:2. extract lane IDs (`lane_id`) from transactions;
+60:3. group transactions by lane;
+61:4. compute one `activity_digest_lane(B, lane_id)` per touched lane, with `merge_idx` committed per tx;
+62:5. update each touched lane tip recursively (existing lane uses previous lane tip; re-appearing lane after purge anchors to `SeqCommit(parent(B))`);
+63:6. commit updated active-lane entries in the active-lanes SMT to get `ActiveLanesRoot(B)`;
+66:9. chain through selected parent to get `SeqCommit(B)`;
+67:10. publish `SeqCommit(B)` in `accepted_id_merkle_root`.
+69:This yields one header commitment for consensus, while preserving lane-local witnesses for `O(activity)` proving between anchors.
+74:Selected-parent SeqCommit chain (global, deep):
+76:  SeqCommit(B0) -> SeqCommit(B1) -> SeqCommit(B2) -> SeqCommit(B3) -> ... -> SeqCommit(BN)
+79:   ActiveLanes0    ActiveLanes1    ActiveLanes2    ActiveLanes3                   ActiveLanesN
+81:For one target lane `L`, proofs only touch the two anchors and lane-local transition:
+86:  include lane_key(L) under ActiveLanes0                    include lane_key(L) under ActiveLanesN
+89:      +------------ compressed lane-local tip transition ---------------+
+90:                   lane_tip(L, B0)  =>  ... lane activity ...  =>  lane_tip(L, BN)
+96:- Lane proving uses two global anchors plus a lane-local compressed transition.
+97:- Proof size tracks lane activity between anchors, rather than all intermediate chain blocks.
+104:1. **Active lane management:** how lane tips are updated and purged as a function of accepted transactions.
+105:2. **What the header commits to:** how we commit those tips (and additional context) into `SeqCommit(B)`.
+109:* Lane (`lane`): an ordered subset of `AcceptedTxList(B)` identified by a lane ID. In this KIP, the lane ID is `tx.subnetwork_id`, so each lane contains exactly the accepted transactions with the same `subnetwork_id`, in their `AcceptedTxList(B)` order. Future KIPs may define additional lane families such as vProg-based lanes.
+110:* Lane Tip: the current recursive hash tip for one lane.
+111:* Active Lane: a lane whose lane tip is currently present in the commitment set.
+112:* Last-Touch Blue Score: blue score of the chain block that last updated the lane tip.
+113:* Active Lanes Root (`ActiveLanesRoot(B)`): the sparse-Merkle root committing to the active lane tips at chain block `B` (Section 6.3).
+114:* Sequencing State Root (`SeqStateRoot(B)`): commits to the active-lanes root and additional context/miner-payload data at chain block `B` (Section 6.6). This is distinct from the UTXO commitment (`utxo_commitment`).
+115:* Sequencing Commitment (`SeqCommit(B)`): the value stored in `B.header.accepted_id_merkle_root` post-activation (Section 6.7).
+117:* Accepting Block (`B`): the chain block whose `SeqCommit(B)` is being computed.
+120:### 2. Lane Extraction
+122:For this KIP, lanes are extracted from accepted transactions as follows:
+124:* For each accepted transaction `tx`, `lane_id(tx) = tx.subnetwork_id`.
+126:* This KIP does not merge system lanes into a single SYS lane; each valid subnetwork ID maps to its own lane.
+128:This keeps the mechanism consensus-native and deterministic with current transaction structure. Future KIPs may define additional lane families and lane-local update rules (e.g., vProg-based CD commitments), while reusing the same outer commitment machinery.
+130:#### 2.1 Canonical Lane ID Encoding (Normative)
+132:In this KIP, `lane_id` denotes the transaction `subnetwork_id`.
+140:* User lane: `namespace || 0x00..0x00`, where `namespace` is 4 bytes, the suffix is 16 zero bytes, and at least one byte in `namespace[1..=3]` is non-zero.
+146:* The committed SMT key is `lane_key(lane_id) = H_lane_key(lane_id)` (Section 6.1).
+147:* Hashing `lane_id` produces the fixed-width 256-bit key used by the active-lanes SMT.
+148:* This also keeps lane-ID encoding decoupled from SMT keyspace layout and leaves room for future composite lane IDs, including vProg-derived lane identifiers.
+150:#### 2.2 Block Lane and Gas Limits (Normative)
+152:For block admission, consensus applies the following lane limits to non-coinbase transactions:
+154:* A block may contain transactions from at most 50 distinct non-coinbase lanes.
+155:* For each non-coinbase lane, the sum of `tx.gas` over all transactions in that lane may not exceed `1_000_000_000`.
+156:* Native and reserved system lanes must use `tx.gas = 0`.
+158:The per-block lane cap bounds local SMT update work. At 10 BPS, the default limit of 50 non-coinbase lanes per block bounds worst-case user-lane updates to 500 per second. Its motivation is local compute and incremental state cost, not the asymptotic boundedness of the active set, which follows from the activity window `F` and inactivity purge.
+160:The selected-parent coinbase transaction is included in `AcceptedTxList(B)` and therefore participates in `SeqCommit(B)`, but it is not counted toward the block lane/gas admission limits above.
+168:  ActiveLanes: map lane_id -> (lane_tip_hash, last_touch_blue_score)
+172:Only lanes that are currently “active” (not purged) appear in `ActiveLanes`.
+176:This section defines byte-level hashing and encoding rules used by per-lane activity and tip updates.
+192:| `H_lane_key` | `"SeqCommitLaneKey"` |
+193:| `H_lane_tip` | `"SeqCommitLaneTip"` |
+194:| `H_activity_leaf` | `"SeqCommitActivityLeaf"` |
+195:| `H_mergeset_context` | `"SeqCommitMergesetContext"` |
+197:| `H_miner_payload_leaf` | `"SeqCommitMinerPayloadLeaf"` |
+198:| `H_activity_root` | `"SeqCommitActivityRoot"` |
+199:| `H_leaf` | `"SeqCommitActiveLeaf"` |
+200:| `H_node` | `"SeqCommitActiveNode"` |
+201:| `H_collapsed` | `"SeqCommitActiveCollapsedNode"` |
+202:| `H_seq` | `"SeqCommitmentMerkleBranchHash"` |
+204:`H_seq` is the same branch hasher domain separator used by the currently deployed post-covenants sequencing commitment path (`SeqCommitmentMerkleBranchHash`). This KIP formalizes that behavior and extends it with lane/state commitments.
+219:#### 4.2 Per-Lane Block Activity Digest
+221:Intuition: This section defines what happened for the lane identified by `lane_id` in block `B` as a single hash. We do this by
+235:For a lane identifier `lane_id`, define `LaneTxList(B, lane_id)` to be the list of all accepted transactions in `B` whose lane ID is `lane_id`, in the same relative order they appear in `AcceptedTxList(B)`.
+237:Define the per-lane activity leaf for each transaction:
+248:Define the per-lane activity digest as a Merkle root over the leaf list:
+251:activity_digest_lane(B, lane_id) = MerkleRoot([activity_leaf(tx) for tx in LaneTxList(B, lane_id)])
+254:Merkle-root semantics match the sequencing commitment Merkle-root behavior specified by this KIP:
+262:For a lane identifier `lane_id` in accepting block `B`, define a recursive update step:
+265:TipUpdateHash(parent_ref, lane_key, activity_digest, MergesetContextHash(B)) =
+266:    H_lane_tip(parent_ref || lane_key || activity_digest || MergesetContextHash(B))
+269:Local lane-tip hash structure:
+272:lane_tip_hash
+273:└── H_lane_tip
+275:    ├── lane_key = H_lane_key(lane_id)
+276:    ├── activity_digest = activity_digest_lane(B, lane_id)
+282:* `parent_ref` is either the previous lane tip hash (if lane is already active) or a global anchor (Section 5.2).
+283:* `lane_key` is the sparse-Merkle key defined in Section 6.1.
+284:* `activity_digest` is `activity_digest_lane(B, lane_id)`.
+289:This section defines the deterministic state transition from `S(parent(B))` to `S(B)`. Conceptually, only two things can change at block `B`: touched lanes are updated, and stale lanes are purged.
+293:#### 5.1 Group Activity by Lane
+295:Define the set of touched lanes in block `B`:
+298:TouchedLanes(B) = { lane_id | exists tx in AcceptedTxList(B) with lane_id(tx) = lane_id }
+301:For each `lane_id in TouchedLanes(B)`, compute `activity_digest_lane(B, lane_id)` as in Section 4.2.
+303:#### 5.2 Update or Initialize Lane Tips
+305:Before iterating touched lanes, compute:
+311:For each `lane_id in TouchedLanes(B)`:
+313:1. Compute `activity_digest_lane(B, lane_id)`.
+314:2. If `lane_id` exists in `S_prev.ActiveLanes`:
+316:   * `parent_ref = S_prev.ActiveLanes[lane_id].lane_tip_hash`
+319:   * `parent_ref = SeqCommit(parent(B))`
+320:4. Compute `lk = lane_key(lane_id)`.
+321:5. Compute `tip_next = TipUpdateHash(parent_ref, lk, activity_digest_lane(B, lane_id), ctx_hash_B)`.
+324:   * `ActiveLanes[lane_id].lane_tip_hash = tip_next`
+325:   * `ActiveLanes[lane_id].last_touch_blue_score = B.blue_score`
+329:* continuity for already-active lanes,
+330:* and global anchoring for lanes re-appearing after inactivity purge.
+332:Rationale: a lane that has been purged has no committed tip in the active-set root. Anchoring a re-appearing lane to `SeqCommit(parent(B))` re-attaches it to a globally committed point without requiring retention of inactive lane tips. Reactivation proving with non-inclusion checkpoints is described in Section 10.3.
+336:To allow bounded memory, lanes are purged after a fixed inactivity threshold.
+340:A lane identified by `lane_id` is purged at block `B` if:
+343:ActiveLanes[lane_id].last_touch_blue_score + F <= B.blue_score
+346:Purged lanes are removed from `ActiveLanes`.
+350:Let `F` be the same inactivity threshold used for lane purge.
+362:    SeqCommit(InactivityShortcutBlock(B))      otherwise
+365:Note: `SeqCommit(genesis)` is defined as `ZERO_HASH`.
+367:The shortcut points to the last selected-parent-chain block not covered by an exclusion proof at `B`: if a lane is absent from `ActiveLanesRoot(B)`, then by the purge rule it had no activity in the blocks after `InactivityShortcutBlock(B)` up to `B`. An inactivity proof can therefore hop from `B` to `InactivityShortcutBlock(B)` as its next proving target.
+371:The shortcut is committed next to `ActiveLanesRoot(B)` inside `ActivityRoot(B)` (Section 6.6).
+375:This section defines how state is projected into the single header commitment. The structure is intentionally layered: active-lanes state first, then per-block context/miner payloads, then selected-parent chaining.
+
+===== https://raw.githubusercontent.com/kaspanet/silverscript/master/README.md =====
+FETCH_OK silverscript-README.md
+6:**Status:** Experimental — the project is unstable and may introduce breaking changes without notice. Use with caution and expect language syntax, APIs and output formats to change.
+8:**Note:** The compiled scripts produced by this repository are valid only on Kaspa Testnet 12. Do not assume compatibility with other Kaspa networks or mainnet.
+41:See [TUTORIAL.md](docs/TUTORIAL.md) for a full language and usage tutorial, [DECL.md](docs/DECL.md) for the covenant declaration spec, and the [KCC20 book](https://kaspanet.github.io/silverscript/kcc20-book/).

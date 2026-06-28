@@ -1,0 +1,8 @@
+{
+  "kip20_covenant_lineage_readonly_tn10_verified": true,
+  "public_tn10_rpc_sufficient": true,
+  "local_tn10_utxoindex_required": false,
+  "recommended_next_step": "ENV-083C offline Rust covenant-state artifact and verifier model; no transaction creation, signing, broadcast, wallet, or mainnet.",
+  "claim_allowed": "Toccata covenant fairness anchor",
+  "reason": "Official Toccata/KIP-20 sources define output covenant bindings and UTXO covenant IDs; local Rust/CLI verifier exposes and checks covenant_id read-only; public TN10 transaction-detail API exposes input covenant_id, output covenant_authorizing_input, and output covenant_id for the canonical accepted TN10 covenant transition; the live read-only CLI verifier returns covenant_id_confirmed=true and verifier_result=PASS."
+}

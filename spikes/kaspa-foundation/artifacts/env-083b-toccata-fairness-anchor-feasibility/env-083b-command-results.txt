@@ -1,0 +1,184 @@
+ENV-083B live read-only verifier evidence
+$ cargo run -p kaspa-fair-cli -- verify-live-tn10-canonical --json
+warning: constant `ROULETTE_RESULT_ALGORITHM_V1` is never used
+  --> crates/kaspa-fair-cli/src/main.rs:25:7
+   |
+25 | const ROULETTE_RESULT_ALGORITHM_V1: &str = "blake3-domain-separated-rejection-sampling-v1";
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `ROULETTE_VARIANT_EUROPEAN` is never used
+  --> crates/kaspa-fair-cli/src/main.rs:26:7
+   |
+26 | const ROULETTE_VARIANT_EUROPEAN: &str = "european";
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `ROULETTE_CANDIDATE_DOMAIN_V1` is never used
+  --> crates/kaspa-fair-cli/src/main.rs:27:7
+   |
+27 | const ROULETTE_CANDIDATE_DOMAIN_V1: &str = "kaspa-fair:roulette:candidate:v1";
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `ROULETTE_POC_RULE_VERSION` is never used
+  --> crates/kaspa-fair-cli/src/main.rs:28:7
+   |
+28 | const ROULETTE_POC_RULE_VERSION: &str = "env-076-roulette-poc-rules-v1";
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `ROULETTE_POC_PAYOUT_TABLE_VERSION` is never used
+  --> crates/kaspa-fair-cli/src/main.rs:29:7
+   |
+29 | const ROULETTE_POC_PAYOUT_TABLE_VERSION: &str = "env-076-roulette-poc-payouts-v1";
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `ROULETTE_POC_ROUND_ID` is never used
+  --> crates/kaspa-fair-cli/src/main.rs:30:7
+   |
+30 | const ROULETTE_POC_ROUND_ID: &str = "env-076-round-0001";
+   |       ^^^^^^^^^^^^^^^^^^^^^
+
+warning: struct `ValidatedFoundationVerifierContract` is never constructed
+   --> crates/kaspa-fair-cli/src/main.rs:209:8
+    |
+209 | struct ValidatedFoundationVerifierContract {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: struct `MockBet` is never constructed
+   --> crates/kaspa-fair-cli/src/main.rs:225:8
+    |
+225 | struct MockBet {
+    |        ^^^^^^^
+
+warning: function `validate_foundation_verifier_contract` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:233:4
+    |
+233 | fn validate_foundation_verifier_contract(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `roulette_poc_round_json` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:309:4
+    |
+309 | fn roulette_poc_round_json(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `required_string_field` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:349:4
+    |
+349 | fn required_string_field(value: &serde_json::Value, field: &str) -> Result<String, String> {
+    |    ^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `required_bool_field` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:357:4
+    |
+357 | fn required_bool_field(value: &serde_json::Value, field: &str) -> Result<bool, String> {
+    |    ^^^^^^^^^^^^^^^^^^^
+
+warning: function `required_u64_field` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:364:4
+    |
+364 | fn required_u64_field(value: &serde_json::Value, field: &str) -> Result<u64, String> {
+    |    ^^^^^^^^^^^^^^^^^^
+
+warning: function `mock_bets` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:371:4
+    |
+371 | fn mock_bets() -> Vec<MockBet> {
+    |    ^^^^^^^^^
+
+warning: function `bets_to_json` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:404:4
+    |
+404 | fn bets_to_json(bets: &[MockBet]) -> Vec<serde_json::Value> {
+    |    ^^^^^^^^^^^^
+
+warning: function `mock_bet_ledger_hash` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:418:4
+    |
+418 | fn mock_bet_ledger_hash(bets: &[MockBet]) -> String {
+    |    ^^^^^^^^^^^^^^^^^^^^
+
+warning: function `roulette_seed_material` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:436:4
+    |
+436 | fn roulette_seed_material(
+    |    ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `derive_roulette_number` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:450:4
+    |
+450 | fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, Box<dyn Error + Send + Sync>> {
+    |    ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `colour_for_number` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:475:4
+    |
+475 | fn colour_for_number(number: u8) -> &'static str {
+    |    ^^^^^^^^^^^^^^^^^
+
+warning: function `settle_mock_bets` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:486:4
+    |
+486 | fn settle_mock_bets(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: function `bet_wins` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:521:4
+    |
+521 | fn bet_wins(bet: &MockBet, result_number: u8, result_colour: &str) -> bool {
+    |    ^^^^^^^^
+
+warning: function `hex_string` is never used
+   --> crates/kaspa-fair-cli/src/main.rs:540:4
+    |
+540 | fn hex_string(bytes: &[u8]) -> String {
+    |    ^^^^^^^^^^
+
+warning: `kaspa-fair-cli` (bin "kaspa-fair-cli") generated 22 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running `target/debug/kaspa-fair-cli verify-live-tn10-canonical --json`
+{"accepted":true,"accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","api_endpoint_used":"https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light","broadcast_used":false,"continuing_output":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0","continuing_output_confirmed":true,"continuing_output_value_confirmed":true,"continuing_output_value_sompi":99700000,"covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","covenant_id_confirmed":true,"env063_spent_outpoint":"2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0","env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","input_relationship_confirmed":true,"mainnet_supported":false,"network":"testnet-10","readonly":true,"schema":"kaspa-fair-live-verification-result-v1","signing_used":false,"transaction_created":false,"verifier_result":"PASS","wallet_access_used":false,"wrpc_endpoint_observed":"wss://muon-10.kaspa.blue/kaspa/testnet-10/wrpc/borsh"}
+
+ENV-083B command results
+
+git status --short
+ M docs/toccata-fairness-anchor-architecture.md
+?? docs/env083b-toccata-fairness-anchor-feasibility.md
+?? scripts/env083a-roulette-randomness-source-audit.sh
+?? scripts/env083b-toccata-fairness-anchor-feasibility.sh
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/
+
+git log --oneline -n 5
+ba2af42 docs: add toccata fairness anchor architecture
+7c29e03 Rebuild roulette UI workflow layout
+f190b28 Render roulette table from layout schema
+bb61286 Define European roulette table layout schema
+21a5a06 Clarify temporary roulette UI bet placement limits
+
+Feasibility doc exists: docs/env083b-toccata-fairness-anchor-feasibility.md
+PASS
+
+Hard gate JSON exists and is valid: spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-hard-gate-result.json
+PASS
+
+Tool decision matrix exists: spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-tool-decision-matrix.md
+PASS
+TOCCATA_FAIRNESS_ANCHOR_FEASIBILITY_READY=PASS
+scripts/env083b-toccata-fairness-anchor-feasibility.sh exit_status=0
+
+===== FINAL REQUIRED CHECKS OUTSIDE SCRIPT =====
+$ git status --short
+ M docs/toccata-fairness-anchor-architecture.md
+?? docs/env083b-toccata-fairness-anchor-feasibility.md
+?? scripts/env083a-roulette-randomness-source-audit.sh
+?? scripts/env083b-toccata-fairness-anchor-feasibility.sh
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/
+
+$ git diff --check
+git diff --check exit_status=0
+
+$ scripts/env083b-toccata-fairness-anchor-feasibility.sh
+TOCCATA_FAIRNESS_ANCHOR_FEASIBILITY_READY=PASS
+scripts/env083b-toccata-fairness-anchor-feasibility.sh exit_status=0

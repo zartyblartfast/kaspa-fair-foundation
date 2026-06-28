@@ -1,0 +1,16 @@
+ M docs/toccata-fairness-anchor-architecture.md
+?? docs/env083b-toccata-fairness-anchor-feasibility.md
+?? scripts/env083a-roulette-randomness-source-audit.sh
+?? scripts/env083b-toccata-fairness-anchor-feasibility.sh
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-randomness-search-evidence.txt
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-result-source-evidence.txt
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-hard-gate-result.json
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-repo-type-rpc-evidence.txt
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-source-evidence.txt
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083b-toccata-fairness-anchor-feasibility/env-083b-tool-decision-matrix.md
