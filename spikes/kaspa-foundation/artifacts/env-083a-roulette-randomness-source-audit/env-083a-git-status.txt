@@ -1,0 +1,10 @@
+$ git status --short
+?? scripts/env083a-roulette-randomness-source-audit.sh
+?? spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/
+
+$ git log --oneline -n 5
+7c29e03 Rebuild roulette UI workflow layout
+f190b28 Render roulette table from layout schema
+bb61286 Define European roulette table layout schema
+21a5a06 Clarify temporary roulette UI bet placement limits
+8a3f554 Add roulette UI mock bet placement flow

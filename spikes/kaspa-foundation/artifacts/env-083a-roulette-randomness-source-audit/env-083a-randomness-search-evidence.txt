@@ -1,0 +1,246 @@
+== UI random API checks ==
+UI_RANDOM_API_MATCHES=NO
+
+== Randomisation-related search across Rust/JS/Cargo/docs/scripts ==
+examples/roulette-poc/ui/sample-round.json:1:{"bet_ledger_hash":"6b5e009eb78a505626c14840d3eeb79848c4926bcd6f597295dce9162d95e0fd","bets":[{"bet_id":"bet-001","bet_type":"straight-number","payout_multiplier":35,"selection_value":"17","stake_units":10},{"bet_id":"bet-002","bet_type":"colour","payout_multiplier":1,"selection_value":"red","stake_units":5},{"bet_id":"bet-003","bet_type":"colour","payout_multiplier":1,"selection_value":"black","stake_units":4},{"bet_id":"bet-004","bet_type":"parity","payout_multiplier":1,"selection_value":"odd","stake_units":7},{"bet_id":"bet-005","bet_type":"parity","payout_multiplier":1,"selection_value":"even","stake_units":6},{"bet_id":"bet-006","bet_type":"range","payout_multiplier":1,"selection_value":"high","stake_units":9},{"bet_id":"bet-007","bet_type":"range","payout_multiplier":1,"selection_value":"low","stake_units":8}],"broadcast_used":false,"final_result":"PASS","foundation_accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","foundation_covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","foundation_env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","foundation_network":"testnet-10","foundation_readonly":true,"foundation_verifier_result":"PASS","foundation_verifier_schema":"kaspa-fair-live-verification-result-v1","mainnet_supported":false,"payout_table_version":"env-077-roulette-engine-payouts-v1","result_algorithm":"blake3-domain-separated-rejection-sampling-v1","result_colour":"red","result_number":21,"roulette_variant":"european","round_id":"env-077-round-0001","round_state":"ProofPublished","rule_version":"env-077-roulette-engine-rules-v1","schema":"kaspa-fair-roulette-engine-round-v1","seed_material_description":"utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash","seed_material_hex":"726f756e645f69643d656e762d3037372d726f756e642d303030310a666f756e646174696f6e5f636f76656e616e745f69643d653262646438373461646438316562636462613464306639656636353039363764646164663130383563653461623135663565623239666464626637396666370a666f756e646174696f6e5f656e763036345f7370656e645f747869643d346362333164626164343436353636356239373862613365633565656563623231383234613365613638366635303835623436613937303636343436343636630a666f756e646174696f6e5f616363657074696e675f626c6f636b5f686173683d653064363265616432343161353231373736393236366463393665383035356335383933633239303734656432633530626132336465316139626137353139300a66696e616c5f6d6f636b5f6265745f6c65646765725f686173683d366235653030396562373861353035363236633134383430643365656237393834386334393236626364366635393732393564636539313632643935653066640a","settlement":[{"bet_id":"bet-001","bet_type":"straight-number","net_units":-10,"payout_units":0,"selection_value":"17","stake_units":10,"won":false},{"bet_id":"bet-002","bet_type":"colour","net_units":5,"payout_units":10,"selection_value":"red","stake_units":5,"won":true},{"bet_id":"bet-003","bet_type":"colour","net_units":-4,"payout_units":0,"selection_value":"black","stake_units":4,"won":false},{"bet_id":"bet-004","bet_type":"parity","net_units":7,"payout_units":14,"selection_value":"odd","stake_units":7,"won":true},{"bet_id":"bet-005","bet_type":"parity","net_units":-6,"payout_units":0,"selection_value":"even","stake_units":6,"won":false},{"bet_id":"bet-006","bet_type":"range","net_units":9,"payout_units":18,"selection_value":"high","stake_units":9,"won":true},{"bet_id":"bet-007","bet_type":"range","net_units":-8,"payout_units":0,"selection_value":"low","stake_units":8,"won":false}],"signing_used":false,"transaction_created":false,"wallet_access_used":false}
+examples/roulette-poc/ui/index.html:84:            <div class="result-colour" id="result-colour">Hidden until automatic reveal</div>
+examples/roulette-poc/ui/index.html:119:        <div id="settlement-summary" class="settlement-summary">Settlement shown automatically after result reveal.</div>
+examples/roulette-poc/ui/app.js:14:  ResultFinalised: "Result revealed from sample-round.json.",
+examples/roulette-poc/ui/app.js:23:  ResultFinalised: "Result revealed",
+examples/roulette-poc/ui/app.js:231:    ui.resultColour.textContent = "Hidden until automatic reveal";
+examples/roulette-poc/ui/app.js:328:    ui.settlementSummary.textContent = "Settlement shown automatically after result reveal.";
+examples/roulette-poc/README.md:24:- automatically advances from wheel spin to no-more-bets, result reveal, settlement display, and proof publication
+examples/roulette-poc/README.md:28:- manual result reveal controls
+examples/roulette-poc/README.md:32:- result generation or randomisation
+docs/roulette-poc-architecture.md:75:- the result seed material is fixed after bet close, or revealed from a prior commitment that cannot change
+docs/roulette-poc-architecture.md:93:   - any pre-round commitment format is fixed
+docs/roulette-poc-architecture.md:105:   - no result seed is finalised during this interval
+docs/roulette-poc-architecture.md:113:   - this hash becomes the round bet-ledger commitment
+docs/roulette-poc-architecture.md:115:7. Result seed material fixed
+docs/roulette-poc-architecture.md:116:   - option A: seed material is constructed only after bet close
+docs/roulette-poc-architecture.md:117:   - option B: a pre-round seed commitment is revealed after bet close and verified against the commitment
+docs/roulette-poc-architecture.md:118:   - in both options, the operator cannot change the final seed after seeing the fixed ledger
+docs/roulette-poc-architecture.md:135:   - the round proof publishes the rule version, payout table version, bet ledger hash, seed material or verified reveal, deterministic result derivation transcript, settlement summary, and foundation live verifier JSON
+docs/roulette-poc-architecture.md:148:- result seed material is fixed only after bets close, or revealed from a pre-round commitment that cannot be changed
+docs/roulette-poc-architecture.md:158:The round uses domain-separated seed material dedicated to roulette result derivation. The published round proof must identify every byte source used to build `seed_material`.
+docs/roulette-poc-architecture.md:160:Permitted PoC seed-material models:
+docs/roulette-poc-architecture.md:161:- post-close fixed seed material assembled only after the final bet ledger hash exists
+docs/roulette-poc-architecture.md:162:- pre-round commitment revealed after bet close and verified against the earlier commitment
+docs/roulette-poc-architecture.md:163:- mixed model that includes both a pre-round commitment reveal and the final bet-ledger hash
+docs/roulette-poc-architecture.md:165:For the first PoC, the round proof must publish enough material for an independent verifier to reconstruct the exact seed bytes.
+docs/roulette-poc-architecture.md:173:`candidate_i = BLAKE3("kaspa-fair:roulette:candidate:v1" || seed_material || counter_u32_be(i))`
+docs/roulette-poc-architecture.md:238:| post-close seed fixation | choosing result after seeing bet ledger | seed material fixed only after close, or reveal a prior commitment that cannot change | foundation provides read-only TN10 proof JSON, not roulette seed handling | implement seed-material schema, commitment or post-close fixation path, and publication rules |
+docs/roulette-poc-architecture.md:240:| result derivation | biased RNG or modulo bias | deterministic BLAKE3 domain-separated rejection sampling | foundation architecture already uses recipe/domain-separation concepts; no roulette RNG exists | implement seed byte definition, candidate transcript, rejection sampling, and verifier reproduction |
+docs/roulette-poc-architecture.md:309:6. fix or reveal seed material under the declared round mode
+docs/roulette-poc-architecture.md:322:- [ ] deterministic seed material recorded
+docs/roulette-poc-architecture.md:340:- seed-material mode
+docs/roulette-poc-architecture.md:341:- seed material or verified reveal material
+docs/roulette-poc-architecture.md:355:- the operator cannot accept bets and then choose an outcome if the round follows the fixed close-first and seed-fixation controls in this document
+docs/roulette-poc-architecture.md:372:- it builds deterministic seed material from the round id, verifier covenant id, verifier ENV-064 spend txid, verifier accepting block hash, and final mock bet-ledger hash
+docs/roulette-poc-architecture.md:470:- the UI does not decide or randomise the result
+docs/roulette-poc-architecture.md:498:- the roulette table highlights the deterministic result number only after reveal
+docs/roulette-poc-architecture.md:673:- the timed flow moves to `No more bets`, then reveals the deterministic result automatically
+docs/kaspa-foundation-architecture.md:263:The protocol should make post-commit outcome manipulation detectable and operationally impractical, while allowing independent verification of each completed round.
+docs/kaspa-foundation-architecture.md:283:- the operator is solvent beyond funds already committed on-chain
+docs/kaspa-foundation-architecture.md:286:- the house will always reveal when required
+docs/kaspa-foundation-architecture.md:288:- the player’s entropy source is strong
+docs/kaspa-foundation-architecture.md:369:- what happens if the house does not reveal
+docs/kaspa-foundation-architecture.md:393:- house commitment
+docs/kaspa-foundation-architecture.md:394:- player entropy
+docs/kaspa-foundation-architecture.md:395:- reveal value
+docs/kaspa-foundation-architecture.md:401:The fairness model should use commit-reveal:
+docs/kaspa-foundation-architecture.md:404:1. House commits to a secret.
+docs/kaspa-foundation-architecture.md:405:2. Player bet and entropy are fixed.
+docs/kaspa-foundation-architecture.md:407:4. House reveals the secret.
+docs/kaspa-foundation-architecture.md:435:- house commits but never reveals
+docs/kaspa-foundation-architecture.md:437:- player entropy missing or malformed
+docs/kaspa-foundation-architecture.md:438:- reveal does not match commitment
+docs/kaspa-foundation-architecture.md:474:player_entropy       = raw 32-byte value
+docs/kaspa-foundation-architecture.md:476:bet_commitment       = canonical hash of selected bet
+docs/kaspa-foundation-architecture.md:482:seed_material =
+docs/kaspa-foundation-architecture.md:486:    player_entropy ||
+docs/kaspa-foundation-architecture.md:488:    bet_commitment
+docs/kaspa-foundation-architecture.md:512:First compute canonical seed material as defined in Section 10.1.
+docs/kaspa-foundation-architecture.md:519:    seed_material ||
+docs/kaspa-foundation-architecture.md:573:- git commit
+docs/kaspa-foundation-architecture.md:590:- was the house commitment fixed before the result?
+docs/kaspa-foundation-architecture.md:591:- was the player input fixed before reveal?
+docs/kaspa-foundation-architecture.md:592:- does the reveal match the commitment?
+docs/kaspa-foundation-architecture.md:646:  "git_commit": "...",
+docs/kaspa-foundation-architecture.md:658:Evidence bundles should be treated as append-only once committed.
+docs/kaspa-foundation-architecture.md:692:- commitment/reveal consistency
+docs/kaspa-foundation-architecture.md:699:ENV-070 implements the first version of this layer as a scaffold and sanity check over the canonical ENV-063/064/065 transcript and committed fixture paths. It is useful, but it is not the final developer value by itself.
+docs/kaspa-foundation-architecture.md:782:staged secret checks before commit
+docs/kaspa-foundation-architecture.md:796:- no mnemonic/password/seed strings in docs
+docs/kaspa-foundation-architecture.md:866:- tampered reveal fails
+docs/kaspa-foundation-architecture.md:879:- commit-reveal mismatch rejected
+docs/kaspa-foundation-architecture.md:880:- late reveal rejected
+docs/kaspa-foundation-architecture.md:946:build_round_commit_plan()
+docs/kaspa-foundation-architecture.md:947:verify_round_commit_plan()
+docs/kaspa-foundation-architecture.md:948:submit_round_commit_once()
+docs/kaspa-foundation-architecture.md:949:confirm_round_commit_readonly()
+docs/kaspa-foundation-architecture.md:972:kaspa-fair roulette reveal
+docs/kaspa-foundation-architecture.md:994:POST /api/rounds/{id}/reveal
+docs/kaspa-foundation-architecture.md:1020:House commitment
+docs/kaspa-foundation-architecture.md:1021:Player entropy
+docs/kaspa-foundation-architecture.md:1117:Offline commit-reveal roulette round with proof transcript.
+docs/proof-transcript-format.md:30:- fixture path links into committed evidence directories
+docs/proof-transcript-format.md:49:The evidence bundle schema names the raw committed evidence set:
+docs/proof-transcript-format.md:79:evidence bundle = raw committed evidence
+docs/proof-transcript-format.md:207:- first, build tooling that can read committed evidence and the proof transcript without requiring a node or wallet
+docs/proof-transcript-format.md:283:- a committed sample transcript artifact under `spikes/kaspa-foundation/artifacts/env-069-proof-transcript-format/`
+docs/proof-transcript-format.md:289:ENV-070 adds the first foundation offline verifier for the canonical TN10 proof transcript. The verifier is deliberately modest: it validates the transcript model and the committed fixture-path links without re-running live Kaspa workflow steps.
+docs/proof-transcript-format.md:304:The verifier intentionally does not check every Kaspa consensus rule. It does not execute scripts, build or sign transactions, query node state, fetch UTXOs, submit transactions, or prove that current TN10 state still matches the historical fixture evidence. It is a deterministic local consistency checker over the foundation transcript and committed fixture tree.
+crates/kaspa-foundation/src/evidence/mod.rs:1://! Offline evidence helpers for committed canonical fixtures.
+crates/kaspa-foundation/src/transcript/canonical.rs:1://! Canonical TN10 transcript metadata derived from committed ENV-063/064/065 fixtures.
+crates/kaspa-foundation/src/transcript/verifier.rs:4://! committed transcript model and fixture-path links without contacting TN10,
+crates/kaspa-foundation/src/covenant/constants.rs:3://! These values are copied from the committed canonical fixtures under
+crates/kaspa-fair-cli/src/roulette.rs:277:        let seed_material =
+crates/kaspa-fair-cli/src/roulette.rs:278:            roulette_seed_material(&self.foundation, self.round_id, bet_ledger_hash);
+crates/kaspa-fair-cli/src/roulette.rs:279:        let result_number = derive_roulette_number(&seed_material)?;
+crates/kaspa-fair-cli/src/roulette.rs:317:        let seed_material =
+crates/kaspa-fair-cli/src/roulette.rs:318:            roulette_seed_material(&self.foundation, self.round_id, bet_ledger_hash);
+crates/kaspa-fair-cli/src/roulette.rs:337:            "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/roulette.rs:338:            "seed_material_hex": hex_string(&seed_material),
+crates/kaspa-fair-cli/src/roulette.rs:445:    let seed_material = roulette_seed_material(foundation, ENV076_ROUND_ID, &bet_ledger_hash);
+crates/kaspa-fair-cli/src/roulette.rs:446:    let result_number = derive_roulette_number(&seed_material)?;
+crates/kaspa-fair-cli/src/roulette.rs:467:        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/roulette.rs:468:        "seed_material_hex": hex_string(&seed_material),
+crates/kaspa-fair-cli/src/roulette.rs:523:pub fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, Box<dyn Error + Send + Sync>> {
+crates/kaspa-fair-cli/src/roulette.rs:529:        let candidate = candidate_biguint(seed_material, counter);
+crates/kaspa-fair-cli/src/roulette.rs:542:pub fn candidate_hex(seed_material: &[u8], counter: u32) -> String {
+crates/kaspa-fair-cli/src/roulette.rs:545:    hasher.update(seed_material);
+crates/kaspa-fair-cli/src/roulette.rs:678:fn roulette_seed_material(
+crates/kaspa-fair-cli/src/roulette.rs:693:fn candidate_biguint(seed_material: &[u8], counter: u32) -> BigUint {
+crates/kaspa-fair-cli/src/roulette.rs:696:    hasher.update(seed_material);
+crates/kaspa-fair-cli/src/roulette.rs:828:    fn same_seed_material_gives_same_result_and_result_is_in_range() {
+crates/kaspa-fair-cli/src/roulette.rs:829:        let seed = b"env077-seed";
+crates/kaspa-fair-cli/src/roulette.rs:830:        let a = derive_roulette_number(seed).unwrap();
+crates/kaspa-fair-cli/src/roulette.rs:831:        let b = derive_roulette_number(seed).unwrap();
+crates/kaspa-fair-cli/src/roulette.rs:837:    fn candidate_stream_changes_when_seed_changes() {
+crates/kaspa-fair-cli/src/roulette.rs:838:        assert_ne!(candidate_hex(b"seed-a", 0), candidate_hex(b"seed-b", 0));
+crates/kaspa-fair-cli/src/main.rs:314:    let seed_material = roulette_seed_material(foundation, &bet_ledger_hash);
+crates/kaspa-fair-cli/src/main.rs:315:    let result_number = derive_roulette_number(&seed_material)?;
+crates/kaspa-fair-cli/src/main.rs:335:        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/main.rs:336:        "seed_material_hex": hex_string(&seed_material),
+crates/kaspa-fair-cli/src/main.rs:436:fn roulette_seed_material(
+crates/kaspa-fair-cli/src/main.rs:450:fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, Box<dyn Error + Send + Sync>> {
+crates/kaspa-fair-cli/src/main.rs:458:        hasher.update(seed_material);
+Cargo.lock:18: "getrandom 0.3.4",
+Cargo.lock:110: "fastrand",
+Cargo.lock:750:name = "fastrand"
+Cargo.lock:840: "fastrand",
+Cargo.lock:898:name = "getrandom"
+Cargo.lock:911:name = "getrandom"
+Cargo.lock:1350: "rand 0.8.6",
+Cargo.lock:1372: "getrandom 0.2.17",
+Cargo.lock:1383: "rand 0.8.6",
+Cargo.lock:1433: "rand 0.8.6",
+Cargo.lock:1590: "rand_chacha 0.3.1",
+Cargo.lock:1618: "rand 0.8.6",
+Cargo.lock:1658: "rand 0.8.6",
+Cargo.lock:1704: "rand 0.8.6",
+Cargo.lock:1789: "rand 0.8.6",
+Cargo.lock:1928: "rand 0.9.4",
+Cargo.lock:2243: "fastrand",
+Cargo.lock:2351: "getrandom 0.2.17",
+Cargo.lock:2352: "rand 0.8.6",
+Cargo.lock:2394:name = "rand"
+Cargo.lock:2400: "rand_chacha 0.3.1",
+Cargo.lock:2401: "rand_core 0.6.4",
+Cargo.lock:2405:name = "rand"
+Cargo.lock:2410: "rand_chacha 0.9.0",
+Cargo.lock:2411: "rand_core 0.9.5",
+Cargo.lock:2415:name = "rand_chacha"
+Cargo.lock:2421: "rand_core 0.6.4",
+Cargo.lock:2425:name = "rand_chacha"
+Cargo.lock:2431: "rand_core 0.9.5",
+Cargo.lock:2435:name = "rand_core"
+Cargo.lock:2440: "getrandom 0.2.17",
+Cargo.lock:2444:name = "rand_core"
+Cargo.lock:2449: "getrandom 0.3.4",
+Cargo.lock:2487: "getrandom 0.2.17",
+Cargo.lock:2575: "getrandom 0.2.17",
+Cargo.lock:2686: "rand 0.8.6",
+Cargo.lock:3330: "rand 0.8.6",
+Cargo.lock:3428: "getrandom 0.2.17",
+Cargo.lock:3437: "getrandom 0.3.4",
+Cargo.lock:3438: "rand 0.9.4",
+Cargo.lock:4043: "getrandom 0.2.17",
+Cargo.lock:4046: "rand 0.8.6",
+Cargo.lock:4165: "getrandom 0.2.17",
+Cargo.lock:4167: "rand 0.8.6",
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:65:check('reveal-result-button' not in combined_source and 'Reveal Result' not in combined_source, 'Reveal Result control/text remains')
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:72:for status_text in ['Bets open', 'Wheel spinning — bets still open', 'No more bets', 'Result revealed', 'Settlement shown', 'Proof published']:
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:86:check('scheduleFlowState("ResultFinalised", SPIN_TO_NO_MORE_BETS_MS + NO_MORE_BETS_TO_RESULT_MS)' in app_js, 'result is not scheduled to reveal automatically after NoMoreBets')
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:96:check('Math.random' not in combined_source, 'Math.random forbidden')
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:97:check('crypto.getRandomValues' not in combined_source and 'randomUUID' not in combined_source, 'crypto random APIs forbidden')
+scripts/env079-roulette-ui-flow-smoke.sh:49:add_check("app.js does not call Math.random", "Math.random" not in app_js)
+scripts/env079-roulette-ui-flow-smoke.sh:50:add_check("app.js does not use crypto random APIs", all(token not in app_js for token in ["crypto.getRandomValues", "crypto.randomBytes", "globalThis.crypto", "window.crypto", "self.crypto"]))
+scripts/env079-roulette-ui-flow-smoke.sh:51:add_check("app.js does not generate a roulette number", all(token not in app_js for token in ["% 37", "mod 37", "candidate_", "random roulette", "generateRoulette"]))
+scripts/env083a-roulette-randomness-source-audit.sh:7:artifact_dir="spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit"
+scripts/env083a-roulette-randomness-source-audit.sh:10:randomness_evidence_file="$artifact_dir/env-083a-randomness-search-evidence.txt"
+scripts/env083a-roulette-randomness-source-audit.sh:16:: > "$randomness_evidence_file"
+scripts/env083a-roulette-randomness-source-audit.sh:65:    'seed_material_description',
+scripts/env083a-roulette-randomness-source-audit.sh:66:    'seed_material_hex',
+scripts/env083a-roulette-randomness-source-audit.sh:97:  echo '== UI random API checks =='
+scripts/env083a-roulette-randomness-source-audit.sh:98:  if grep -RIn -E 'Math\.random|crypto\.getRandomValues|crypto\.randomUUID|globalThis\.crypto|window\.crypto|self\.crypto' \
+scripts/env083a-roulette-randomness-source-audit.sh:108:    -E 'random|rng|rand|entropy|seed|nonce|commit|reveal|Math\.random|crypto\.getRandomValues|crypto\.randomUUID|OsRng|thread_rng|rand::|getrandom' \
+scripts/env083a-roulette-randomness-source-audit.sh:114:    -E 'derive_roulette_number|roulette_seed_material|candidate_biguint|candidate_hex|ROULETTE_RESULT_ALGORITHM|ROULETTE_CANDIDATE_DOMAIN|blake3-domain-separated-rejection-sampling' \
+scripts/env083a-roulette-randomness-source-audit.sh:116:} > "$randomness_evidence_file" 2>&1
+scripts/env083a-roulette-randomness-source-audit.sh:122:run_capture_allow_fail 'randomness grep' grep -RIn --exclude-dir=target --exclude-dir=.git -E 'random|rng|rand|entropy|seed|nonce|commit|reveal|Math\.random|crypto\.getRandomValues|crypto\.randomUUID|OsRng|thread_rng|rand::|getrandom' examples/roulette-poc docs crates Cargo.toml Cargo.lock scripts
+scripts/env083a-roulette-randomness-source-audit.sh:132:ui_random_tokens = ['Math.random', 'crypto.getRandomValues', 'crypto.randomUUID', 'globalThis.crypto', 'window.crypto', 'self.crypto']
+scripts/env083a-roulette-randomness-source-audit.sh:133:print('# ENV-083A roulette randomness/source audit summary')
+scripts/env083a-roulette-randomness-source-audit.sh:148:print('- deterministic verification/result derivation: crates/kaspa-fair-cli/src/roulette.rs derives roulette numbers from seed material with BLAKE3 domain-separated rejection sampling.')
+scripts/env083a-roulette-randomness-source-audit.sh:149:print('- random generation: no UI Math.random/browser crypto random APIs found in current UI files; no OsRng/thread_rng/rand:: source match found in roulette Rust source.')
+scripts/env083a-roulette-randomness-source-audit.sh:150:print('- cryptographic commitment/reveal material: architecture docs describe commit/reveal and seed-material models; current sample publishes seed_material_hex and bet_ledger_hash, not a fresh entropy source.')
+scripts/env083a-roulette-randomness-source-audit.sh:151:print('- UI-only timed state transitions: app.js uses setTimeout/scheduleFlowState to reveal the already-loaded sample result; timers do not choose the result.')
+scripts/env083a-roulette-randomness-source-audit.sh:153:print('UI random API tokens found:')
+scripts/env083a-roulette-randomness-source-audit.sh:154:for token in ui_random_tokens:
+scripts/env083a-roulette-randomness-source-audit.sh:161:    'env-083a-randomness-search-evidence.txt',
+scripts/env083a-roulette-randomness-source-audit.sh:165:    print(f'- spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/{name}')
+scripts/env081b-svg-table-renderer-smoke.sh:154:check('Math.random' not in combined_source, 'Math.random forbidden')
+scripts/env081b-svg-table-renderer-smoke.sh:155:check('crypto.getRandomValues' not in combined_source, 'crypto.getRandomValues forbidden')
+scripts/env081b-svg-table-renderer-smoke.sh:156:check('randomUUID' not in combined_source, 'randomUUID forbidden')
+scripts/env080-roulette-ui-bet-flow-smoke.sh:55:add_check("app.js does not call Math.random", "Math.random" not in app_js)
+scripts/env080-roulette-ui-bet-flow-smoke.sh:56:add_check("app.js does not use crypto random APIs", all(token not in app_js for token in ["crypto.getRandomValues", "crypto.randomBytes", "globalThis.crypto", "window.crypto", "self.crypto"]))
+scripts/env080-roulette-ui-bet-flow-smoke.sh:57:add_check("app.js does not generate a roulette result", all(token not in app_js for token in ["% 37", "mod 37", "candidate_", "random roulette", "generateRoulette"]))
+scripts/env080b-roulette-ui-bet-cleanup-smoke.sh:74:add_check("app.js does not call Math.random", "Math.random" not in app_js)
+scripts/env080b-roulette-ui-bet-cleanup-smoke.sh:76:    "app.js does not use crypto random APIs",
+scripts/env080b-roulette-ui-bet-cleanup-smoke.sh:77:    all(token not in app_js for token in ["crypto.getRandomValues", "crypto.randomBytes", "globalThis.crypto", "window.crypto", "self.crypto"]),
+scripts/env080b-roulette-ui-bet-cleanup-smoke.sh:81:    all(token not in app_js for token in ["% 37", "mod 37", "candidate_", "random roulette", "generateRoulette"]),
+
+== Deterministic roulette result derivation candidates ==
+crates/kaspa-fair-cli/src/roulette.rs:7:pub const ROULETTE_RESULT_ALGORITHM_V1: &str = "blake3-domain-separated-rejection-sampling-v1";
+crates/kaspa-fair-cli/src/roulette.rs:9:pub const ROULETTE_CANDIDATE_DOMAIN_V1: &str = "kaspa-fair:roulette:candidate:v1";
+crates/kaspa-fair-cli/src/roulette.rs:278:            roulette_seed_material(&self.foundation, self.round_id, bet_ledger_hash);
+crates/kaspa-fair-cli/src/roulette.rs:279:        let result_number = derive_roulette_number(&seed_material)?;
+crates/kaspa-fair-cli/src/roulette.rs:318:            roulette_seed_material(&self.foundation, self.round_id, bet_ledger_hash);
+crates/kaspa-fair-cli/src/roulette.rs:339:            "result_algorithm": ROULETTE_RESULT_ALGORITHM_V1,
+crates/kaspa-fair-cli/src/roulette.rs:445:    let seed_material = roulette_seed_material(foundation, ENV076_ROUND_ID, &bet_ledger_hash);
+crates/kaspa-fair-cli/src/roulette.rs:446:    let result_number = derive_roulette_number(&seed_material)?;
+crates/kaspa-fair-cli/src/roulette.rs:469:        "result_algorithm": ROULETTE_RESULT_ALGORITHM_V1,
+crates/kaspa-fair-cli/src/roulette.rs:523:pub fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, Box<dyn Error + Send + Sync>> {
+crates/kaspa-fair-cli/src/roulette.rs:529:        let candidate = candidate_biguint(seed_material, counter);
+crates/kaspa-fair-cli/src/roulette.rs:542:pub fn candidate_hex(seed_material: &[u8], counter: u32) -> String {
+crates/kaspa-fair-cli/src/roulette.rs:544:    hasher.update(ROULETTE_CANDIDATE_DOMAIN_V1.as_bytes());
+crates/kaspa-fair-cli/src/roulette.rs:552:    ROULETTE_RESULT_ALGORITHM_V1
+crates/kaspa-fair-cli/src/roulette.rs:678:fn roulette_seed_material(
+crates/kaspa-fair-cli/src/roulette.rs:693:fn candidate_biguint(seed_material: &[u8], counter: u32) -> BigUint {
+crates/kaspa-fair-cli/src/roulette.rs:695:    hasher.update(ROULETTE_CANDIDATE_DOMAIN_V1.as_bytes());
+crates/kaspa-fair-cli/src/roulette.rs:824:        assert_eq!(algorithm_label(), ROULETTE_RESULT_ALGORITHM_V1);
+crates/kaspa-fair-cli/src/roulette.rs:830:        let a = derive_roulette_number(seed).unwrap();
+crates/kaspa-fair-cli/src/roulette.rs:831:        let b = derive_roulette_number(seed).unwrap();
+crates/kaspa-fair-cli/src/roulette.rs:838:        assert_ne!(candidate_hex(b"seed-a", 0), candidate_hex(b"seed-b", 0));
+crates/kaspa-fair-cli/src/roulette.rs:915:        assert_eq!(round["result_algorithm"], ROULETTE_RESULT_ALGORITHM_V1);
+crates/kaspa-fair-cli/src/main.rs:25:const ROULETTE_RESULT_ALGORITHM_V1: &str = "blake3-domain-separated-rejection-sampling-v1";
+crates/kaspa-fair-cli/src/main.rs:27:const ROULETTE_CANDIDATE_DOMAIN_V1: &str = "kaspa-fair:roulette:candidate:v1";
+crates/kaspa-fair-cli/src/main.rs:314:    let seed_material = roulette_seed_material(foundation, &bet_ledger_hash);
+crates/kaspa-fair-cli/src/main.rs:315:    let result_number = derive_roulette_number(&seed_material)?;
+crates/kaspa-fair-cli/src/main.rs:337:        "result_algorithm": ROULETTE_RESULT_ALGORITHM_V1,
+crates/kaspa-fair-cli/src/main.rs:436:fn roulette_seed_material(
+crates/kaspa-fair-cli/src/main.rs:450:fn derive_roulette_number(seed_material: &[u8]) -> Result<u8, Box<dyn Error + Send + Sync>> {
+crates/kaspa-fair-cli/src/main.rs:457:        hasher.update(ROULETTE_CANDIDATE_DOMAIN_V1.as_bytes());
+crates/kaspa-fair-cli/src/main.rs:1152:            "blake3-domain-separated-rejection-sampling-v1"
+examples/roulette-poc/ui/sample-round.json:1:{"bet_ledger_hash":"6b5e009eb78a505626c14840d3eeb79848c4926bcd6f597295dce9162d95e0fd","bets":[{"bet_id":"bet-001","bet_type":"straight-number","payout_multiplier":35,"selection_value":"17","stake_units":10},{"bet_id":"bet-002","bet_type":"colour","payout_multiplier":1,"selection_value":"red","stake_units":5},{"bet_id":"bet-003","bet_type":"colour","payout_multiplier":1,"selection_value":"black","stake_units":4},{"bet_id":"bet-004","bet_type":"parity","payout_multiplier":1,"selection_value":"odd","stake_units":7},{"bet_id":"bet-005","bet_type":"parity","payout_multiplier":1,"selection_value":"even","stake_units":6},{"bet_id":"bet-006","bet_type":"range","payout_multiplier":1,"selection_value":"high","stake_units":9},{"bet_id":"bet-007","bet_type":"range","payout_multiplier":1,"selection_value":"low","stake_units":8}],"broadcast_used":false,"final_result":"PASS","foundation_accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","foundation_covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","foundation_env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","foundation_network":"testnet-10","foundation_readonly":true,"foundation_verifier_result":"PASS","foundation_verifier_schema":"kaspa-fair-live-verification-result-v1","mainnet_supported":false,"payout_table_version":"env-077-roulette-engine-payouts-v1","result_algorithm":"blake3-domain-separated-rejection-sampling-v1","result_colour":"red","result_number":21,"roulette_variant":"european","round_id":"env-077-round-0001","round_state":"ProofPublished","rule_version":"env-077-roulette-engine-rules-v1","schema":"kaspa-fair-roulette-engine-round-v1","seed_material_description":"utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash","seed_material_hex":"726f756e645f69643d656e762d3037372d726f756e642d303030310a666f756e646174696f6e5f636f76656e616e745f69643d653262646438373461646438316562636462613464306639656636353039363764646164663130383563653461623135663565623239666464626637396666370a666f756e646174696f6e5f656e763036345f7370656e645f747869643d346362333164626164343436353636356239373862613365633565656563623231383234613365613638366635303835623436613937303636343436343636630a666f756e646174696f6e5f616363657074696e675f626c6f636b5f686173683d653064363265616432343161353231373736393236366463393665383035356335383933633239303734656432633530626132336465316139626137353139300a66696e616c5f6d6f636b5f6265745f6c65646765725f686173683d366235653030396562373861353035363236633134383430643365656237393834386334393236626364366635393732393564636539313632643935653066640a","settlement":[{"bet_id":"bet-001","bet_type":"straight-number","net_units":-10,"payout_units":0,"selection_value":"17","stake_units":10,"won":false},{"bet_id":"bet-002","bet_type":"colour","net_units":5,"payout_units":10,"selection_value":"red","stake_units":5,"won":true},{"bet_id":"bet-003","bet_type":"colour","net_units":-4,"payout_units":0,"selection_value":"black","stake_units":4,"won":false},{"bet_id":"bet-004","bet_type":"parity","net_units":7,"payout_units":14,"selection_value":"odd","stake_units":7,"won":true},{"bet_id":"bet-005","bet_type":"parity","net_units":-6,"payout_units":0,"selection_value":"even","stake_units":6,"won":false},{"bet_id":"bet-006","bet_type":"range","net_units":9,"payout_units":18,"selection_value":"high","stake_units":9,"won":true},{"bet_id":"bet-007","bet_type":"range","net_units":-8,"payout_units":0,"selection_value":"low","stake_units":8,"won":false}],"signing_used":false,"transaction_created":false,"wallet_access_used":false}
+scripts/env083a-roulette-randomness-source-audit.sh:114:    -E 'derive_roulette_number|roulette_seed_material|candidate_biguint|candidate_hex|ROULETTE_RESULT_ALGORITHM|ROULETTE_CANDIDATE_DOMAIN|blake3-domain-separated-rejection-sampling' \
