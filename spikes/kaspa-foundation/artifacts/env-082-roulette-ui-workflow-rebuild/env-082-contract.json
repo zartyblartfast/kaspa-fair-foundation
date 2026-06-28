@@ -1,0 +1,35 @@
+{
+  "env": "ENV-082",
+  "title": "Roulette UI workflow/layout rebuild",
+  "result": "PASS",
+  "readiness_line": "ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS",
+  "workflow_contract": {
+    "roulette_table_is_first_prominent_section": true,
+    "start_wheel_button_implemented": true,
+    "reset_round_button_implemented": true,
+    "reveal_result_button_removed": true,
+    "wheel_visual_removed": true,
+    "old_interactive_round_controls_removed": true,
+    "status_label_implemented": true,
+    "bets_allowed_before_spin": true,
+    "bets_allowed_during_spin": true,
+    "bets_blocked_after_no_more_bets": true,
+    "blocked_bet_message": "No more bets accepted this round.",
+    "blocked_bet_not_added_to_ledger": true,
+    "result_auto_reveals_when_wheel_stops": true,
+    "reset_works_without_page_refresh": true,
+    "result_loaded_from_sample_json_only": true
+  },
+  "safety": {
+    "mock_display_only": true,
+    "real_betting": false,
+    "real_payouts": false,
+    "backend_custody": false,
+    "signing": false,
+    "transaction_creation": false,
+    "submitting_broadcasting": false,
+    "wallet_private_key_access": false,
+    "mainnet": false,
+    "secrets_added": false
+  }
+}

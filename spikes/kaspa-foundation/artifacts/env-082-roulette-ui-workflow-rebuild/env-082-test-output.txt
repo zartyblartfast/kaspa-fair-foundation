@@ -1,0 +1,40 @@
+ENV-082 verification results:
+
+ENV-081B pre-check:
+PASS git status --short
+PASS git fetch origin main
+PASS git log --oneline --decorate -n 20
+PASS git log origin/main --oneline --decorate -n 20
+PASS git log --all --grep="Render roulette table from layout schema" --oneline
+  f190b28 Render roulette table from layout schema
+  HEAD and origin/main both contain f190b28.
+
+Required checks:
+PASS cargo fmt --check
+PASS cargo test -p kaspa-fair-cli
+  18 passed; 0 failed.
+PASS cargo test -p kaspa-foundation
+  lib tests: 4 passed; env068: 5 passed; env069: 5 passed; env070: 6 passed; env071: 4 passed, 1 ignored; doc-tests: 0.
+PASS cargo check -p kaspa-fair-cli
+  Completed with existing dead_code warnings; exit status 0.
+PASS cargo check -p kaspa-foundation
+PASS git diff --check
+PASS node --check examples/roulette-poc/ui/app.js
+PASS node --check examples/roulette-poc/ui/roulette-table-renderer.js
+PASS scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+  ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+
+Browser behavior evidence on http://127.0.0.1:8081/?v=env082-workflow-rebuild-2:
+PASS first visible main panel is table-panel.
+PASS Reveal Result button absent.
+PASS Wheel Visual absent.
+PASS initial status: Bets open.
+PASS Start Wheel status: Wheel spinning — bets still open.
+PASS betting during spin added a second mock bet.
+PASS NoMoreBets blocked later table bet with: No more bets accepted this round.
+PASS blocked table bet did not increase actual mock bet count.
+PASS result auto-revealed as sample-round.json result 21 red.
+PASS reset returned status to Bets open, result to --, and cleared actual mock bets.
+
+Final readiness line:
+ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS

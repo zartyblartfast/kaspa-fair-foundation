@@ -8,28 +8,41 @@ const ROUND_SEQUENCE = [
 ];
 
 const ROUND_DESCRIPTIONS = {
-  BetsOpen: "Schema-driven mock bets may be placed before wheel start.",
-  SpinVisualStarted: "Bets are still open while the wheel is visually spinning.",
-  NoMoreBets: "No more bets — ledger locked.",
-  ResultFinalised: "Deterministic result revealed from sample-round.json after NoMoreBets.",
-  Settled: "Deterministic settlement from sample-round.json is shown. UI-added bets remain mock display bets only.",
-  ProofPublished: "Proof fields and final PASS status are now displayed.",
+  BetsOpen: "Bets open. Place mock chips on the table, then start the wheel.",
+  SpinVisualStarted: "Wheel spinning — bets still open.",
+  NoMoreBets: "No more bets.",
+  ResultFinalised: "Result revealed from sample-round.json.",
+  Settled: "Settlement shown from sample-round.json.",
+  ProofPublished: "Proof published from sample-round.json.",
+};
+
+const ROUND_STATUS_LABELS = {
+  BetsOpen: "Bets open",
+  SpinVisualStarted: "Wheel spinning — bets still open",
+  NoMoreBets: "No more bets",
+  ResultFinalised: "Result revealed",
+  Settled: "Settlement shown",
+  ProofPublished: "Proof published",
 };
 
 const BETS_CLOSED_NO_MORE_BETS = "BETS_CLOSED_NO_MORE_BETS";
+const NO_MORE_BETS_MESSAGE = "No more bets accepted this round.";
 const PLACEABLE_STATES = new Set(["BetsOpen", "SpinVisualStarted"]);
 const BET_PLACEMENT_DESCRIPTION = "Click any valid roulette table zone to add a chip: number cells, zero, split/street/corner/six-line selectors, dozens, columns, and outside rectangles all use the same additive bet placement behavior.";
+const SPIN_TO_NO_MORE_BETS_MS = 900;
+const NO_MORE_BETS_TO_RESULT_MS = 450;
+const RESULT_TO_SETTLEMENT_MS = 250;
+const SETTLEMENT_TO_PROOF_MS = 250;
 
 const ui = {
   overallStatus: document.getElementById("overall-status"),
   failurePanel: document.getElementById("failure-panel"),
   failureMessage: document.getElementById("failure-message"),
-  currentRoundState: document.getElementById("current-round-state"),
+  roundStatusLabel: document.getElementById("round-status-label"),
   stateDescription: document.getElementById("state-description"),
-  wheelVisual: document.getElementById("wheel-visual"),
   trustList: document.getElementById("trust-status-list"),
   safetyFlagsList: document.getElementById("safety-flags-list"),
-  sequenceList: document.getElementById("sequence-list"),
+
   rouletteTableSvgHost: document.getElementById("roulette-table-svg-host"),
   resultNumber: document.getElementById("result-number"),
   resultColour: document.getElementById("result-colour"),
@@ -45,10 +58,6 @@ const ui = {
   betPlacementNote: document.getElementById("bet-placement-note"),
   mockBetList: document.getElementById("mock-bet-list"),
   startWheelButton: document.getElementById("start-wheel-button"),
-  noMoreBetsButton: document.getElementById("no-more-bets-button"),
-  revealResultButton: document.getElementById("reveal-result-button"),
-  showSettlementButton: document.getElementById("show-settlement-button"),
-  publishProofButton: document.getElementById("publish-proof-button"),
   resetRoundButton: document.getElementById("reset-round-button"),
 };
 
@@ -58,6 +67,7 @@ const appState = {
   uiState: "BetsOpen",
   uiMockBets: [],
   nextMockBetId: 1,
+  flowTimers: [],
 };
 
 boot().catch((error) => {
@@ -139,12 +149,30 @@ function validateTableSchema(tableSchema) {
 }
 
 function bindEvents() {
-  ui.startWheelButton.addEventListener("click", () => advanceState("SpinVisualStarted"));
-  ui.noMoreBetsButton.addEventListener("click", () => advanceState("NoMoreBets"));
-  ui.revealResultButton.addEventListener("click", () => advanceState("ResultFinalised"));
-  ui.showSettlementButton.addEventListener("click", () => advanceState("Settled"));
-  ui.publishProofButton.addEventListener("click", () => advanceState("ProofPublished"));
+  ui.startWheelButton.addEventListener("click", startWheelFlow);
   ui.resetRoundButton.addEventListener("click", resetRoundFlow);
+}
+
+function startWheelFlow() {
+  if (appState.uiState !== "BetsOpen") {
+    return;
+  }
+  clearFlowTimers();
+  advanceState("SpinVisualStarted");
+  scheduleFlowState("NoMoreBets", SPIN_TO_NO_MORE_BETS_MS);
+  scheduleFlowState("ResultFinalised", SPIN_TO_NO_MORE_BETS_MS + NO_MORE_BETS_TO_RESULT_MS);
+  scheduleFlowState("Settled", SPIN_TO_NO_MORE_BETS_MS + NO_MORE_BETS_TO_RESULT_MS + RESULT_TO_SETTLEMENT_MS);
+  scheduleFlowState("ProofPublished", SPIN_TO_NO_MORE_BETS_MS + NO_MORE_BETS_TO_RESULT_MS + RESULT_TO_SETTLEMENT_MS + SETTLEMENT_TO_PROOF_MS);
+}
+
+function scheduleFlowState(nextState, delayMs) {
+  const timerId = window.setTimeout(() => advanceState(nextState), delayMs);
+  appState.flowTimers.push(timerId);
+}
+
+function clearFlowTimers() {
+  appState.flowTimers.forEach((timerId) => window.clearTimeout(timerId));
+  appState.flowTimers = [];
 }
 
 function advanceState(nextState) {
@@ -166,6 +194,7 @@ function renderStaticPanels(round) {
 }
 
 function resetRoundFlow() {
+  clearFlowTimers();
   appState.uiState = "BetsOpen";
   appState.uiMockBets = [];
   appState.nextMockBetId = 1;
@@ -181,16 +210,11 @@ function renderFlow() {
   const proofVisible = hasReachedState("ProofPublished");
   const canPlaceMockBets = canPlaceBetsForState(uiState);
 
-  ui.currentRoundState.textContent = uiState;
+  ui.roundStatusLabel.textContent = ROUND_STATUS_LABELS[uiState];
+  ui.roundStatusLabel.className = `round-status-label ${canPlaceMockBets ? "round-status-open" : "round-status-closed"}`;
   ui.stateDescription.textContent = ROUND_DESCRIPTIONS[uiState];
-  ui.wheelVisual.textContent = hasReachedState("SpinVisualStarted") ? "SPINNING" : "READY";
-  ui.wheelVisual.className = `wheel-visual ${hasReachedState("SpinVisualStarted") ? (hasReachedState("NoMoreBets") ? "wheel-stopped" : "wheel-spinning") : "wheel-ready"}`;
 
   ui.startWheelButton.disabled = uiState !== "BetsOpen";
-  ui.noMoreBetsButton.disabled = uiState !== "SpinVisualStarted";
-  ui.revealResultButton.disabled = uiState !== "NoMoreBets";
-  ui.showSettlementButton.disabled = uiState !== "ResultFinalised";
-  ui.publishProofButton.disabled = uiState !== "Settled";
   ui.betStakeInput.disabled = !canPlaceMockBets;
 
   ui.betStatus.textContent = buildBetStatusText(uiState);
@@ -204,11 +228,10 @@ function renderFlow() {
   } else {
     ui.resultNumber.textContent = "--";
     ui.resultNumber.className = "result-number hidden-result";
-    ui.resultColour.textContent = "Hidden until reveal";
+    ui.resultColour.textContent = "Hidden until automatic reveal";
   }
 
-  renderRouletteTable(resultVisible ? round.result_number : null, canPlaceMockBets);
-  renderRoundSequence(uiState);
+  renderRouletteTable(resultVisible ? round.result_number : null, true);
   renderUiMockBetLedger();
   renderSettlement(round, settlementVisible);
   renderProof(round, proofVisible);
@@ -251,23 +274,6 @@ function renderSafetyFlags(round) {
     const pass = value === "PASS" || value === "false" || value === "true";
     li.innerHTML = `<span class="kv-key">${escapeHtml(key)}</span><span class="kv-value ${pass ? "pass" : "fail"}">${escapeHtml(String(value))}</span>`;
     ui.safetyFlagsList.appendChild(li);
-  });
-}
-
-function renderRoundSequence(currentState) {
-  const currentIndex = ROUND_SEQUENCE.indexOf(currentState);
-  ui.sequenceList.innerHTML = "";
-  ROUND_SEQUENCE.forEach((state, index) => {
-    const li = document.createElement("li");
-    const stateClass = index < currentIndex ? "complete" : index === currentIndex ? "active" : "pending";
-    li.innerHTML = `
-      <div class="sequence-step ${stateClass}">
-        <span class="sequence-badge">${index + 1}</span>
-        <span>${state}</span>
-      </div>
-      <span class="${stateClass}">${index === currentIndex ? "current" : index < currentIndex ? "done" : "waiting"}</span>
-    `;
-    ui.sequenceList.appendChild(li);
   });
 }
 
@@ -319,7 +325,7 @@ function renderDeterministicSettlementInput(round) {
 function renderSettlement(round, visible) {
   ui.settlementList.innerHTML = "";
   if (!visible) {
-    ui.settlementSummary.textContent = "Settlement hidden until Show Settlement.";
+    ui.settlementSummary.textContent = "Settlement shown automatically after result reveal.";
     ui.uiOnlyBetNote.textContent = "UI-added bets are mock display bets only; deterministic settlement is from the engine sample round.";
     return;
   }
@@ -353,7 +359,7 @@ function renderSettlement(round, visible) {
 function renderProof(round, visible) {
   ui.proofList.innerHTML = "";
   if (!visible) {
-    ui.proofStatus.textContent = "Proof hidden until Publish Proof.";
+    ui.proofStatus.textContent = "Proof published automatically after settlement display.";
     ui.proofStatus.className = "proof-status proof-hidden";
     return;
   }
@@ -381,7 +387,7 @@ function renderProof(round, visible) {
 function placeMockBetFromZone(zone) {
   const currentState = appState.uiState;
   if (!canPlaceBetsForState(currentState)) {
-    ui.betStatus.textContent = `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
+    ui.betStatus.textContent = NO_MORE_BETS_MESSAGE;
     ui.betStatus.className = "bet-status bet-closed";
     return;
   }
@@ -402,8 +408,8 @@ function placeMockBetFromZone(zone) {
   appState.nextMockBetId += 1;
   appState.uiMockBets.push(mockBet);
   ui.betStatus.textContent = currentState === "SpinVisualStarted"
-    ? "Bets are still open while the wheel is visually spinning."
-    : "BetsOpen: schema-driven mock bets may be placed before wheel start.";
+    ? ROUND_STATUS_LABELS.SpinVisualStarted
+    : ROUND_STATUS_LABELS.BetsOpen;
   ui.betStatus.className = "bet-status bet-open";
   renderUiMockBetLedger();
   renderRouletteTable(hasReachedState("ResultFinalised") ? appState.round.result_number : null, true);
@@ -446,12 +452,12 @@ function buildLedgerLabel(zone) {
 
 function buildBetStatusText(uiState) {
   if (uiState === "SpinVisualStarted") {
-    return "Bets are still open while the wheel is visually spinning.";
+    return ROUND_STATUS_LABELS.SpinVisualStarted;
   }
   if (uiState === "BetsOpen") {
-    return "BetsOpen: schema-driven mock bets may be placed before wheel start.";
+    return ROUND_STATUS_LABELS.BetsOpen;
   }
-  return `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
+  return ROUND_STATUS_LABELS[uiState];
 }
 
 function canPlaceBetsForState(uiState) {

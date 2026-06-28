@@ -110,18 +110,32 @@ h3 {
   grid-column: 1 / -1;
 }
 
-.hero-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
+.table-first-panel {
+  border-color: rgba(245, 197, 66, 0.3);
+}
+
+.table-heading-row {
+  display: flex;
+  justify-content: space-between;
   gap: 20px;
-  align-items: center;
+  align-items: start;
+}
+
+.round-status-box {
+  min-width: 240px;
+}
+
+.compact-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .status-pill,
 .state-banner,
 .bet-status,
 .proof-status,
-.wheel-visual {
+.round-status-label {
   padding: 10px 14px;
   border-radius: 999px;
   font-weight: 700;
@@ -146,8 +160,7 @@ h3 {
 .status-pass,
 .bet-open,
 .proof-pass,
-.wheel-ready,
-.wheel-spinning {
+.round-status-open {
   background: rgba(22, 163, 74, 0.15);
   color: #7ee787;
   border-color: rgba(22, 163, 74, 0.35);
@@ -156,7 +169,7 @@ h3 {
 .status-fail,
 .bet-closed,
 .proof-hidden,
-.wheel-stopped {
+.round-status-closed {
   background: rgba(220, 38, 38, 0.15);
   color: #ff9b9b;
   border-color: rgba(220, 38, 38, 0.35);
@@ -178,8 +191,7 @@ h3 {
 }
 
 .mock-bet-list,
-.kv-list,
-.sequence-list {
+.kv-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -260,8 +272,7 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.kv-list li,
-.sequence-list li {
+.kv-list li {
   display: flex;
   justify-content: space-between;
   gap: 18px;
@@ -269,8 +280,7 @@ h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.kv-list li:last-child,
-.sequence-list li:last-child {
+.kv-list li:last-child {
   border-bottom: 0;
 }
 
@@ -278,31 +288,12 @@ h3 {
   color: var(--muted);
 }
 
-.kv-value.pass,
-.sequence-list .active,
-.sequence-list .complete {
+.kv-value.pass {
   color: #7ee787;
 }
 
-.kv-value.fail,
-.sequence-list .blocked {
+.kv-value.fail {
   color: #ff9b9b;
-}
-
-.sequence-step {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sequence-badge {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.06);
-  font-size: 12px;
 }
 
 .roulette-svg-shell {
@@ -474,9 +465,8 @@ td {
   }
 
   .page-header,
-  .hero-panel {
+  .table-heading-row {
     flex-direction: column;
-    grid-template-columns: 1fr;
   }
 
   .bet-toolbar {

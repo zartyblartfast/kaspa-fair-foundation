@@ -648,3 +648,41 @@ ENV-081B remains strictly mock-only and safety-bounded:
 - no mainnet
 - no secrets
 - no production casino functionality
+
+## 21. ENV-082 roulette UI workflow/layout rebuild
+
+ENV-082 rebuilds the static roulette UI layout so the roulette table is the first prominent object on the page.
+
+Primary readiness command:
+- `scripts/env082-roulette-ui-workflow-rebuild-smoke.sh`
+
+Primary UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/roulette-table-renderer.js`
+
+UI behavior now demonstrated:
+- the roulette table appears before workflow, ledger, settlement, proof, verifier, and safety sections
+- the old wheel visual and multi-button interactive workflow are removed
+- the manual `Reveal Result` control is removed
+- the only top-level round controls are `Start Wheel` and `Reset Round`
+- round progress is shown through a status label, not status-like buttons
+- `Start Wheel` moves the UI into `Wheel spinning — bets still open`
+- table bets remain allowed during the spinning state
+- the timed flow moves to `No more bets`, then reveals the deterministic result automatically
+- table bet attempts after `NoMoreBets` show exactly `No more bets accepted this round.` and do not add a ledger row
+- reset clears UI-added mock bets and returns to the initial state without page refresh
+- deterministic result, settlement, and proof still come from `sample-round.json` only
+
+ENV-082 remains strictly mock-only and safety-bounded:
+- no real betting
+- no real payouts
+- no wallet/private-key access
+- no backend custody
+- no signing
+- no transaction creation
+- no submitting or broadcasting
+- no mainnet
+- no secrets
+- no production casino functionality

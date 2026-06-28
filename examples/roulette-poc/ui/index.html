@@ -4,16 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kaspa Fair Roulette PoC</title>
-    <link rel="stylesheet" href="styles.css?v=single-consistent-bet-selection-5" />
+    <link rel="stylesheet" href="styles.css?v=env082-workflow-rebuild" />
   </head>
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">ENV-081B schema-driven SVG roulette table renderer</p>
+        <p class="eyebrow">ENV-082 roulette UI workflow/layout rebuild</p>
         <h1>Kaspa Fair Roulette PoC</h1>
         <p class="subhead">
-          Interactive static roulette prototype with a schema-driven SVG betting surface rendered from roulette-table-schema.json and
-          deterministic result/proof display from sample-round.json only.
+          Table-first static roulette prototype with mock-only chip placement and deterministic result/proof display from sample-round.json only.
         </p>
       </div>
       <div id="overall-status" class="status-pill status-loading">Loading deterministic round and SVG table schema…</div>
@@ -25,47 +24,31 @@
         <p id="failure-message">Round or table schema failed validation.</p>
       </section>
 
-      <section class="panel wide hero-panel">
-        <div>
-          <div class="label">Current round state</div>
-          <div id="current-round-state" class="state-banner">BetsOpen</div>
-          <p class="note" id="state-description">Schema-driven mock bets may be placed before wheel start.</p>
+      <section class="panel wide table-first-panel" id="table-panel">
+        <div class="table-heading-row">
+          <div>
+            <h2>Roulette table</h2>
+            <p class="table-note">
+              Click the table to place mock chips. Bets are still open while the wheel is spinning; result comes from sample-round.json only.
+            </p>
+          </div>
+          <div class="round-status-box" aria-live="polite">
+            <span class="label">Round status</span>
+            <span id="round-status-label" class="round-status-label">Bets open</span>
+          </div>
         </div>
-        <div class="wheel-visual-panel">
-          <div class="label">Wheel visual</div>
-          <div id="wheel-visual" class="wheel-visual">READY</div>
-          <p class="note">spin animation != result finalisation</p>
+        <div class="roulette-svg-shell">
+          <div class="roulette-svg-host" id="roulette-table-svg-host" aria-label="SVG roulette table container"></div>
         </div>
       </section>
 
-      <section class="panel wide" id="controls-panel">
-        <h2>Interactive round controls</h2>
-        <p class="note">
-          Follow the required flow: BetsOpen → SpinVisualStarted → NoMoreBets → ResultFinalised → Settled → ProofPublished.
-        </p>
+      <section class="panel wide compact-controls-panel" id="controls-panel">
+        <h2>Round controls</h2>
+        <p class="note" id="state-description">Bets open. Place mock chips on the table, then start the wheel.</p>
         <div class="button-row">
           <button id="start-wheel-button" type="button">Start Wheel</button>
-          <button id="no-more-bets-button" type="button">No More Bets</button>
-          <button id="reveal-result-button" type="button">Reveal Result</button>
-          <button id="show-settlement-button" type="button">Show Settlement</button>
-          <button id="publish-proof-button" type="button">Publish Proof</button>
           <button id="reset-round-button" type="button">Reset Round</button>
         </div>
-      </section>
-
-      <section class="panel" id="trust-panel">
-        <h2>Foundation verifier status</h2>
-        <ul class="kv-list" id="trust-status-list"></ul>
-      </section>
-
-      <section class="panel" id="safety-panel">
-        <h2>Safety flags</h2>
-        <ul class="kv-list" id="safety-flags-list"></ul>
-      </section>
-
-      <section class="panel wide" id="sequence-panel">
-        <h2>Round sequence</h2>
-        <ol class="sequence-list" id="sequence-list"></ol>
       </section>
 
       <section class="panel wide" id="bet-editor-panel">
@@ -80,23 +63,13 @@
             <input id="bet-stake-input" type="number" min="1" step="1" value="5" />
           </label>
         </div>
-        <div id="bet-status" class="bet-status bet-open">BetsOpen: schema-driven mock bets may be placed before wheel start.</div>
+        <div id="bet-status" class="bet-status bet-open">Bets open</div>
         <div id="bet-placement-note" class="bet-placement-note">
           Click any valid roulette table zone to add a chip: number cells, zero, split/street/corner/six-line selectors, dozens, columns, and outside rectangles
           all use the same additive bet placement behavior.
         </div>
         <h3>UI mock bet ledger</h3>
         <ul class="mock-bet-list" id="mock-bet-list"></ul>
-      </section>
-
-      <section class="panel wide" id="table-panel">
-        <h2>Roulette table</h2>
-        <div class="table-note">
-          Bets are still open while the wheel is visually spinning. Highlighted result appears only after deterministic reveal.
-        </div>
-        <div class="roulette-svg-shell">
-          <div class="roulette-svg-host" id="roulette-table-svg-host" aria-label="SVG roulette table container"></div>
-        </div>
       </section>
 
       <section class="panel" id="result-panel">
@@ -108,13 +81,18 @@
           </div>
           <div>
             <div class="label">Result colour</div>
-            <div class="result-colour" id="result-colour">Hidden until reveal</div>
+            <div class="result-colour" id="result-colour">Hidden until automatic reveal</div>
           </div>
         </div>
         <div class="algorithm-box">
           <div class="label">Deterministic result algorithm</div>
           <code id="result-algorithm">Loading…</code>
         </div>
+      </section>
+
+      <section class="panel" id="trust-panel">
+        <h2>Proof / verifier details</h2>
+        <ul class="kv-list" id="trust-status-list"></ul>
       </section>
 
       <section class="panel wide" id="bets-panel">
@@ -137,20 +115,25 @@
       </section>
 
       <section class="panel wide" id="settlement-panel">
-        <h2>Settlement panel</h2>
-        <div id="settlement-summary" class="settlement-summary">Settlement hidden until Show Settlement.</div>
+        <h2>Settlement</h2>
+        <div id="settlement-summary" class="settlement-summary">Settlement shown automatically after result reveal.</div>
         <div id="ui-only-bet-note" class="prototype-note">UI-added bets are mock display bets only; deterministic settlement is from the engine sample round.</div>
         <ul class="kv-list" id="settlement-list"></ul>
       </section>
 
       <section class="panel wide" id="proof-panel">
-        <h2>Proof panel</h2>
-        <div id="proof-status" class="proof-status">Proof hidden until Publish Proof.</div>
+        <h2>Proof</h2>
+        <div id="proof-status" class="proof-status">Proof published automatically after settlement display.</div>
         <ul class="kv-list proof-list" id="proof-list"></ul>
+      </section>
+
+      <section class="panel wide" id="safety-panel">
+        <h2>Safety information</h2>
+        <ul class="kv-list" id="safety-flags-list"></ul>
       </section>
     </main>
 
-    <script src="roulette-table-renderer.js?v=single-consistent-bet-selection-5"></script>
-    <script src="app.js?v=single-consistent-bet-selection-5"></script>
+    <script src="roulette-table-renderer.js?v=env082-workflow-rebuild"></script>
+    <script src="app.js?v=env082-workflow-rebuild"></script>
   </body>
 </html>

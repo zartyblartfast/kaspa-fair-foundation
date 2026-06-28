@@ -1,6 +1,6 @@
 # Roulette PoC
 
-ENV-081B rebuilds the roulette PoC betting surface as a schema-driven SVG renderer.
+ENV-082 rebuilds the roulette PoC page flow so the roulette table is the first prominent object on the page and the controls are reduced to a simple Start Wheel / Reset Round workflow.
 
 Primary UI files:
 - `examples/roulette-poc/ui/index.html`
@@ -9,7 +9,7 @@ Primary UI files:
 - `examples/roulette-poc/ui/roulette-table-schema.json`
 - `examples/roulette-poc/ui/roulette-table-renderer.js`
 
-What ENV-081B does:
+What the current UI does:
 - renders the visible roulette betting surface from the ENV-081A schema in `roulette-table-schema.json`
 - uses an SVG table layout with the standard European shape
 - keeps `0` as the dedicated green region on the left
@@ -17,11 +17,16 @@ What ENV-081B does:
 - renders dozens, outside bets, and column selector regions from schema geometry
 - keeps straight number cells clickable on the table
 - keeps dozens, columns, and outside bets clickable on the table
-- uses compact table-overlay modes for split, street, corner, and six-line hotspots
+- uses compact table hotspot selectors for split, street, corner, and six-line bets
 - adds visible chip markers and a UI ledger for mock bets only
+- keeps the table before workflow, ledger, settlement, proof, verifier, and safety information
+- uses a status label rather than status-like workflow buttons
+- automatically advances from wheel spin to no-more-bets, result reveal, settlement display, and proof publication
 - preserves the deterministic result, settlement, and proof from `sample-round.json` only
 
-What ENV-081B explicitly avoids:
+What the current UI explicitly avoids:
+- manual result reveal controls
+- old wheel visual / multi-button round-control workflow
 - giant inside-zone lists
 - dropdown-only inside-zone betting
 - result generation or randomisation
@@ -39,5 +44,5 @@ What ENV-081B explicitly avoids:
 Readiness command:
 
 ```bash
-scripts/env081b-svg-table-renderer-smoke.sh
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
 ```
