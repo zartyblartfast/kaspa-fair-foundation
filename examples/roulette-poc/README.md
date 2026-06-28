@@ -1,34 +1,43 @@
 # Roulette PoC
 
-ENV-081A defines the declarative European roulette table layout schema at `examples/roulette-poc/ui/roulette-table-schema.json`.
+ENV-081B rebuilds the roulette PoC betting surface as a schema-driven SVG renderer.
 
-What it does:
-- defines the standard European roulette layout as schema data only
-- keeps `0` as a dedicated green region on the left of the main number grid
-- defines all 37 straight number cells with coordinates and chip anchors
-- defines dozens, outside even-money bets, and explicit column selector regions
-- defines future hotspot geometry for split, street, corner, and six-line bets
-- provides a stable schema that can drive future SVG/table-hotspot rendering
-- keeps the current UI rebuild deferred to ENV-081B
-- explicitly avoids giant inside-zone lists
-- explicitly avoids dropdown-based inside-zone betting
+Primary UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/roulette-table-schema.json`
+- `examples/roulette-poc/ui/roulette-table-renderer.js`
 
-What it does not do:
-- rebuild the betting UI yet
-- render the final SVG betting surface yet
-- decide, generate, or randomise the result
+What ENV-081B does:
+- renders the visible roulette betting surface from the ENV-081A schema in `roulette-table-schema.json`
+- uses an SVG table layout with the standard European shape
+- keeps `0` as the dedicated green region on the left
+- renders the 12 × 3 number grid with rows `3,6,9,...,36`, `2,5,8,...,35`, and `1,4,7,...,34`
+- renders dozens, outside bets, and column selector regions from schema geometry
+- keeps straight number cells clickable on the table
+- keeps dozens, columns, and outside bets clickable on the table
+- uses compact table-overlay modes for split, street, corner, and six-line hotspots
+- adds visible chip markers and a UI ledger for mock bets only
+- preserves the deterministic result, settlement, and proof from `sample-round.json` only
+
+What ENV-081B explicitly avoids:
+- giant inside-zone lists
+- dropdown-only inside-zone betting
+- result generation or randomisation
 - real betting
 - real payouts
 - wallet integration
 - backend custody or accounts
 - signing
 - transaction creation
-- submitting/broadcasting
+- submitting or broadcasting
 - mainnet
+- secrets
 - production casino functionality
 
 Readiness command:
 
 ```bash
-scripts/env081a-roulette-table-schema-smoke.sh
+scripts/env081b-svg-table-renderer-smoke.sh
 ```

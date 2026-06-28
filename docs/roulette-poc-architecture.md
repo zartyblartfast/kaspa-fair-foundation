@@ -607,3 +607,44 @@ ENV-081A explicitly avoids:
 - transaction creation
 - mainnet
 - production casino functionality
+
+## 20. ENV-081B schema-driven SVG roulette table renderer
+
+ENV-081B consumes the ENV-081A schema and renders the visible roulette betting surface from that schema.
+
+Primary readiness command:
+- `scripts/env081b-svg-table-renderer-smoke.sh`
+
+Primary UI files:
+- `examples/roulette-poc/ui/index.html`
+- `examples/roulette-poc/ui/styles.css`
+- `examples/roulette-poc/ui/app.js`
+- `examples/roulette-poc/ui/roulette-table-schema.json`
+- `examples/roulette-poc/ui/roulette-table-renderer.js`
+
+UI behavior now demonstrated:
+- the visible roulette table is SVG and schema-driven
+- the SVG renders the standard European layout from `roulette-table-schema.json`
+- the green zero region is rendered on the left
+- the number grid renders the schema-defined rows `3,6,9,...,36`, `2,5,8,...,35`, and `1,4,7,...,34`
+- dozens, outside bets, and column selectors are rendered from schema geometry
+- straight number cells, dozens, columns, and outside bets are clickable directly on the table
+- split, street, corner, and six-line bets use compact table hotspot overlays instead of giant lists
+- dropdown-only inside-zone betting is not used
+- UI-added bets place visible chips and ledger entries on a mock-only basis
+- betting remains allowed in `BetsOpen` and `SpinVisualStarted`
+- betting is blocked after `NoMoreBets` with `BETS_CLOSED_NO_MORE_BETS`
+- `Reset Round` clears UI-added bets, chip markers, and the visible round flow back to `BetsOpen` without page refresh
+- deterministic result, settlement, and proof still come from `sample-round.json` only
+
+ENV-081B remains strictly mock-only and safety-bounded:
+- no real betting
+- no real payouts
+- no wallet/private-key access
+- no backend custody
+- no signing
+- no transaction creation
+- no submitting or broadcasting
+- no mainnet
+- no secrets
+- no production casino functionality

@@ -4,32 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kaspa Fair Roulette PoC</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=single-consistent-bet-selection-5" />
   </head>
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">ENV-080B temporary simple mock bet UI cleanup</p>
+        <p class="eyebrow">ENV-081B schema-driven SVG roulette table renderer</p>
         <h1>Kaspa Fair Roulette PoC</h1>
         <p class="subhead">
-          Interactive static roulette prototype with temporary simple mock bet placement, intentionally minimal visual polish,
-          and deterministic result/proof display from sample-round.json only.
+          Interactive static roulette prototype with a schema-driven SVG betting surface rendered from roulette-table-schema.json and
+          deterministic result/proof display from sample-round.json only.
         </p>
       </div>
-      <div id="overall-status" class="status-pill status-loading">Loading deterministic round…</div>
+      <div id="overall-status" class="status-pill status-loading">Loading deterministic round and SVG table schema…</div>
     </header>
 
     <main class="layout">
       <section class="panel wide" id="failure-panel" hidden>
         <h2>Failure / unsafe state</h2>
-        <p id="failure-message">Round data failed validation.</p>
+        <p id="failure-message">Round or table schema failed validation.</p>
       </section>
 
       <section class="panel wide hero-panel">
         <div>
           <div class="label">Current round state</div>
           <div id="current-round-state" class="state-banner">BetsOpen</div>
-          <p class="note" id="state-description">Temporary simple straight-number mock bets may be placed before wheel start.</p>
+          <p class="note" id="state-description">Schema-driven mock bets may be placed before wheel start.</p>
         </div>
         <div class="wheel-visual-panel">
           <div class="label">Wheel visual</div>
@@ -69,29 +69,22 @@
       </section>
 
       <section class="panel wide" id="bet-editor-panel">
-        <h2>Temporary simple mock bet prototype</h2>
+        <h2>Schema-driven mock betting surface</h2>
         <p class="note">
-          UI-added bets are temporary prototype straight-number mock bets only. They do not alter the deterministic result, settlement, or proof loaded from sample-round.json.
+          The visible SVG table is the mock betting surface. Clicking table zones adds mock bets only and does not alter the deterministic result,
+          settlement, or proof loaded from sample-round.json.
         </p>
-        <p class="note">Full roulette table bet zones are not implemented yet.</p>
-        <p class="note">Future table-driven bet zones: straight, split, street, corner, six-line, dozens, columns, red/black, odd/even, high/low.</p>
-        <div class="bet-editor-grid">
-          <label>
-            <span class="label">Prototype straight-number mock bet choice</span>
-            <select id="bet-choice-select">
-              <option value="straight-number:0">straight number 0</option>
-              <option value="straight-number:17">straight number 17</option>
-              <option value="straight-number:21">straight number 21</option>
-            </select>
-          </label>
+        <div class="bet-toolbar">
           <label>
             <span class="label">Stake units</span>
             <input id="bet-stake-input" type="number" min="1" step="1" value="5" />
           </label>
-          <button id="place-mock-bet-button" type="button">Add Prototype Straight-Number Mock Bet</button>
         </div>
-        <div id="bet-status" class="bet-status bet-open">BetsOpen: temporary simple straight-number mock bets may be placed before wheel start.</div>
-        <div id="bet-placement-note" class="bet-placement-note">Only temporary simple straight-number mock bets are supported in this prototype UI.</div>
+        <div id="bet-status" class="bet-status bet-open">BetsOpen: schema-driven mock bets may be placed before wheel start.</div>
+        <div id="bet-placement-note" class="bet-placement-note">
+          Click any valid roulette table zone to add a chip: number cells, zero, split/street/corner/six-line selectors, dozens, columns, and outside rectangles
+          all use the same additive bet placement behavior.
+        </div>
         <h3>UI mock bet ledger</h3>
         <ul class="mock-bet-list" id="mock-bet-list"></ul>
       </section>
@@ -101,7 +94,9 @@
         <div class="table-note">
           Bets are still open while the wheel is visually spinning. Highlighted result appears only after deterministic reveal.
         </div>
-        <div class="roulette-table" id="roulette-table"></div>
+        <div class="roulette-svg-shell">
+          <div class="roulette-svg-host" id="roulette-table-svg-host" aria-label="SVG roulette table container"></div>
+        </div>
       </section>
 
       <section class="panel" id="result-panel">
@@ -144,7 +139,7 @@
       <section class="panel wide" id="settlement-panel">
         <h2>Settlement panel</h2>
         <div id="settlement-summary" class="settlement-summary">Settlement hidden until Show Settlement.</div>
-        <div id="ui-only-bet-note" class="prototype-note">UI-added bets are prototype display bets only; deterministic settlement is from the engine sample round.</div>
+        <div id="ui-only-bet-note" class="prototype-note">UI-added bets are mock display bets only; deterministic settlement is from the engine sample round.</div>
         <ul class="kv-list" id="settlement-list"></ul>
       </section>
 
@@ -155,6 +150,7 @@
       </section>
     </main>
 
-    <script src="app.js"></script>
+    <script src="roulette-table-renderer.js?v=single-consistent-bet-selection-5"></script>
+    <script src="app.js?v=single-consistent-bet-selection-5"></script>
   </body>
 </html>

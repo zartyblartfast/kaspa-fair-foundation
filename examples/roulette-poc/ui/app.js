@@ -8,18 +8,17 @@ const ROUND_SEQUENCE = [
 ];
 
 const ROUND_DESCRIPTIONS = {
-  BetsOpen: "Temporary simple straight-number mock bets may be placed before wheel start.",
+  BetsOpen: "Schema-driven mock bets may be placed before wheel start.",
   SpinVisualStarted: "Bets are still open while the wheel is visually spinning.",
   NoMoreBets: "No more bets — ledger locked.",
   ResultFinalised: "Deterministic result revealed from sample-round.json after NoMoreBets.",
-  Settled: "Deterministic settlement from sample-round.json is shown. UI-added bets remain temporary simple mock bets only.",
+  Settled: "Deterministic settlement from sample-round.json is shown. UI-added bets remain mock display bets only.",
   ProofPublished: "Proof fields and final PASS status are now displayed.",
 };
 
-const RED_NUMBERS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
-const BLACK_NUMBERS = new Set([2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]);
 const BETS_CLOSED_NO_MORE_BETS = "BETS_CLOSED_NO_MORE_BETS";
 const PLACEABLE_STATES = new Set(["BetsOpen", "SpinVisualStarted"]);
+const BET_PLACEMENT_DESCRIPTION = "Click any valid roulette table zone to add a chip: number cells, zero, split/street/corner/six-line selectors, dozens, columns, and outside rectangles all use the same additive bet placement behavior.";
 
 const ui = {
   overallStatus: document.getElementById("overall-status"),
@@ -31,7 +30,7 @@ const ui = {
   trustList: document.getElementById("trust-status-list"),
   safetyFlagsList: document.getElementById("safety-flags-list"),
   sequenceList: document.getElementById("sequence-list"),
-  rouletteTable: document.getElementById("roulette-table"),
+  rouletteTableSvgHost: document.getElementById("roulette-table-svg-host"),
   resultNumber: document.getElementById("result-number"),
   resultColour: document.getElementById("result-colour"),
   resultAlgorithm: document.getElementById("result-algorithm"),
@@ -41,10 +40,9 @@ const ui = {
   settlementList: document.getElementById("settlement-list"),
   proofStatus: document.getElementById("proof-status"),
   proofList: document.getElementById("proof-list"),
-  betChoiceSelect: document.getElementById("bet-choice-select"),
   betStakeInput: document.getElementById("bet-stake-input"),
-  placeMockBetButton: document.getElementById("place-mock-bet-button"),
   betStatus: document.getElementById("bet-status"),
+  betPlacementNote: document.getElementById("bet-placement-note"),
   mockBetList: document.getElementById("mock-bet-list"),
   startWheelButton: document.getElementById("start-wheel-button"),
   noMoreBetsButton: document.getElementById("no-more-bets-button"),
@@ -56,27 +54,37 @@ const ui = {
 
 const appState = {
   round: null,
+  tableSchema: null,
   uiState: "BetsOpen",
   uiMockBets: [],
   nextMockBetId: 1,
 };
 
 boot().catch((error) => {
-  showFailure(`Failed to load round JSON: ${error.message}`);
+  showFailure(`Failed to load deterministic round or roulette table schema: ${error.message}`);
 });
 
 async function boot() {
-  const response = await fetch("sample-round.json", { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
+  const [round, tableSchema] = await Promise.all([
+    fetchJson("sample-round.json"),
+    fetchJson("roulette-table-schema.json"),
+  ]);
 
-  const round = await response.json();
   validateRound(round);
+  validateTableSchema(tableSchema);
   appState.round = round;
+  appState.tableSchema = tableSchema;
   bindEvents();
   renderStaticPanels(round);
   resetRoundFlow();
+}
+
+async function fetchJson(path) {
+  const response = await fetch(path, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`${path} HTTP ${response.status}`);
+  }
+  return response.json();
 }
 
 function validateRound(round) {
@@ -101,13 +109,41 @@ function validateRound(round) {
   }
 }
 
+function validateTableSchema(tableSchema) {
+  const topRow = tableSchema.layout?.main_grid?.top_row || [];
+  const middleRow = tableSchema.layout?.main_grid?.middle_row || [];
+  const bottomRow = tableSchema.layout?.main_grid?.bottom_row || [];
+  const checks = [
+    ["schema name", tableSchema.schema === "kaspa-fair-roulette-table-layout-v1"],
+    ["roulette variant european", tableSchema.roulette_variant === "european"],
+    ["mock only true", tableSchema.mock_only === true],
+    ["mainnet_supported false", tableSchema.mainnet_supported === false],
+    ["zero on left", tableSchema.layout?.zero_position === "left"],
+    ["top row length", topRow.length === 12],
+    ["middle row length", middleRow.length === 12],
+    ["bottom row length", bottomRow.length === 12],
+    ["number cell count", (tableSchema.regions?.number_cells || []).length === 37],
+    ["dozen count", (tableSchema.regions?.dozens || []).length === 3],
+    ["outside count", (tableSchema.regions?.outside_bets || []).length === 6],
+    ["column count", (tableSchema.regions?.columns || []).length === 3],
+    ["split hotspots", (tableSchema.regions?.hotspots?.split || []).length > 0],
+    ["street hotspots", (tableSchema.regions?.hotspots?.street || []).length > 0],
+    ["corner hotspots", (tableSchema.regions?.hotspots?.corner || []).length > 0],
+    ["six_line hotspots", (tableSchema.regions?.hotspots?.six_line || []).length > 0],
+  ];
+
+  const failedChecks = checks.filter(([, passed]) => !passed).map(([label]) => label);
+  if (failedChecks.length > 0) {
+    throw new Error(`Unsafe or invalid roulette table schema: ${failedChecks.join(", ")}`);
+  }
+}
+
 function bindEvents() {
   ui.startWheelButton.addEventListener("click", () => advanceState("SpinVisualStarted"));
   ui.noMoreBetsButton.addEventListener("click", () => advanceState("NoMoreBets"));
   ui.revealResultButton.addEventListener("click", () => advanceState("ResultFinalised"));
   ui.showSettlementButton.addEventListener("click", () => advanceState("Settled"));
   ui.publishProofButton.addEventListener("click", () => advanceState("ProofPublished"));
-  ui.placeMockBetButton.addEventListener("click", placeMockBet);
   ui.resetRoundButton.addEventListener("click", resetRoundFlow);
 }
 
@@ -125,16 +161,14 @@ function renderStaticPanels(round) {
   renderTrustPanel(round);
   renderSafetyFlags(round);
   renderDeterministicSettlementInput(round);
-  renderRouletteTable();
   ui.resultAlgorithm.textContent = round.result_algorithm;
-  setOverallStatus("PASS — deterministic sample JSON loaded; temporary simple mock bet prototype ready", true);
+  setOverallStatus("PASS — deterministic sample JSON and schema-driven SVG roulette table loaded", true);
 }
 
 function resetRoundFlow() {
   appState.uiState = "BetsOpen";
   appState.uiMockBets = [];
   appState.nextMockBetId = 1;
-  ui.betChoiceSelect.value = "straight-number:0";
   ui.betStakeInput.value = "5";
   renderFlow();
 }
@@ -157,12 +191,11 @@ function renderFlow() {
   ui.revealResultButton.disabled = uiState !== "NoMoreBets";
   ui.showSettlementButton.disabled = uiState !== "ResultFinalised";
   ui.publishProofButton.disabled = uiState !== "Settled";
-
-  ui.betChoiceSelect.disabled = !canPlaceMockBets;
   ui.betStakeInput.disabled = !canPlaceMockBets;
-  ui.placeMockBetButton.disabled = !canPlaceMockBets;
+
   ui.betStatus.textContent = buildBetStatusText(uiState);
   ui.betStatus.className = `bet-status ${canPlaceMockBets ? "bet-open" : "bet-closed"}`;
+  ui.betPlacementNote.textContent = BET_PLACEMENT_DESCRIPTION;
 
   if (resultVisible) {
     ui.resultNumber.textContent = String(round.result_number);
@@ -174,7 +207,7 @@ function renderFlow() {
     ui.resultColour.textContent = "Hidden until reveal";
   }
 
-  renderRouletteTable(resultVisible ? round.result_number : null);
+  renderRouletteTable(resultVisible ? round.result_number : null, canPlaceMockBets);
   renderRoundSequence(uiState);
   renderUiMockBetLedger();
   renderSettlement(round, settlementVisible);
@@ -188,12 +221,13 @@ function renderTrustPanel(round) {
     ["round id", round.round_id],
     ["round source state", round.round_state],
     ["deterministic result source", "sample-round.json"],
+    ["roulette table schema source", "roulette-table-schema.json"],
   ];
 
   ui.trustList.innerHTML = "";
   rows.forEach(([key, value]) => {
     const li = document.createElement("li");
-    const isPass = ["PASS", "testnet-10", "sample-round.json"].includes(String(value));
+    const isPass = ["PASS", "testnet-10", "sample-round.json", "roulette-table-schema.json"].includes(String(value));
     li.innerHTML = `<span class="kv-key">${escapeHtml(key)}</span><span class="kv-value ${isPass ? "pass" : ""}">${escapeHtml(String(value))}</span>`;
     ui.trustList.appendChild(li);
   });
@@ -202,7 +236,8 @@ function renderTrustPanel(round) {
 function renderSafetyFlags(round) {
   const flags = [
     ["testnet-10", round.foundation_network === "testnet-10" ? "PASS" : "FAIL"],
-    ["mainnet_supported: false", String(round.mainnet_supported)],
+    ["mock_only schema: true", String(appState.tableSchema.mock_only)],
+    ["mainnet_supported: false", String(round.mainnet_supported || appState.tableSchema.mainnet_supported)],
     ["readonly: true", String(round.foundation_readonly)],
     ["signing_used: false", String(round.signing_used)],
     ["transaction_created: false", String(round.transaction_created)],
@@ -236,30 +271,26 @@ function renderRoundSequence(currentState) {
   });
 }
 
-function renderRouletteTable(resultNumber = null) {
-  ui.rouletteTable.innerHTML = "";
+function renderRouletteTable(resultNumber = null, allowBetPlacement = false) {
+  const chipStackCounts = new Map();
+  const chips = appState.uiMockBets.map((bet) => {
+    const stackKey = `${bet.anchor.x}:${bet.anchor.y}`;
+    const stackIndex = chipStackCounts.get(stackKey) || 0;
+    chipStackCounts.set(stackKey, stackIndex + 1);
+    return {
+      id: bet.betId,
+      x: bet.anchor.x,
+      y: bet.anchor.y,
+      stakeUnits: bet.stakeUnits,
+      stackIndex,
+    };
+  });
 
-  const zero = document.createElement("div");
-  zero.className = `zero-cell ${resultNumber === 0 ? "hit" : ""}`;
-  zero.textContent = "0";
-  ui.rouletteTable.appendChild(zero);
-
-  for (let row = 0; row < 12; row += 1) {
-    for (let offset = 0; offset < 3; offset += 1) {
-      const number = 3 * row + (3 - offset);
-      const colour = colourForNumber(number);
-      const cell = document.createElement("div");
-      cell.className = `table-cell ${colour} ${number === resultNumber ? "hit" : ""}`;
-      cell.textContent = String(number);
-      ui.rouletteTable.appendChild(cell);
-    }
-  }
-
-  ["1–18", "even", "red", "black", "odd", "19–36"].forEach((label) => {
-    const area = document.createElement("div");
-    area.className = "bet-area";
-    area.textContent = label;
-    ui.rouletteTable.appendChild(area);
+  window.RouletteTableRenderer.render(ui.rouletteTableSvgHost, appState.tableSchema, {
+    allowBetPlacement,
+    chips,
+    highlightedNumber: resultNumber,
+    onZoneClick: placeMockBetFromZone,
   });
 }
 
@@ -289,7 +320,7 @@ function renderSettlement(round, visible) {
   ui.settlementList.innerHTML = "";
   if (!visible) {
     ui.settlementSummary.textContent = "Settlement hidden until Show Settlement.";
-    ui.uiOnlyBetNote.textContent = "UI-added bets are prototype display bets only; deterministic settlement is from the engine sample round.";
+    ui.uiOnlyBetNote.textContent = "UI-added bets are mock display bets only; deterministic settlement is from the engine sample round.";
     return;
   }
 
@@ -302,14 +333,14 @@ function renderSettlement(round, visible) {
   }, { totalStake: 0, totalPayout: 0, totalNet: 0, wins: 0 });
 
   ui.settlementSummary.textContent = `Deterministic settlement shown from sample-round.json for ${round.settlement.length} bets.`;
-  ui.uiOnlyBetNote.textContent = "UI-added bets are prototype display bets only; deterministic settlement is from the engine sample round.";
+  ui.uiOnlyBetNote.textContent = "UI-added bets are mock display bets only; deterministic settlement is from the engine sample round.";
 
   const rows = [
     ["winning bets", totals.wins],
     ["total stake units", totals.totalStake],
     ["total payout units", totals.totalPayout],
     ["total net units", totals.totalNet],
-    ["ui-only mock bets in locked ledger", appState.uiMockBets.length],
+    ["ui-only mock bets in display ledger", appState.uiMockBets.length],
   ];
 
   rows.forEach(([key, value]) => {
@@ -347,40 +378,42 @@ function renderProof(round, visible) {
   });
 }
 
-function placeMockBet() {
+function placeMockBetFromZone(zone) {
   const currentState = appState.uiState;
-  const canPlaceMockBets = canPlaceBetsForState(currentState);
-  if (!canPlaceMockBets) {
+  if (!canPlaceBetsForState(currentState)) {
     ui.betStatus.textContent = `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
     ui.betStatus.className = "bet-status bet-closed";
     return;
   }
 
-  const [betType, selection] = ui.betChoiceSelect.value.split(":");
-  const stakeUnits = Number.parseInt(ui.betStakeInput.value, 10);
-  const safeStakeUnits = Number.isInteger(stakeUnits) && stakeUnits > 0 ? stakeUnits : 1;
+  const stakeUnits = normaliseStakeUnits(ui.betStakeInput.value);
+  const anchor = window.RouletteTableRenderer.getZoneAnchor(zone);
   const mockBet = {
     betId: `ui-mock-${String(appState.nextMockBetId).padStart(3, "0")}`,
-    betType,
-    selection,
-    stakeUnits: safeStakeUnits,
+    betType: zone.bet_type,
+    label: buildLedgerLabel(zone),
+    coveredNumbers: [...(zone.covered_numbers || [])],
+    payoutMultiplier: Number(zone.payout_multiplier ?? 0),
+    stakeUnits,
     placedDuringState: currentState,
+    anchor,
   };
+
   appState.nextMockBetId += 1;
   appState.uiMockBets.push(mockBet);
-
   ui.betStatus.textContent = currentState === "SpinVisualStarted"
     ? "Bets are still open while the wheel is visually spinning."
-    : "BetsOpen: temporary simple straight-number mock bets may be placed before wheel start.";
+    : "BetsOpen: schema-driven mock bets may be placed before wheel start.";
   ui.betStatus.className = "bet-status bet-open";
   renderUiMockBetLedger();
+  renderRouletteTable(hasReachedState("ResultFinalised") ? appState.round.result_number : null, true);
 }
 
 function renderUiMockBetLedger() {
   ui.mockBetList.innerHTML = "";
   if (appState.uiMockBets.length === 0) {
     const item = document.createElement("li");
-    item.innerHTML = "<div class=\"label\">UI mock bet ledger</div><strong>No UI-added mock bets yet.</strong><div>Add Prototype Straight-Number Mock Bet to add a visible temporary prototype bet.</div>";
+    item.innerHTML = "<div class=\"label\">UI mock bet ledger</div><strong>No UI-added mock bets yet.</strong><div>Click the SVG roulette table to add a mock bet from the visible schema-driven zones.</div>";
     ui.mockBetList.appendChild(item);
     return;
   }
@@ -389,13 +422,26 @@ function renderUiMockBetLedger() {
     const item = document.createElement("li");
     item.innerHTML = `
       <div class="label">${escapeHtml(bet.betId)}</div>
-      <strong>${escapeHtml(bet.betType)}</strong>
-      <div>selection: <code>${escapeHtml(String(bet.selection))}</code></div>
-      <div>stake_units: <code>${escapeHtml(String(bet.stakeUnits))}</code></div>
+      <strong>${escapeHtml(bet.betType)} — ${escapeHtml(bet.label)}</strong>
+      <div>covered numbers: <code>${escapeHtml(bet.coveredNumbers.join(", "))}</code></div>
+      <div>stake units: <code>${escapeHtml(String(bet.stakeUnits))}</code></div>
+      <div>payout multiplier: <code>${escapeHtml(String(bet.payoutMultiplier))}</code></div>
       <div>placed during: <code>${escapeHtml(bet.placedDuringState)}</code></div>
     `;
     ui.mockBetList.appendChild(item);
   });
+}
+
+function normaliseStakeUnits(value) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
+}
+
+function buildLedgerLabel(zone) {
+  if (zone.bet_type === "column") {
+    return `${zone.label} — ${window.RouletteTableRenderer.visibleZoneLabel(zone)}`;
+  }
+  return window.RouletteTableRenderer.visibleZoneLabel(zone);
 }
 
 function buildBetStatusText(uiState) {
@@ -403,7 +449,7 @@ function buildBetStatusText(uiState) {
     return "Bets are still open while the wheel is visually spinning.";
   }
   if (uiState === "BetsOpen") {
-    return "BetsOpen: temporary simple straight-number mock bets may be placed before wheel start.";
+    return "BetsOpen: schema-driven mock bets may be placed before wheel start.";
   }
   return `${BETS_CLOSED_NO_MORE_BETS} — No more bets — ledger locked.`;
 }
@@ -424,14 +470,7 @@ function setOverallStatus(text, pass) {
 function showFailure(message) {
   ui.failurePanel.hidden = false;
   ui.failureMessage.textContent = message;
-  setOverallStatus("FAIL — deterministic round could not be loaded safely", false);
-}
-
-function colourForNumber(number) {
-  if (number === 0) return "green";
-  if (RED_NUMBERS.has(number)) return "red";
-  if (BLACK_NUMBERS.has(number)) return "black";
-  return "green";
+  setOverallStatus("FAIL — deterministic round or SVG schema could not be loaded safely", false);
 }
 
 function escapeHtml(value) {

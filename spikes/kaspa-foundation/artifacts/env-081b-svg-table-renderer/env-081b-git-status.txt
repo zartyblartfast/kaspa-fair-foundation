@@ -1,0 +1,14 @@
+ M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/app.js
+ M examples/roulette-poc/ui/index.html
+ M examples/roulette-poc/ui/styles.css
+?? docs/roulette-table-selection-ui-changes.md
+?? examples/roulette-poc/ui/roulette-table-renderer.js
+?? scripts/env081b-svg-table-renderer-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-081b-svg-table-renderer/env-081b-commands.txt
+?? spikes/kaspa-foundation/artifacts/env-081b-svg-table-renderer/env-081b-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-081b-svg-table-renderer/env-081b-renderer-contract.json
+?? spikes/kaspa-foundation/artifacts/env-081b-svg-table-renderer/env-081b-summary.md
+?? spikes/kaspa-foundation/artifacts/env-081b-svg-table-renderer/env-081b-svg-table-renderer-smoke-output.txt
+?? spikes/kaspa-foundation/artifacts/env-081b-svg-table-renderer/env-081b-test-output.txt

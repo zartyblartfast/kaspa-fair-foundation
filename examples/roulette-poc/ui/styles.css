@@ -10,6 +10,8 @@
   --black-chip: #111827;
   --gold: #f5c542;
   --blue: #58a6ff;
+  --table-green: #0a7a3f;
+  --table-surface: #0c4d2c;
 }
 
 * {
@@ -24,8 +26,7 @@ body {
 }
 
 button,
-input,
-select {
+input {
   font: inherit;
 }
 
@@ -44,8 +45,7 @@ button:disabled {
   opacity: 0.45;
 }
 
-input,
-select {
+input {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
@@ -169,12 +169,12 @@ h3 {
   margin-top: 14px;
 }
 
-.bet-editor-grid {
+.bet-toolbar {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  gap: 18px;
   align-items: end;
-  margin: 16px 0 14px;
+  margin: 18px 0 14px;
 }
 
 .mock-bet-list,
@@ -187,9 +187,13 @@ h3 {
 
 .mock-bet-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 12px;
   margin-top: 14px;
+  height: 178px;
+  align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .mock-bet-list li {
@@ -229,19 +233,15 @@ h3 {
   color: var(--muted);
 }
 
-.result-number.red,
-.table-cell.red {
+.result-number.red {
   background: rgba(220, 38, 38, 0.85);
 }
 
-.result-number.black,
-.table-cell.black {
+.result-number.black {
   background: rgba(17, 24, 39, 0.95);
 }
 
-.result-number.green,
-.table-cell.green,
-.zero-cell {
+.result-number.green {
   background: rgba(22, 163, 74, 0.85);
 }
 
@@ -252,7 +252,8 @@ h3 {
 }
 
 .algorithm-box,
-.settlement-summary {
+.settlement-summary,
+.roulette-svg-shell {
   padding: 12px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
@@ -304,41 +305,126 @@ h3 {
   font-size: 12px;
 }
 
-.roulette-table {
-  display: grid;
-  grid-template-columns: 92px repeat(12, minmax(44px, 1fr));
-  gap: 6px;
+.roulette-svg-shell {
   margin-top: 16px;
+  background: linear-gradient(180deg, rgba(10, 122, 63, 0.22), rgba(5, 40, 23, 0.22));
 }
 
-.zero-cell {
-  grid-row: span 3;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  min-height: 160px;
+.roulette-svg-host {
+  width: 100%;
 }
 
-.table-cell,
-.bet-area {
-  min-height: 48px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
+.roulette-table-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.roulette-table-frame {
+  fill: rgba(6, 28, 17, 0.25);
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 0.5;
+}
+
+.roulette-zone rect {
+  stroke: rgba(235, 240, 255, 0.8);
+  stroke-width: 0.65;
+}
+
+.number-zone-red rect {
+  fill: rgba(220, 38, 38, 0.9);
+}
+
+.number-zone-black rect {
+  fill: rgba(17, 24, 39, 0.97);
+}
+
+.number-zone-green rect,
+.zero-zone rect {
+  fill: rgba(22, 163, 74, 0.92);
+}
+
+.dozen-zone rect,
+.column-zone rect,
+.outside-zone rect {
+  fill: rgba(15, 70, 40, 0.88);
+}
+
+.hotspot-hit-area {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.hotspot-marker-shape {
+  fill: rgba(245, 197, 66, 0.72);
+  stroke: rgba(255, 247, 204, 0.92);
+  stroke-width: 0.55;
+}
+
+.hotspot-zone {
+  opacity: 0.92;
+}
+
+.roulette-zone-label {
+  fill: #f8fbff;
+  font-size: 3.6px;
   font-weight: 700;
-  border: 2px solid transparent;
+  pointer-events: none;
 }
 
-.table-cell.hit,
-.zero-cell.hit {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 2px rgba(245, 197, 66, 0.2);
+.roulette-zone-label-column {
+  font-size: 2.8px;
 }
 
-.bet-area {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--muted);
+.result-hit rect {
+  stroke: var(--gold);
+  stroke-width: 1.4;
+}
+
+.roulette-zone,
+.roulette-zone:focus,
+.roulette-zone:focus-visible,
+.roulette-zone:active {
+  outline: none;
+}
+
+.zone-clickable {
+  cursor: pointer;
+}
+
+.zone-clickable:hover rect {
+  stroke: #ffffff;
+  stroke-width: 1.1;
+}
+
+.hotspot-zone.zone-clickable:hover .hotspot-marker-shape {
+  stroke: #ffffff;
+  stroke-width: 0.75;
+}
+
+.zone-locked {
+  opacity: 0.76;
+}
+
+.chip-marker-group {
+  pointer-events: none;
+}
+
+.chip-marker {
+  fill: var(--gold);
+  stroke: #fff3c2;
+  stroke-width: 0.45;
+}
+
+.chip-marker-inner {
+  fill: rgba(255, 255, 255, 0.18);
+}
+
+.chip-marker-label {
+  fill: #111827;
+  font-size: 1.8px;
+  font-weight: 900;
+  pointer-events: none;
 }
 
 table {
@@ -393,16 +479,7 @@ td {
     grid-template-columns: 1fr;
   }
 
-  .bet-editor-grid {
+  .bet-toolbar {
     grid-template-columns: 1fr;
-  }
-
-  .roulette-table {
-    grid-template-columns: repeat(6, minmax(44px, 1fr));
-  }
-
-  .zero-cell {
-    grid-row: span 1;
-    min-height: 48px;
   }
 }

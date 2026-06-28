@@ -1,0 +1,11 @@
+ENV-081B required commands executed:
+
+cargo fmt --check
+cargo test -p kaspa-fair-cli
+cargo test -p kaspa-foundation
+cargo check -p kaspa-fair-cli
+cargo check -p kaspa-foundation
+git diff --check
+node --check examples/roulette-poc/ui/app.js
+node --check examples/roulette-poc/ui/roulette-table-renderer.js
+scripts/env081b-svg-table-renderer-smoke.sh
