@@ -1,0 +1,16 @@
+ M crates/kaspa-fair-cli/src/main.rs
+ M crates/kaspa-foundation/Cargo.toml
+ M crates/kaspa-foundation/src/lib.rs
+ M docs/env083b-toccata-fairness-anchor-feasibility.md
+?? crates/kaspa-foundation/src/fairness.rs
+?? crates/kaspa-foundation/tests/env083c_fairness_verifier.rs
+?? scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-combined-output.json
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-live-tn10-anchor-evidence.json
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-mutation-reconciliation.txt
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-negative-checks.txt
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-proof-artifact.json
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-verifier-output.json

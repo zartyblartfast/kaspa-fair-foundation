@@ -1,0 +1,235 @@
+ENV-083C-VERIFY — Mutation warning reconciliation
+
+Result: PASS
+
+Reconciliation result:
+
+* outcome: A
+* fairness.rs actually modified: yes — it is a new untracked ENV-083C source file in the working tree (`?? crates/kaspa-foundation/src/fairness.rs`). Because it is untracked, `git diff -- crates/kaspa-foundation/src/fairness.rs` is empty until staged, while `git status --short -- crates/kaspa-foundation/src/fairness.rs` shows the file.
+* fairness.rs required for ENV-083C correctness: yes
+* ENV-083C verifier logic location: `crates/kaspa-foundation/src/fairness.rs`; exported by `crates/kaspa-foundation/src/lib.rs`; tested by `crates/kaspa-foundation/tests/env083c_fairness_verifier.rs`; invoked by `crates/kaspa-fair-cli/src/main.rs` command `env083c-toccata-evidence-bound-fairness-proof`.
+* final ENV-083C PASS claim still valid: yes
+
+Mutation-warning conclusion:
+
+The warning `/root/kaspa-fair-foundation/crates/kaspa-foundation/src/fairness.rs — [patch] Found 34 matches for old_string` was an intermediate patch-tool matching warning from an attempted broad replacement. It does not indicate that `fairness.rs` is missing or invalid. The implemented file exists in the working tree, contains the ENV-083C Rust verifier/model, and passes the required checks.
+
+Actual changed files from `git diff --name-status`:
+
+```text
+M	crates/kaspa-fair-cli/src/main.rs
+M	crates/kaspa-foundation/Cargo.toml
+M	crates/kaspa-foundation/src/lib.rs
+M	docs/env083b-toccata-fairness-anchor-feasibility.md
+```
+
+Note: `git diff --name-status` lists tracked changes only. Untracked ENV-083C files are visible in `git status --short`, including `crates/kaspa-foundation/src/fairness.rs`.
+
+Required command results:
+
+1. `git status --short`
+
+```text
+ M crates/kaspa-fair-cli/src/main.rs
+ M crates/kaspa-foundation/Cargo.toml
+ M crates/kaspa-foundation/src/lib.rs
+ M docs/env083b-toccata-fairness-anchor-feasibility.md
+?? crates/kaspa-foundation/src/fairness.rs
+?? crates/kaspa-foundation/tests/env083c_fairness_verifier.rs
+?? scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/
+```
+
+Result: PASS, exit 0.
+
+2. `git diff --name-status`
+
+```text
+M	crates/kaspa-fair-cli/src/main.rs
+M	crates/kaspa-foundation/Cargo.toml
+M	crates/kaspa-foundation/src/lib.rs
+M	docs/env083b-toccata-fairness-anchor-feasibility.md
+```
+
+Result: PASS, exit 0.
+
+3. `git diff --stat`
+
+```text
+ crates/kaspa-fair-cli/src/main.rs                  | 82 ++++++++++++++++++++++
+ crates/kaspa-foundation/Cargo.toml                 |  3 +
+ crates/kaspa-foundation/src/lib.rs                 |  1 +
+ .../env083b-toccata-fairness-anchor-feasibility.md |  4 +-
+ 4 files changed, 88 insertions(+), 2 deletions(-)
+```
+
+Result: PASS, exit 0.
+
+4. `git diff -- crates/kaspa-foundation/src/fairness.rs`
+
+```text
+```
+
+Result: PASS, exit 0. Empty because `fairness.rs` is untracked, not because it is absent.
+
+5. `git status --short -- crates/kaspa-foundation/src/fairness.rs`
+
+```text
+?? crates/kaspa-foundation/src/fairness.rs
+```
+
+Result: PASS, exit 0.
+
+6. Implementation evidence grep
+
+Result: PASS, exit 0. Evidence includes:
+
+```text
+crates/kaspa-foundation/src/fairness.rs:1://! ENV-083C Toccata evidence-bound roulette fairness proof verifier.
+crates/kaspa-foundation/src/fairness.rs:14:pub const ENV083C_EVIDENCE_MODE: &str = "live_readonly_tn10";
+crates/kaspa-foundation/src/fairness.rs:16:pub const ENV083C_COMMITMENT_DOMAIN: &str = "kaspa-fair:env083c:roulette-commitment:v1";
+crates/kaspa-foundation/src/fairness.rs:17:pub const ENV083C_REVEAL_DOMAIN: &str = "kaspa-fair:env083c:roulette-reveal:v1";
+crates/kaspa-foundation/src/fairness.rs:202:    pub fn tampered_json(&self, case: Env083cNegativeCase) -> Value {
+crates/kaspa-foundation/src/fairness.rs:221:                value.as_object_mut().unwrap().remove("live_tn10_anchor");
+crates/kaspa-foundation/src/fairness.rs:224:                value["claim_tier"] = json!("live_tn10_round_commit_reveal_transactions");
+crates/kaspa-foundation/src/fairness.rs:377:        .ok_or("missing live_tn10_anchor for Toccata-bound proof")?;
+crates/kaspa-foundation/src/fairness.rs:509:        "commitment hash recomputes",
+crates/kaspa-foundation/src/fairness.rs:536:        "reveal payload hash recomputes",
+crates/kaspa-foundation/tests/env083c_fairness_verifier.rs:7:fn env083c_demo_proof_binds_round_transcript_to_live_tn10_anchor() {
+crates/kaspa-foundation/tests/env083c_fairness_verifier.rs:31:fn env083c_negative_cases_reject_tampering_and_claim_upgrades() {
+```
+
+7. Rust exports/imports grep
+
+Result: PASS, exit 0. Evidence includes:
+
+```text
+crates/kaspa-foundation/src/lib.rs:9:pub mod fairness;
+crates/kaspa-foundation/tests/env083c_fairness_verifier.rs:1:use kaspa_foundation::fairness::{
+crates/kaspa-fair-cli/src/main.rs:13:use kaspa_foundation::fairness::{
+```
+
+8. `cargo fmt --check`
+
+Result: PASS, exit 0.
+
+9. `cargo check -p kaspa-foundation`
+
+Result: PASS, exit 0.
+
+10. `cargo check -p kaspa-fair-cli`
+
+Result: PASS, exit 0.
+
+11. `cargo test -p kaspa-foundation`
+
+Result: PASS, exit 0.
+
+Summary:
+
+```text
+kaspa_foundation lib tests: 4 passed, 0 failed
+ENV-068 integration tests: 5 passed, 0 failed
+ENV-069 integration tests: 5 passed, 0 failed
+ENV-070 integration tests: 6 passed, 0 failed
+ENV-071 integration tests: 4 passed, 0 failed, 1 ignored optional live TN10 test
+ENV-083C integration tests: 2 passed, 0 failed
+Doc-tests: 0 passed, 0 failed
+```
+
+12. `cargo test -p kaspa-fair-cli`
+
+Result: PASS, exit 0.
+
+Summary:
+
+```text
+18 passed; 0 failed; 0 ignored
+```
+
+13. `git diff --check`
+
+Result: PASS, exit 0.
+
+14. `scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh`
+
+Result: PASS, exit 0.
+
+```text
+TOCCATA_EVIDENCE_BOUND_FAIRNESS_VERIFIER_READY=PASS
+```
+
+15. `cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json`
+
+Result: PASS, exit 0.
+
+Validated fields from generated JSON:
+
+```text
+verifier_output.verifier_result=PASS
+proof_artifact.live_tn10_anchor.evidence_mode=live_readonly_tn10
+proof_artifact.future_live_round_transaction_evidence=not_created_not_claimed_future_work
+```
+
+16. Artifact field validation with jq
+
+Result: PASS.
+
+Generated CLI artifact fields:
+
+```text
+live_tn10_anchor.evidence_mode=live_readonly_tn10
+live_tn10_anchor.verifier_result=PASS
+live_tn10_anchor.covenant_id_confirmed=true
+live_tn10_anchor.transaction_created=false
+live_tn10_anchor.signing_used=false
+live_tn10_anchor.broadcast_used=false
+live_tn10_anchor.wallet_access_used=false
+live_tn10_anchor.mainnet_supported=false
+future_live_round_transaction_evidence=not_created_not_claimed_future_work
+```
+
+Recorded proof artifact fields:
+
+```text
+live_tn10_anchor.evidence_mode=live_readonly_tn10
+live_tn10_anchor.verifier_result=PASS
+live_tn10_anchor.covenant_id_confirmed=true
+live_tn10_anchor.transaction_created=false
+live_tn10_anchor.signing_used=false
+live_tn10_anchor.broadcast_used=false
+live_tn10_anchor.wallet_access_used=false
+live_tn10_anchor.mainnet_supported=false
+future_live_round_transaction_evidence=not_created_not_claimed_future_work
+```
+
+Files changed by this reconciliation:
+
+* Created/updated: `spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/env-083c-mutation-reconciliation.txt`
+* Re-running the ENV-083C smoke script refreshed the existing ENV-083C artifact outputs under `spikes/kaspa-foundation/artifacts/env-083c-toccata-evidence-bound-fairness-verifier/`.
+* Additional reconciliation scratch artifacts were created during command capture:
+  * `env-083c-mutation-reconciliation.raw.txt`
+  * `env-083c-mutation-reconciliation-checks.raw.txt`
+  * `env-083c-mutation-reconciliation-field-validation.txt`
+  * `env-083c-verify-cli-output.json`
+
+Safety confirmation:
+
+* verification/reconciliation only
+* no roulette UI behaviour changed
+* sample-round.json not changed
+* no randomisation implemented
+* no real betting
+* no real payouts
+* no backend/custody
+* no wallet/private key access
+* no signing
+* no transaction creation
+* no submitting/broadcasting
+* no mainnet
+* no secrets added
+
+Git handoff:
+
+Do not commit or push.
+Ask before commit/push.

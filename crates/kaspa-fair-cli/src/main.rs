@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod roulette;
 
 use std::env;
@@ -10,6 +12,9 @@ use std::time::Duration;
 use num_bigint::BigUint;
 use serde_json::json;
 
+use kaspa_foundation::fairness::{
+    build_env083c_demo_proof_with_accepting_block_hash, verify_env083c_json_mirror,
+};
 use kaspa_foundation::transcript::online_verifier::{
     verify_canonical_tn10_transcript_online, LiveTn10Evidence, OnlineVerificationReport,
     OnlineVerificationResult, ReadOnlyClientSafety, ReadOnlyTn10Client, Tn10ReadOnlyConfig,
@@ -19,6 +24,8 @@ use kaspa_foundation::transcript::online_verifier::{
 const COMMAND_VERIFY_LIVE_TN10_CANONICAL: &str = "verify-live-tn10-canonical";
 const COMMAND_ROULETTE_POC_DRY_RUN: &str = "roulette-poc-dry-run";
 const COMMAND_ROULETTE_ENGINE_DRY_RUN: &str = "roulette-engine-dry-run";
+const COMMAND_ENV083C_EVIDENCE_BOUND_FAIRNESS_PROOF: &str =
+    "env083c-toccata-evidence-bound-fairness-proof";
 const FLAG_JSON: &str = "--json";
 const LIVE_VERIFICATION_SCHEMA_V1: &str = "kaspa-fair-live-verification-result-v1";
 const ROULETTE_POC_SCHEMA_V1: &str = "kaspa-fair-roulette-poc-round-v1";
@@ -60,6 +67,9 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
         CliCommand::VerifyLiveTn10Canonical { output } => run_verify_live_tn10_canonical(output),
         CliCommand::RoulettePocDryRun { output } => run_roulette_poc_dry_run(output),
         CliCommand::RouletteEngineDryRun { output } => run_roulette_engine_dry_run(output),
+        CliCommand::Env083cEvidenceBoundFairnessProof { output } => {
+            run_env083c_evidence_bound_fairness_proof(output)
+        }
     }
 }
 
@@ -69,6 +79,7 @@ enum CliCommand {
     VerifyLiveTn10Canonical { output: OutputMode },
     RoulettePocDryRun { output: OutputMode },
     RouletteEngineDryRun { output: OutputMode },
+    Env083cEvidenceBoundFairnessProof { output: OutputMode },
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -113,6 +124,18 @@ fn parse_command(args: &[String]) -> CliCommand {
                 }
             }
         }
+
+        Some(COMMAND_ENV083C_EVIDENCE_BOUND_FAIRNESS_PROOF) => {
+            if args.get(1).map(String::as_str) == Some(FLAG_JSON) {
+                CliCommand::Env083cEvidenceBoundFairnessProof {
+                    output: OutputMode::Json,
+                }
+            } else {
+                CliCommand::Env083cEvidenceBoundFairnessProof {
+                    output: OutputMode::Human,
+                }
+            }
+        }
         Some(_) => CliCommand::Help,
     }
 }
@@ -132,6 +155,8 @@ fn print_help() {
         "      Emit the stable {} deterministic roulette engine contract.",
         roulette::ROULETTE_ENGINE_SCHEMA_V1
     );
+    println!("  {COMMAND_ENV083C_EVIDENCE_BOUND_FAIRNESS_PROOF} {FLAG_JSON}");
+    println!("      Emit the ENV-083C Rust-verified JSON mirror bound to live read-only TN10 covenant evidence.");
     println!();
     println!("Safety:");
     println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
@@ -153,6 +178,54 @@ fn run_verify_live_tn10_canonical(
         OnlineVerificationResult::Fail => ExitCode::from(2),
         OnlineVerificationResult::Ambiguous => ExitCode::from(3),
     })
+}
+
+fn run_env083c_evidence_bound_fairness_proof(
+    output: OutputMode,
+) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+    let runtime = tokio::runtime::Runtime::new()?;
+    let summary = runtime.block_on(read_and_verify_live_tn10_canonical())?;
+    if summary.report.result != OnlineVerificationResult::Pass {
+        return Err("ENV-083C requires live read-only TN10 anchor verifier_result=PASS".into());
+    }
+    let accepting_block_hash = summary
+        .readout
+        .transaction_detail
+        .accepting_block_hash
+        .as_deref()
+        .ok_or("ENV-083C live TN10 anchor missing accepting_block_hash")?;
+    let proof = build_env083c_demo_proof_with_accepting_block_hash(accepting_block_hash)
+        .map_err(|err| format!("ENV-083C proof construction failed: {err}"))?;
+    let proof_json = proof.to_json();
+    let verifier_output = verify_env083c_json_mirror(&proof_json)
+        .map_err(|err| format!("ENV-083C verifier rejected proof: {err}"))?
+        .to_json();
+    let anchor_json = live_tn10_summary_json(&summary);
+    let combined = json!({
+        "proof_artifact": proof_json,
+        "verifier_output": verifier_output,
+        "live_tn10_anchor_evidence": anchor_json,
+    });
+
+    match output {
+        OutputMode::Human => {
+            println!("ENV-083C Toccata evidence-bound fairness proof verifier");
+            println!(
+                "verifier_result={}",
+                combined["verifier_output"]["verifier_result"]
+                    .as_str()
+                    .unwrap_or("FAIL")
+            );
+            println!("live_tn10_anchor_evidence_mode=live_readonly_tn10");
+            println!("transaction_created=false");
+            println!("signing_used=false");
+            println!("broadcast_used=false");
+            println!("wallet_access_used=false");
+        }
+        OutputMode::Json => println!("{combined}"),
+    }
+
+    Ok(ExitCode::SUCCESS)
 }
 
 fn run_roulette_poc_dry_run(output: OutputMode) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
@@ -1070,6 +1143,15 @@ mod tests {
                 FLAG_JSON.to_string()
             ]),
             CliCommand::RouletteEngineDryRun {
+                output: OutputMode::Json
+            }
+        );
+        assert_eq!(
+            parse_command(&[
+                COMMAND_ENV083C_EVIDENCE_BOUND_FAIRNESS_PROOF.to_string(),
+                FLAG_JSON.to_string()
+            ]),
+            CliCommand::Env083cEvidenceBoundFairnessProof {
                 output: OutputMode::Json
             }
         );

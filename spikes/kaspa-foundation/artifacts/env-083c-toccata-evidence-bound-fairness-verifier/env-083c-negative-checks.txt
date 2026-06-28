@@ -1,0 +1,5 @@
+tampered reveal rejected: tested in Rust
+mismatched covenant_id rejected: tested in Rust
+mismatched result rejected: tested in Rust
+omitted TN10 anchor rejected for Toccata-bound claim: tested in Rust
+application-only evidence rejected for live round transaction claim: tested in Rust

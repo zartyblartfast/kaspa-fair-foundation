@@ -1,0 +1,69 @@
+{
+  "application_round_transcript": {
+    "commitment": {
+      "anchor_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+      "commitment_domain": "kaspa-fair:env083c:roulette-commitment:v1",
+      "commitment_hash": "ecf348b3baee191a357cf2c13444b03bab77ba38e2f9b7605df3358f4bac7f48",
+      "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
+      "evidence_mode": "live_readonly_tn10",
+      "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+      "round_id": "env-083c-round-0001",
+      "rule_version": "env-083c-toccata-evidence-bound-rules-v1"
+    },
+    "reveal": {
+      "anchor_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+      "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
+      "evidence_mode": "live_readonly_tn10",
+      "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+      "result_colour": "red",
+      "result_number": 18,
+      "reveal_payload_hash": "42df5bdaa939c31b75282986ea58cec855bf8e13778cbc739f965a3f8846da3f",
+      "revealed_seed_material": "env083c fixed demo seed material bound to live TN10 covenant evidence",
+      "round_id": "env-083c-round-0001"
+    }
+  },
+  "claim_tier": "toccata_bound_application_proof",
+  "evidence_mode": "live_readonly_tn10",
+  "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+  "live_tn10_anchor": {
+    "accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
+    "broadcast_used": false,
+    "continuing_output": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0",
+    "continuing_output_value_sompi": 99700000,
+    "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+    "covenant_id_confirmed": true,
+    "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
+    "env063_spent_outpoint": "2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0",
+    "env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+    "evidence_mode": "live_readonly_tn10",
+    "mainnet_supported": false,
+    "network": "testnet-10",
+    "private_key_access_used": false,
+    "signing_used": false,
+    "transaction_created": false,
+    "verifier_result": "PASS",
+    "wallet_access_used": false
+  },
+  "network": "testnet-10",
+  "round_id": "env-083c-round-0001",
+  "safety_flags": {
+    "backend_custody": false,
+    "broadcast_used": false,
+    "mainnet_supported": false,
+    "mock_display_only": true,
+    "private_key_access_used": false,
+    "real_betting": false,
+    "real_payouts": false,
+    "signing_used": false,
+    "transaction_created": false,
+    "wallet_access_used": false
+  },
+  "schema": "kaspa-fair-env083c-toccata-evidence-bound-proof-v1",
+  "verifier_transcript": [
+    "schema checked by Rust verifier",
+    "live TN10 anchor evidence required for Toccata-bound claim",
+    "application commitment hash recomputed from reveal material",
+    "BLAKE3 domain-separated rejection-sampling result verified",
+    "application transcript is not accepted as live round transaction evidence"
+  ]
+}

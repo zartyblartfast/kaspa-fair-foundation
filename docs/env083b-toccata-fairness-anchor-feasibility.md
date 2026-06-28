@@ -272,9 +272,9 @@ Do not build yet:
 
 ## Recommended next ENV
 
-ENV-083C — Offline covenant-state artifact and verifier model.
+ENV-083C — Toccata evidence-bound fairness proof verifier.
 
-The next ENV should implement only Rust-native offline modelling of the fairness lifecycle and verifier checks. It should not create, sign, or broadcast transactions. It should produce a modelled commitment artifact, reveal artifact, derivation transcript, covenant-state transition model, verifier checks, and JSON mirror mapping.
+ENV-083C implements the first Rust-owned roulette fairness proof verifier and JSON mirror bound to the live read-only TN10 covenant evidence path proven here. It remains read-only and does not create, sign, or broadcast transactions; round-specific commitment/reveal transaction evidence remains future work.
 
 ## Hard-gate JSON summary
 

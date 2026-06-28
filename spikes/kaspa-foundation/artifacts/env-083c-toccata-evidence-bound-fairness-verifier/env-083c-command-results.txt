@@ -1,0 +1,11 @@
+$ cargo test -p kaspa-foundation env083c --test env083c_fairness_verifier
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running tests/env083c_fairness_verifier.rs (target/debug/deps/env083c_fairness_verifier-75dd968e36cba6d3)
+
+running 2 tests
+test env083c_demo_proof_binds_round_transcript_to_live_tn10_anchor ... ok
+test env083c_negative_cases_reject_tampering_and_claim_upgrades ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json

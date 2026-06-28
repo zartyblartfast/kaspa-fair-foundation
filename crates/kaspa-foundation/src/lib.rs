@@ -6,6 +6,7 @@
 
 pub mod covenant;
 pub mod evidence;
+pub mod fairness;
 pub mod safety;
 pub mod transcript;
 pub mod verifier;

@@ -10,6 +10,9 @@ offline = []
 live-submit = []
 
 [dependencies]
+blake3 = "1.5"
+num-bigint = "0.4"
+serde_json = "1.0"
 
 [dev-dependencies]
 kaspa-addresses = "0.15.0"
