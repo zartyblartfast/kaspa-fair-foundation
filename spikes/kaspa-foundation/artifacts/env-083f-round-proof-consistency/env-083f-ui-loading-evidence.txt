@@ -1,0 +1,11 @@
+UI loading evidence
+
+- app.js fetches sample-round.json in boot().
+- app.js fetches toccata-fairness-proof.json in boot().
+- app.js displays roulette result from appState.round.result_number/result_colour.
+- app.js renders verifier/proof snapshot from appState.proofArtifact.
+- app.js contains no Math.random usage.
+- app.js contains no browser crypto random API usage.
+- index.html contains Start Wheel and Reset Round controls.
+- Reveal Result remains absent.
+- Wheel Visual remains absent.

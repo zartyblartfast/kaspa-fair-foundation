@@ -1,0 +1,105 @@
+{
+  "schema": "env-083f-round-proof-field-checks-v1",
+  "blocking_mismatch_found": {
+    "sample_before": "21 red",
+    "proof_before": "18 red"
+  },
+  "fix_applied": "sample round aligned to verified proof artifact",
+  "round": {
+    "result_number": 18,
+    "result_colour": "red",
+    "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+    "foundation_verifier_result": "PASS"
+  },
+  "proof": {
+    "result_number": 18,
+    "result_colour": "red",
+    "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+    "verifier_result": "PASS",
+    "evidence_mode": "live_readonly_tn10",
+    "future_live_round_transaction_evidence": "not_created_not_claimed_future_work"
+  },
+  "proof_reveal": {
+    "result_number": 18,
+    "result_colour": "red",
+    "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+    "evidence_mode": "live_readonly_tn10"
+  },
+  "contract": {
+    "sample_round_exists": true,
+    "proof_artifact_exists": true,
+    "displayed_result_number_consistent": true,
+    "displayed_result_colour_consistent": true,
+    "result_algorithm_consistent": true,
+    "verifier_result_pass_represented": true,
+    "live_readonly_tn10_represented": true,
+    "covenant_id_confirmed_represented": true,
+    "future_live_round_transaction_work_labelled_not_created_future": true,
+    "safety_flags_safe": true
+  },
+  "settlement_result_dependent_updates": [
+    {
+      "bet_id": "bet-001",
+      "bet_type": "straight-number",
+      "net_units": -10,
+      "payout_units": 0,
+      "selection_value": "17",
+      "stake_units": 10,
+      "won": false
+    },
+    {
+      "bet_id": "bet-002",
+      "bet_type": "colour",
+      "net_units": 5,
+      "payout_units": 10,
+      "selection_value": "red",
+      "stake_units": 5,
+      "won": true
+    },
+    {
+      "bet_id": "bet-003",
+      "bet_type": "colour",
+      "net_units": -4,
+      "payout_units": 0,
+      "selection_value": "black",
+      "stake_units": 4,
+      "won": false
+    },
+    {
+      "bet_id": "bet-004",
+      "bet_type": "parity",
+      "net_units": -7,
+      "payout_units": 0,
+      "selection_value": "odd",
+      "stake_units": 7,
+      "won": false
+    },
+    {
+      "bet_id": "bet-005",
+      "bet_type": "parity",
+      "net_units": 6,
+      "payout_units": 12,
+      "selection_value": "even",
+      "stake_units": 6,
+      "won": true
+    },
+    {
+      "bet_id": "bet-006",
+      "bet_type": "range",
+      "net_units": -9,
+      "payout_units": 0,
+      "selection_value": "high",
+      "stake_units": 9,
+      "won": false
+    },
+    {
+      "bet_id": "bet-007",
+      "bet_type": "range",
+      "net_units": 8,
+      "payout_units": 16,
+      "selection_value": "low",
+      "stake_units": 8,
+      "won": true
+    }
+  ]
+}

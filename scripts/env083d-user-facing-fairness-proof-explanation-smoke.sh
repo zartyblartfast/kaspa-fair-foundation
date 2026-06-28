@@ -5,7 +5,7 @@ UI="examples/roulette-poc/ui/index.html"
 APP_JS="examples/roulette-poc/ui/app.js"
 RENDERER_JS="examples/roulette-poc/ui/roulette-table-renderer.js"
 SAMPLE="examples/roulette-poc/ui/sample-round.json"
-EXPECTED_SAMPLE_SHA256="5cc864d40af42d3268af3bf0e4e540f39c08466e3ed4e27f34d902597ab7e6b6"
+EXPECTED_SAMPLE_SHA256="fb7536fd8a3ebf672c2b4789bdc384920ccbb832a9fb569cdf2c2087adc0df35"
 
 require_text() {
   local file="$1"

@@ -1,0 +1,12 @@
+ M examples/roulette-poc/ui/sample-round.json
+ M scripts/env083a-roulette-randomness-source-audit.sh
+ M scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+ M scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+?? docs/env083f-verifiable-demo-round-generation-path.md
+?? scripts/env083f-round-proof-consistency-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-demo-generation-path-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-round-proof-field-checks.json
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-ui-loading-evidence.txt

@@ -77,8 +77,8 @@ for key in [
     print(f'{p}:{key}={data.get(key)!r}')
 print(f'{p}:settlement_count={len(data.get("settlement", []))}')
 print(f'{p}:bets_count={len(data.get("bets", []))}')
-if data.get('result_number') != 21 or data.get('result_colour') != 'red':
-    raise SystemExit('sample-round.json does not contain expected current fixture result 21 red')
+if data.get('result_number') != 18 or data.get('result_colour') != 'red':
+    raise SystemExit('sample-round.json does not contain expected current fixture result 18 red')
 PY
 
   echo

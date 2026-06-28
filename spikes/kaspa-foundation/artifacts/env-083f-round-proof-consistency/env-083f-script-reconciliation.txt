@@ -1,0 +1,207 @@
+ENV-083F-VERIFY — Prior smoke script reconciliation
+
+Exact changed prior scripts:
+- scripts/env083a-roulette-randomness-source-audit.sh
+- scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+- scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+
+Classification:
+
+scripts/env083a-roulette-randomness-source-audit.sh
+- changed: yes
+- classification: A — Required compatibility update
+- kept/restored: kept
+- reason: script had stale hardcoded current fixture expectation result_number=21/result_colour=red. ENV-083F-FIX intentionally aligned sample-round.json to verified proof result 18 red, so the persistent audit script must expect 18 red to remain valid.
+- safety checks preserved: yes; the change updates only the expected fixture value and does not remove random API, safety, or source-audit checks.
+
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+- changed: yes
+- classification: A — Required compatibility update
+- kept/restored: kept
+- reason: script pinned the old sample-round.json SHA256. ENV-083F-FIX intentionally changed sample-round.json, so the hash guard must be updated to the new aligned artifact hash.
+- safety checks preserved: yes; the hash guard remains active and all UI/randomness/wallet/signing/broadcast/mainnet rejection checks remain intact.
+
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+- changed: yes
+- classification: A — Required compatibility update
+- kept/restored: kept
+- reason: script pinned the old sample-round.json SHA256. ENV-083F-FIX intentionally changed sample-round.json, so the hash guard must be updated to the new aligned artifact hash.
+- safety checks preserved: yes; the hash guard remains active and all proof artifact, UI, randomness, and safety checks remain intact.
+
+Restores performed:
+- none
+
+Command results:
+
+$ cargo fmt --check
+exit_status=0
+
+$ cargo check -p kaspa-foundation
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+exit_status=0
+
+$ cargo check -p kaspa-fair-cli
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.30s
+exit_status=0
+
+$ cargo test -p kaspa-foundation
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running unittests src/lib.rs (target/debug/deps/kaspa_foundation-0c984b196b1facfc)
+
+running 4 tests
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
+test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+test safety::tests::defaults_are_safe ... ok
+test verifier::tests::canonical_sanity_passes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env068_canonical_recipe.rs (target/debug/deps/env068_canonical_recipe-524f1966aa30441d)
+
+running 5 tests
+test canonical_env064_fixture_values_are_represented ... ok
+test corrected_recipe_identity_and_network_are_canonical ... ok
+test corrected_recipe_records_toccata_keyed_blake3_and_domain_policy ... ok
+test historical_env060c_recipe_is_not_canonical ... ok
+test default_foundation_capabilities_do_not_expose_sign_or_submit ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env069_proof_transcript.rs (target/debug/deps/env069_proof_transcript-56fd6eb298788ffb)
+
+running 5 tests
+test canonical_env_sequence_is_exactly_env063_env064_env065 ... ok
+test canonical_transcript_is_offline_readonly_evidence_only_and_safe ... ok
+test canonical_transcript_links_to_fixture_paths_that_exist ... ok
+test canonical_transcript_records_proven_tn10_values ... ok
+test transcript_schema_versions_are_stable ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env070_offline_transcript_verifier.rs (target/debug/deps/env070_offline_transcript_verifier-770c56ce75994a6c)
+
+running 6 tests
+test canonical_transcript_verifies_successfully ... ok
+test mainnet_and_unsafe_requirements_are_rejected ... ok
+test missing_fixture_path_is_rejected ... ok
+test wrong_canonical_values_are_rejected ... ok
+test wrong_env_sequence_is_rejected ... ok
+test wrong_schema_versions_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env071_online_tn10_readonly_verifier.rs (target/debug/deps/env071_online_tn10_readonly_verifier-5c4604cd824a782b)
+
+running 5 tests
+test live_tn10_readonly_verification_is_optional_and_gated ... ignored, optional live TN10 read-only integration test; requires explicit KASPA_FOUNDATION_RUN_LIVE_TN10=1
+test canonical_transcript_can_be_prepared_for_tn10_online_verification ... ok
+test online_verifier_refuses_mainnet_config ... ok
+test online_verifier_config_and_client_are_read_only ... ok
+test online_verifier_report_represents_pass_fail_and_skipped_checks ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env083c_fairness_verifier.rs (target/debug/deps/env083c_fairness_verifier-75dd968e36cba6d3)
+
+running 2 tests
+test env083c_demo_proof_binds_round_transcript_to_live_tn10_anchor ... ok
+test env083c_negative_cases_reject_tampering_and_claim_upgrades ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kaspa_foundation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit_status=0
+
+$ cargo test -p kaspa-fair-cli
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running unittests src/main.rs (target/debug/deps/kaspa_fair_cli-5cd5a47306706a45)
+
+running 18 tests
+test roulette::tests::deterministic_algorithm_label_is_stable ... ok
+test roulette::tests::candidate_stream_changes_when_seed_changes ... ok
+test roulette::tests::european_colour_table_is_complete_and_exact ... ok
+test roulette::tests::foundation_contract_validator_accepts_passing_contract ... ok
+test roulette::tests::engine_round_reaches_proof_published_and_pass ... ok
+test roulette::tests::foundation_contract_validator_rejects_unsafe_flags ... ok
+test roulette::tests::mock_ledger_hash_is_stable ... ok
+test roulette::tests::mock_settlement_is_reproducible ... ok
+test roulette::tests::same_ledger_hash_is_stable_and_changed_ledger_differs ... ok
+test roulette::tests::same_seed_material_gives_same_result_and_result_is_in_range ... ok
+test roulette::tests::roulette_engine_json_contains_required_contract_fields ... ok
+test tests::command_parser_selects_live_verifier_command ... ok
+test roulette::tests::state_machine_rejects_invalid_transitions ... ok
+test tests::json_result_labels_match_app_contract ... ok
+test tests::live_verifier_json_schema_and_safety_fields_are_stable ... ok
+test tests::result_labels_match_cli_contract ... ok
+test tests::roulette_poc_rejects_unsafe_foundation_contract ... ok
+test tests::roulette_poc_round_json_is_stable_for_passing_foundation_contract ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit_status=0
+
+$ node --check examples/roulette-poc/ui/app.js
+exit_status=0
+
+$ node --check examples/roulette-poc/ui/roulette-table-renderer.js
+exit_status=0
+
+$ git diff --check
+exit_status=0
+
+$ scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+exit_status=0
+
+$ scripts/env083a-roulette-randomness-source-audit.sh
+ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+exit_status=0
+
+$ scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+exit_status=0
+
+$ scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+exit_status=0
+
+$ scripts/env083f-round-proof-consistency-smoke.sh
+ROUND_PROOF_CONSISTENCY_READY=PASS
+exit_status=0
+
+$ cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json
+{"live_tn10_anchor_evidence":{"accepted":true,"accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","api_endpoint_used":"https://api-tn10.kaspa.org/transactions/4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c?inputs=true&outputs=true&resolve_previous_outpoints=light","broadcast_used":false,"continuing_output":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0","continuing_output_confirmed":true,"continuing_output_value_confirmed":true,"continuing_output_value_sompi":99700000,"covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","covenant_id_confirmed":true,"env063_spent_outpoint":"2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0","env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","input_relationship_confirmed":true,"mainnet_supported":false,"network":"testnet-10","readonly":true,"schema":"kaspa-fair-live-verification-result-v1","signing_used":false,"transaction_created":false,"verifier_result":"PASS","wallet_access_used":false,"wrpc_endpoint_observed":"wss://muon-10.kaspa.blue/kaspa/testnet-10/wrpc/borsh"},"proof_artifact":{"application_round_transcript":{"commitment":{"anchor_covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","commitment_domain":"kaspa-fair:env083c:roulette-commitment:v1","commitment_hash":"ecf348b3baee191a357cf2c13444b03bab77ba38e2f9b7605df3358f4bac7f48","covenant_lineage_reference":"tn10-env063-env064-canonical-covenant-lineage","evidence_mode":"live_readonly_tn10","result_algorithm":"blake3-domain-separated-rejection-sampling-v1","round_id":"env-083c-round-0001","rule_version":"env-083c-toccata-evidence-bound-rules-v1"},"reveal":{"anchor_covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","covenant_lineage_reference":"tn10-env063-env064-canonical-covenant-lineage","evidence_mode":"live_readonly_tn10","result_algorithm":"blake3-domain-separated-rejection-sampling-v1","result_colour":"red","result_number":18,"reveal_payload_hash":"42df5bdaa939c31b75282986ea58cec855bf8e13778cbc739f965a3f8846da3f","revealed_seed_material":"env083c fixed demo seed material bound to live TN10 covenant evidence","round_id":"env-083c-round-0001"}},"claim_tier":"toccata_bound_application_proof","evidence_mode":"live_readonly_tn10","future_live_round_transaction_evidence":"not_created_not_claimed_future_work","live_tn10_anchor":{"accepting_block_hash":"e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190","broadcast_used":false,"continuing_output":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c:0","continuing_output_value_sompi":99700000,"covenant_id":"e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7","covenant_id_confirmed":true,"covenant_lineage_reference":"tn10-env063-env064-canonical-covenant-lineage","env063_spent_outpoint":"2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0","env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","evidence_mode":"live_readonly_tn10","mainnet_supported":false,"network":"testnet-10","private_key_access_used":false,"signing_used":false,"transaction_created":false,"verifier_result":"PASS","wallet_access_used":false},"network":"testnet-10","round_id":"env-083c-round-0001","safety_flags":{"backend_custody":false,"broadcast_used":false,"mainnet_supported":false,"mock_display_only":true,"private_key_access_used":false,"real_betting":false,"real_payouts":false,"signing_used":false,"transaction_created":false,"wallet_access_used":false},"schema":"kaspa-fair-env083c-toccata-evidence-bound-proof-v1","verifier_transcript":["schema checked by Rust verifier","live TN10 anchor evidence required for Toccata-bound claim","application commitment hash recomputed from reveal material","BLAKE3 domain-separated rejection-sampling result verified","application transcript is not accepted as live round transaction evidence"]},"verifier_output":{"checks":[{"detail":"PASS","name":"schema","passed":true},{"detail":"PASS","name":"round_id","passed":true},{"detail":"PASS","name":"network","passed":true},{"detail":"PASS","name":"claim tier","passed":true},{"detail":"PASS","name":"evidence mode","passed":true},{"detail":"PASS","name":"anchor evidence mode","passed":true},{"detail":"PASS","name":"anchor verifier result","passed":true},{"detail":"PASS","name":"anchor network","passed":true},{"detail":"PASS","name":"anchor covenant id confirmed","passed":true},{"detail":"PASS","name":"anchor covenant id","passed":true},{"detail":"PASS","name":"anchor lineage","passed":true},{"detail":"PASS","name":"anchor txid","passed":true},{"detail":"PASS","name":"anchor accepted tx evidence present","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"commitment round id","passed":true},{"detail":"PASS","name":"reveal round id","passed":true},{"detail":"PASS","name":"commitment/reveal round id match","passed":true},{"detail":"PASS","name":"commitment covenant matches anchor","passed":true},{"detail":"PASS","name":"reveal covenant matches anchor","passed":true},{"detail":"PASS","name":"commitment lineage matches anchor","passed":true},{"detail":"PASS","name":"reveal lineage matches anchor","passed":true},{"detail":"PASS","name":"commitment algorithm","passed":true},{"detail":"PASS","name":"reveal algorithm","passed":true},{"detail":"PASS","name":"commitment evidence mode","passed":true},{"detail":"PASS","name":"reveal evidence mode","passed":true},{"detail":"PASS","name":"commitment hash recomputes","passed":true},{"detail":"PASS","name":"result number verifies","passed":true},{"detail":"PASS","name":"result colour verifies","passed":true},{"detail":"PASS","name":"reveal payload hash recomputes","passed":true},{"detail":"PASS","name":"future live round tx not claimed","passed":true},{"detail":"PASS","name":"mock display only","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true}],"round_id":"env-083c-round-0001","schema":"kaspa-fair-env083c-verifier-output-v1","verifier_result":"PASS"}}
+
+exit_status=0
+
+Old ENV-083A artifact rewrites from executing scripts/env083a-roulette-randomness-source-audit.sh were restored to keep ENV-083F-VERIFY scoped to the current ENV artifact bundle.
+
+Final changed-files list (git diff --name-status):
+M	examples/roulette-poc/ui/sample-round.json
+M	scripts/env083a-roulette-randomness-source-audit.sh
+M	scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+M	scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+
+Final working tree including untracked (git status --short --untracked-files=all):
+ M examples/roulette-poc/ui/sample-round.json
+ M scripts/env083a-roulette-randomness-source-audit.sh
+ M scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+ M scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+?? docs/env083f-verifiable-demo-round-generation-path.md
+?? scripts/env083f-round-proof-consistency-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-demo-generation-path-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-round-proof-field-checks.json
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-script-reconciliation.txt
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083f-round-proof-consistency/env-083f-ui-loading-evidence.txt
+
+Final git diff --check:
+(no output)
+exit_status=0
