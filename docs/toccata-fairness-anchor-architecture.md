@@ -10,6 +10,41 @@ The project must not drift into a generic roulette UI with JSON proof files. The
 
 The roulette app is only the demonstration surface. The proof layer is the product.
 
+## Trust model
+
+This PoC assumes the roulette UI and operator are not trusted.
+
+In a naïve system, the operator could attempt to:
+
+* choose or alter the result after seeing bets
+* search for a favourable seed before committing
+* change proof data after reveal
+* present a UI result that does not match the actual proof data
+* obscure whether commitment happened before reveal
+* rely on a private database that users cannot independently inspect
+
+The project goal is not to make the UI trusted. The goal is to make the fairness evidence independently checkable.
+
+Kaspa/Toccata can help close:
+
+* post-commitment result mutation
+* arbitrary proof rewriting after publication
+* fake or unlinked round-state evidence
+* reliance on a private operator-controlled database
+* weak linkage between commitment, reveal, and verifier evidence
+
+Kaspa/Toccata does not automatically close:
+
+* biased or operator-ground seed generation
+* all forms of seed grinding
+* poor entropy design
+* misleading UI copy
+* real-money betting, custody, payout, wallet, or regulatory risks
+
+This document must be read alongside `docs/threat-model.md`.
+
+The architecture here should not be interpreted independently of the project threat model.
+
 ## Current project position
 
 The project currently has:
@@ -39,27 +74,35 @@ The project currently does not have:
 
 The current JSON path is useful as a scaffold, but it must not become the centre of the PoC.
 
-## Strategic correction
+## Two-tier fairness thesis
 
-The project direction should change from:
+The project has two separate fairness claims.
 
-```text
-Improve JSON proof model first, maybe add Toccata later.
-```
+### Tier 1 — Trustless beats trusted
 
-to:
+A centralised database or operator-controlled backend can record a roulette result, but users must trust the operator not to alter, hide, reorder, or selectively disclose evidence.
 
-```text
-Use JSON only as a local mirror/export format for a Toccata-backed fairness proof model.
-```
+Kaspa improves the baseline by allowing fairness evidence to be anchored to a public, immutable, censorship-resistant PoW DAG that no single operator controls.
 
-The PoC must deliberately answer:
+The Tier 1 message is:
 
-```text
-Can Kaspa/Toccata strengthen the proof-of-fairness claim in a way that ordinary off-chain JSON cannot?
-```
+Do not trust the operator. Verify against the chain.
 
-If Toccata covenant functionality can sensibly support the fairness story, the PoC should use it sooner rather than later.
+This explains why the project should use Kaspa rather than a private database.
+
+### Tier 2 — Covenant-enforced beats merely anchored
+
+A bare commitment hash could be anchored to a blockchain without Toccata covenants. That would be useful, but it would still leave the round rules mostly enforced by off-chain verifier logic.
+
+The Toccata thesis is stronger: covenant lineage, state transitions, transaction introspection, and covenant IDs should be used where possible so that the fairness lifecycle is not merely recorded, but constrained by the covenant flow.
+
+The Tier 2 message is:
+
+Do not merely anchor a hash. Use Toccata to prove and constrain the fairness lifecycle.
+
+This explains why the project should use Toccata features rather than a generic “hash on chain” pattern.
+
+The engineering target is therefore not simply to publish proof data. The target is to show what Toccata adds over ordinary anchoring.
 
 ## Core fairness claim
 
@@ -86,37 +129,26 @@ The spin animation is theatre.
 The proof is the product.
 ```
 
-## Important distinction: randomisation vs verifiability
+## Seed and entropy position
 
-Randomisation does not inherently conflict with proof-of-fairness.
+The PoC must be honest about the seed/entropy gap.
 
-The risk is hidden or unverifiable randomisation.
+Version 1 may use an operator-committed seed for a controlled demonstration, but the limitation must be explicitly disclosed:
 
-Bad model:
+* commitment/reveal proves the seed was not changed after commitment
+* deterministic derivation proves the displayed result follows from the revealed seed
+* it does not prove the operator selected the seed without bias
+* it does not fully prevent seed grinding
 
-```text
-UI calls Math.random()
-UI chooses roulette number
-UI displays result
-```
+The existing deterministic BLAKE3 domain-separated rejection-sampling result derivation is useful and should be retained. It is the derivation step, not the entropy source.
 
-This weakens the fairness story because the result is client-side behaviour and cannot prove that the result was fixed fairly before or during the betting window.
+The intended roadmap improvement is to bind result derivation to independent or public entropy, such as a TN10 block hash, DAA score, future chain event, user-contributed seed, or multi-party seed material.
 
-Better model:
+The exact entropy design must be treated as a future ENV because public-chain entropy can itself be manipulable if the sampling point is poorly chosen.
 
-```text
-Seed or entropy material is defined.
-A commitment is published before result reveal.
-Betting closes.
-Seed/reveal material is disclosed.
-The roulette number is derived deterministically using a public algorithm.
-The verifier recomputes the result.
-The UI only displays the verified result.
-```
+For the current architecture, the correct claim is:
 
-The existing deterministic BLAKE3 domain-separated rejection-sampling result derivation is useful. It is the derivation step, not the entropy source.
-
-Do not call deterministic derivation “randomisation” unless the ENV also defines and verifies the entropy or commitment/reveal material.
+The PoC demonstrates verifiable commitment/reveal and deterministic result derivation. It does not yet claim production-grade unbiased casino randomness.
 
 ## Toccata opportunity
 
@@ -175,6 +207,23 @@ Later, only if authorised: TN10 testnet transaction creation/broadcast
 ```
 
 The JSON file should be treated as a mirror/export of proof evidence, not as the source of truth.
+
+## JSON mirror ownership
+
+The app-facing JSON is not independently trusted.
+
+The Rust verifier owns the mapping between JSON mirror fields and covenant/TN10 evidence.
+
+A JSON proof file is valid only if the Rust verifier can prove that:
+
+* the JSON round ID matches the covenant or anchor evidence
+* the commitment fields match the on-chain or modelled commitment
+* the reveal fields match the commitment
+* the derived result matches the revealed seed material
+* the proof transcript matches the expected deterministic algorithm
+* the claimed Toccata evidence is present and correctly linked
+
+The JSON file is therefore an export/mirror format, not the source of truth.
 
 ## Toolchain decision
 
@@ -321,22 +370,20 @@ tn10_node_evidence
 
 Not all of these need to exist immediately. ENV-083B should determine the minimum useful set.
 
-## Commitment/reveal fairness
+## Commitment/reveal scope
 
-Commitment/reveal proves:
+The PoC scope for commitment/reveal is:
 
-* The reveal material matches an earlier commitment.
-* The result source was fixed before reveal.
-* The displayed result can be recomputed from the revealed material.
-* The operator cannot change the result after reveal without detection.
+* commitment/reveal proves the seed was not changed after commitment
+* deterministic derivation proves the displayed result follows from the revealed seed
+* it does not prove unbiased seed selection
+* it does not fully prevent seed grinding
 
-Commitment/reveal alone does not prove:
+The architecture documents this gap explicitly and treats unbiased entropy design as future work.
 
-* The seed was unbiased.
-* The operator did not search for a favourable seed before committing.
-* The system is production casino-grade.
+For the current PoC, only this claim is made:
 
-Future improvements may include independent entropy, public entropy, user-contributed entropy, block-derived entropy, or multi-party seed contribution. These must be designed carefully so the system is not manipulable by any party.
+The PoC demonstrates verifiable commitment/reveal and deterministic result derivation. It does not yet claim production-grade unbiased casino randomness.
 
 ## Toccata feature opportunities
 
@@ -382,6 +429,24 @@ Possible later use:
 
 This should probably be deferred. It is powerful but likely too much for the first fairness-anchor milestone.
 
+## PoC success criteria
+
+The PoC succeeds if:
+
+1. An independent party can verify a roulette round end-to-end without trusting the UI or operator.
+2. Verification visibly depends on at least one Toccata covenant feature that a plain anchored hash cannot provide.
+3. A developer can read the proof transcript, inspect the covenant evidence, and reproduce the displayed result.
+4. The documentation clearly explains what is proven, what is not proven, and what remains future work.
+5. The safety boundary remains intact:
+   * no real betting
+   * no payouts
+   * no custody
+   * no wallet/private key access
+   * no signing
+   * no transaction creation
+   * no broadcasting
+   * no mainnet
+
 ## Recommended near-term roadmap
 
 ### ENV-083B — TN10 Toccata fairness-anchor architecture and toolchain sanity check
@@ -389,6 +454,16 @@ This should probably be deferred. It is powerful but likely too much for the fir
 Goal:
 
 Define the correct Toccata-backed fairness architecture before implementing random demo rounds or deeper UI changes.
+
+ENV-083B must treat KIP-20 covenant lineage feasibility as a hard gate.
+
+If covenant IDs / covenant lineage cannot be verified read-only on TN10 with available tooling, ENV-083B must not pretend the architecture is proven.
+
+Instead it must report FAIL or PARTIAL and define a fallback plan:
+
+* **Fallback A**: Use a bare TN10 commitment anchor plus Rust verifier while clearly labelling this as Tier 1 only, not a full Toccata covenant fairness proof.
+* **Fallback B**: Use an offline Rust covenant-state model while deferring live TN10 covenant evidence until the necessary node/API/tooling support is confirmed.
+* **Fallback C**: Use a local TN10 node or indexed node if public RPC cannot expose the required covenant evidence.
 
 Required outputs:
 
@@ -406,12 +481,15 @@ Required outputs:
 * Evaluate SilverScript compatibility but do not depend on it.
 * Produce a no-wallet/no-signing/no-broadcast implementation plan.
 * Clearly mark what later requires explicit transaction authorisation.
+* Set explicit pass/fail for hard-gate evidence.
 
 Expected result:
 
 ```text
 TOCCATA_FAIRNESS_ANCHOR_ARCHITECTURE_READY=PASS
 ```
+
+No later ENV may claim “Toccata-backed covenant fairness” unless ENV-083B proves the required covenant evidence path.
 
 ### ENV-083C — Offline covenant-state artifact and verifier model
 
@@ -513,32 +591,35 @@ Git handoff:
 
 ## Non-negotiable architectural principles
 
-1. Toccata is not decoration.
-   The PoC must use Toccata where it sensibly improves proof-of-fairness.
+1. Trust model first.
+   Design and verify under the explicit trust model in this document and in the threat model.
 
-2. JSON is not the proof source.
-   JSON may mirror/export evidence, but the model should lead toward covenant-backed proof anchoring.
+2. Toccata is not decoration.
+   The PoC must use Toccata where it genuinely improves fairness evidence.
 
-3. Rust is the truth layer.
-   Deterministic verification and proof logic belong in Rust.
+3. Toccata must add something beyond bare hash anchoring.
+   Toccata-specific claims must describe what is impossible with a plain anchor model.
 
-4. RPC is evidence transport.
-   RPC observes TN10 and retrieves evidence. It should not become the proof model.
+4. Covenant evidence claims must be proven, not assumed.
+   If covenant IDs/lineage claims are made, read-only validation must exist and be explicitly documented.
 
-5. SilverScript is optional until proven.
-   It may help author covenant scripts later, but it must pass a compatibility spike first.
+5. JSON mirrors evidence; Rust verifies the mirror.
+   A JSON proof file is valid only when the Rust verifier proves the mapping to covenant evidence.
 
-6. UI is not trusted.
-   The UI displays and explains proof. It must not choose the result.
+6. Seed grinding is disclosed until independent entropy is designed.
+   Seed bias and grinding risks remain explicit limitations until independently addressed.
 
 7. Randomness must be verifiable.
    Random-looking outcomes are acceptable only when tied to explicit seed/commitment/reveal evidence.
 
-8. No real casino functionality.
+8. If Toccata evidence is unavailable, the PoC must say so plainly.
+   Do not hide, soften, or defer this limitation.
+
+9. No real casino functionality.
    The PoC remains mock-only unless explicitly authorised otherwise.
 
-9. No silent scope expansion.
+10. No silent scope expansion.
    Wallet, signing, broadcasting, faucet, custody, and mainnet work require explicit authorisation.
 
-10. The proof layer is the product.
-    Roulette is the demonstration vehicle.
+11. The proof layer is the product.
+   Roulette is the demonstration vehicle.
