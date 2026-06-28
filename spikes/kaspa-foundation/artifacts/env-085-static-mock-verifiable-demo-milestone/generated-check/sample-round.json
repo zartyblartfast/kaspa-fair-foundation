@@ -1,0 +1,165 @@
+{
+  "bet_ledger_hash": "6b5e009eb78a505626c14840d3eeb79848c4926bcd6f597295dce9162d95e0fd",
+  "bets": [
+    {
+      "bet_id": "bet-001",
+      "bet_type": "straight-number",
+      "payout_multiplier": 35,
+      "selection_value": "17",
+      "stake_units": 10
+    },
+    {
+      "bet_id": "bet-002",
+      "bet_type": "colour",
+      "payout_multiplier": 1,
+      "selection_value": "red",
+      "stake_units": 5
+    },
+    {
+      "bet_id": "bet-003",
+      "bet_type": "colour",
+      "payout_multiplier": 1,
+      "selection_value": "black",
+      "stake_units": 4
+    },
+    {
+      "bet_id": "bet-004",
+      "bet_type": "parity",
+      "payout_multiplier": 1,
+      "selection_value": "odd",
+      "stake_units": 7
+    },
+    {
+      "bet_id": "bet-005",
+      "bet_type": "parity",
+      "payout_multiplier": 1,
+      "selection_value": "even",
+      "stake_units": 6
+    },
+    {
+      "bet_id": "bet-006",
+      "bet_type": "range",
+      "payout_multiplier": 1,
+      "selection_value": "high",
+      "stake_units": 9
+    },
+    {
+      "bet_id": "bet-007",
+      "bet_type": "range",
+      "payout_multiplier": 1,
+      "selection_value": "low",
+      "stake_units": 8
+    }
+  ],
+  "broadcast_used": false,
+  "final_result": "PASS",
+  "foundation_accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
+  "foundation_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+  "foundation_env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
+  "foundation_network": "testnet-10",
+  "foundation_readonly": true,
+  "foundation_verifier_result": "PASS",
+  "foundation_verifier_schema": "kaspa-fair-live-verification-result-v1",
+  "mainnet_supported": false,
+  "payout_table_version": "env-084-rust-owned-demo-round-payouts-v1",
+  "private_key_access_used": false,
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "result_colour": "red",
+  "result_number": 21,
+  "roulette_variant": "european",
+  "round_id": "env-085-demo-round-0001",
+  "round_state": "ProofPublished",
+  "rule_version": "env-084-rust-owned-demo-round-rules-v1",
+  "schema": "kaspa-fair-roulette-engine-round-v1",
+  "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
+  "seed_material_hex": "656e763038352d64656d6f2d736565642d30303031",
+  "settlement": [
+    {
+      "bet_id": "bet-001",
+      "bet_type": "straight-number",
+      "net_units": -10,
+      "payout_multiplier": 35,
+      "payout_units": 0,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "17",
+      "stake_units": 10,
+      "won": false
+    },
+    {
+      "bet_id": "bet-002",
+      "bet_type": "colour",
+      "net_units": 5,
+      "payout_multiplier": 1,
+      "payout_units": 10,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "red",
+      "stake_units": 5,
+      "won": true
+    },
+    {
+      "bet_id": "bet-003",
+      "bet_type": "colour",
+      "net_units": -4,
+      "payout_multiplier": 1,
+      "payout_units": 0,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "black",
+      "stake_units": 4,
+      "won": false
+    },
+    {
+      "bet_id": "bet-004",
+      "bet_type": "parity",
+      "net_units": 7,
+      "payout_multiplier": 1,
+      "payout_units": 14,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "odd",
+      "stake_units": 7,
+      "won": true
+    },
+    {
+      "bet_id": "bet-005",
+      "bet_type": "parity",
+      "net_units": -6,
+      "payout_multiplier": 1,
+      "payout_units": 0,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "even",
+      "stake_units": 6,
+      "won": false
+    },
+    {
+      "bet_id": "bet-006",
+      "bet_type": "range",
+      "net_units": 9,
+      "payout_multiplier": 1,
+      "payout_units": 18,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "high",
+      "stake_units": 9,
+      "won": true
+    },
+    {
+      "bet_id": "bet-007",
+      "bet_type": "range",
+      "net_units": -8,
+      "payout_multiplier": 1,
+      "payout_units": 0,
+      "result_colour": "red",
+      "result_number": 21,
+      "selection_value": "low",
+      "stake_units": 8,
+      "won": false
+    }
+  ],
+  "signing_used": false,
+  "transaction_created": false,
+  "wallet_access_used": false
+}

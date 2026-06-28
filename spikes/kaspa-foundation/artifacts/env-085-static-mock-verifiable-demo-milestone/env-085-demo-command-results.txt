@@ -1,0 +1,21 @@
+ENV-085 command results
+
+PASS git status --short
+PASS git log --oneline -n 10
+PASS cargo fmt --check
+PASS cargo check -p kaspa-foundation
+PASS cargo check -p kaspa-fair-cli
+PASS cargo test -p kaspa-foundation
+PASS cargo test -p kaspa-fair-cli
+PASS node --check examples/roulette-poc/ui/app.js
+PASS node --check examples/roulette-poc/ui/roulette-table-renderer.js
+PASS git diff --check
+PASS scripts/env082-roulette-ui-workflow-rebuild-smoke.sh -> ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+PASS scripts/env083a-roulette-randomness-source-audit.sh -> ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+PASS scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh -> USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+PASS scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh -> APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+PASS scripts/env083f-round-proof-consistency-smoke.sh -> ROUND_PROOF_CONSISTENCY_READY=PASS
+PASS scripts/env084-verifiable-demo-round-generator-smoke.sh -> VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+PASS scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh -> STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+PASS cargo run -q -p kaspa-fair-cli -- env083c-toccata-evidence-bound-fairness-proof --json -> verifier_output.verifier_result=PASS
+PASS cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round --round-id env-085-demo-round-0001 --demo-seed "env085-demo-seed-0001" --out-dir spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check -> result_number=21, result_colour=red, verifier_result=PASS

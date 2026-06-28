@@ -1,0 +1,12 @@
+?? docs/env085-static-mock-verifiable-demo-milestone.md
+?? docs/roulette-poc-milestone-summary.md
+?? scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-demo-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-verifier-output.json
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json
+?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/verifier-output.json

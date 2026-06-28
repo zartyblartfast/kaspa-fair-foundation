@@ -1,0 +1,26 @@
+{
+  "documents": {
+    "non_developer_summary": "docs/roulette-poc-milestone-summary.md",
+    "runbook": "docs/env085-static-mock-verifiable-demo-milestone.md"
+  },
+  "future_live_round_specific_transactions_authorisation_required": true,
+  "generated_artifacts": {
+    "evidence_mode": "live_readonly_tn10",
+    "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+    "result_colour": "red",
+    "result_number": 21,
+    "round_id": "env-085-demo-round-0001",
+    "sample_proof_agree": true,
+    "verifier_result": "PASS"
+  },
+  "live_tn10_evidence_readonly": true,
+  "milestone_package": true,
+  "no_new_proof_logic_added": true,
+  "no_new_ui_behaviour_added": true,
+  "no_production_randomness_added": true,
+  "no_transactions_created_signed_broadcast": true,
+  "no_wallet_private_key_access": true,
+  "result": "PASS",
+  "schema": "kaspa-fair-env085-static-mock-verifiable-demo-milestone-checklist-v1",
+  "smoke": "scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh"
+}
