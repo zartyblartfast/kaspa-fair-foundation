@@ -698,3 +698,18 @@ ENV-082 remains strictly mock-only and safety-bounded:
 - no mainnet
 - no secrets
 - no production casino functionality
+
+
+## 22. ENV-083E app-facing Toccata fairness proof artifact integration
+
+ENV-083E connects the static roulette UI to `examples/roulette-poc/ui/toccata-fairness-proof.json`, an app-facing mirror/export derived from the ENV-083C Rust verifier proof artifact and verifier output. The UI still loads `sample-round.json` for the current mock roulette round/result display and does not generate or choose roulette results.
+
+The UI now distinguishes these layers:
+- roulette mock round display from `sample-round.json`;
+- Rust verifier output fields mirrored in `toccata-fairness-proof.json`;
+- live read-only TN10 Toccata covenant anchor evidence;
+- future round-specific live commitment/reveal transaction evidence labelled `not_created_not_claimed_future_work`.
+
+The verifier proof snapshot displays `verifier_result`, `live_readonly_tn10` evidence mode, `covenant_id_confirmed`, covenant lineage, result algorithm, commitment/reveal check status, deterministic BLAKE3 derivation check status, proof result number/colour, and safety flags. JSON remains a mirror/export only; Rust verifier logic remains the proof authority.
+
+ENV-083E remains strictly static/read-only and mock-only: no result generation in the UI, no production randomisation, no real betting, no real payouts, no backend custody, no wallet/private-key access, no signing, no transaction creation, no broadcast/submission, no faucet funds, and no mainnet.

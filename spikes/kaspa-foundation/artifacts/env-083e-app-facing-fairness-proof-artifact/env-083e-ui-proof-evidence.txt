@@ -1,0 +1,27 @@
+ENV-083E UI proof evidence
+
+Browser-rendered proof snapshot evidence:
+- overall status: PASS — sample round, schema-driven SVG roulette table, and static Toccata proof artifact loaded
+- Verifier proof snapshot heading present: yes
+- verifier result displayed: PASS
+- evidence mode displayed: live_readonly_tn10
+- live TN10 anchor evidence mode displayed: live_readonly_tn10
+- live TN10 anchor verifier result displayed: PASS
+- covenant_id_confirmed displayed: yes
+- covenant ID displayed: e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7
+- covenant lineage reference displayed: tn10-env063-env064-canonical-covenant-lineage
+- result algorithm displayed: blake3-domain-separated-rejection-sampling-v1
+- commitment/reveal check status displayed: PASS
+- deterministic derivation check status displayed: PASS
+- proof artifact result number displayed: 18
+- proof artifact result colour displayed: red
+- future live round transaction evidence displayed: not_created_not_claimed_future_work
+- safety flags summary displayed: {'backend_custody': False, 'broadcast_used': False, 'mainnet_supported': False, 'mock_display_only': True, 'private_key_access_used': False, 'real_betting': False, 'real_payouts': False, 'signing_used': False, 'transaction_created': False, 'wallet_access_used': False}
+
+Source contract evidence:
+- index.html contains Verifier proof snapshot section: yes
+- app.js fetches sample-round.json: yes
+- app.js fetches toccata-fairness-proof.json: yes
+- app.js validates proof artifact fields before rendering: yes
+- app.js renders proof snapshot from loaded artifact: yes
+- sample-round.json sha256: 5cc864d40af42d3268af3bf0e4e540f39c08466e3ed4e27f34d902597ab7e6b6

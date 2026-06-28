@@ -1,6 +1,6 @@
 # Roulette PoC
 
-ENV-083D adds a user-facing Toccata fairness proof explanation to the roulette PoC while preserving the ENV-082 table-first Start Wheel / Reset Round workflow.
+ENV-083E connects the roulette PoC UI to a static app-facing Toccata fairness proof artifact while preserving the ENV-082 table-first Start Wheel / Reset Round workflow and the ENV-083D proof explanation.
 
 Current milestone:
 
@@ -12,6 +12,7 @@ Primary UI files:
 - `examples/roulette-poc/ui/app.js`
 - `examples/roulette-poc/ui/roulette-table-schema.json`
 - `examples/roulette-poc/ui/roulette-table-renderer.js`
+- `examples/roulette-poc/ui/toccata-fairness-proof.json`
 
 What the current UI does:
 - renders the visible roulette betting surface from the ENV-081A schema in `roulette-table-schema.json`
@@ -26,8 +27,10 @@ What the current UI does:
 - keeps the table before workflow, ledger, settlement, proof, verifier, and safety information
 - uses a status label rather than status-like workflow buttons
 - automatically advances from wheel spin to no-more-bets, result reveal, settlement display, and proof publication
-- preserves the deterministic result, settlement, and proof from `sample-round.json` only
+- preserves the mock roulette round/result display from `sample-round.json`
+- loads Rust verifier/Toccata proof snapshot fields from `toccata-fairness-proof.json`
 - explains that the UI displays a mock roulette round and does not choose the result
+- displays a compact verifier proof snapshot with verifier result, evidence mode, covenant ID confirmation, result algorithm, result number/colour, future live transaction evidence, and safety flags
 - explains that the proof is checked by Rust verifier logic
 - explains commitment/reveal consistency and deterministic BLAKE3 result derivation
 - explains that the proof transcript is bound to live TN10 Toccata covenant evidence
@@ -54,8 +57,9 @@ What the current UI explicitly avoids:
 - secrets
 - production casino functionality
 
-Readiness command:
+Readiness commands:
 
 ```bash
 scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
 ```

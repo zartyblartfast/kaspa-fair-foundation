@@ -1,0 +1,11 @@
+ M docs/roulette-poc-architecture.md
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/app.js
+ M examples/roulette-poc/ui/index.html
+?? examples/roulette-poc/ui/toccata-fairness-proof.json
+?? scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-083e-app-facing-fairness-proof-artifact/env-083e-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-083e-app-facing-fairness-proof-artifact/env-083e-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-083e-app-facing-fairness-proof-artifact/env-083e-proof-artifact-copy.json
+?? spikes/kaspa-foundation/artifacts/env-083e-app-facing-fairness-proof-artifact/env-083e-summary.md
+?? spikes/kaspa-foundation/artifacts/env-083e-app-facing-fairness-proof-artifact/env-083e-ui-proof-evidence.txt

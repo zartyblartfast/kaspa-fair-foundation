@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+UI="examples/roulette-poc/ui/index.html"
+APP_JS="examples/roulette-poc/ui/app.js"
+RENDERER_JS="examples/roulette-poc/ui/roulette-table-renderer.js"
+PROOF="examples/roulette-poc/ui/toccata-fairness-proof.json"
+SAMPLE="examples/roulette-poc/ui/sample-round.json"
+EXPECTED_SAMPLE_SHA256="5cc864d40af42d3268af3bf0e4e540f39c08466e3ed4e27f34d902597ab7e6b6"
+
+require_text() {
+  local file="$1"
+  local pattern="$2"
+  if ! grep -Eiq -- "$pattern" "$file"; then
+    printf 'missing required text in %s: %s
+' "$file" "$pattern" >&2
+    exit 1
+  fi
+}
+
+reject_text() {
+  local file="$1"
+  local pattern="$2"
+  if grep -Eiq -- "$pattern" "$file"; then
+    printf 'forbidden text in %s: %s
+' "$file" "$pattern" >&2
+    exit 1
+  fi
+}
+
+[[ -f "$PROOF" ]] || { printf 'missing proof artifact: %s
+' "$PROOF" >&2; exit 1; }
+python3 -m json.tool "$PROOF" >/dev/null
+
+require_text "$APP_JS" 'fetchJson\("sample-round\.json"\)'
+require_text "$APP_JS" 'fetchJson\("toccata-fairness-proof\.json"\)'
+require_text "$APP_JS" 'validateProofArtifact'
+require_text "$APP_JS" 'renderProofSnapshot'
+require_text "$UI" '<h2>Verifier proof snapshot</h2>'
+require_text "$UI" 'toccata-fairness-proof\.json'
+require_text "$UI" 'UI still does not choose the result'
+require_text "$UI" 'proof artifact is checked by Rust verifier logic'
+require_text "$UI" 'live TN10 evidence is read-only'
+require_text "$UI" 'round-specific live commitment/reveal transactions remain future work'
+
+require_text "$PROOF" '"verifier_result"[[:space:]]*:[[:space:]]*"PASS"'
+require_text "$PROOF" '"evidence_mode"[[:space:]]*:[[:space:]]*"live_readonly_tn10"'
+require_text "$PROOF" '"covenant_id_confirmed"[[:space:]]*:[[:space:]]*true'
+require_text "$PROOF" '"future_live_round_transaction_evidence"[[:space:]]*:[[:space:]]*"not_created_not_claimed_future_work"'
+require_text "$PROOF" '"commitment_reveal_check_status"[[:space:]]*:[[:space:]]*"PASS"'
+require_text "$PROOF" '"deterministic_derivation_check_status"[[:space:]]*:[[:space:]]*"PASS"'
+require_text "$PROOF" '"mock_display_only"[[:space:]]*:[[:space:]]*true'
+require_text "$PROOF" '"real_betting"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"real_payouts"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"backend_custody"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"wallet_access_used"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"private_key_access_used"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"signing_used"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"transaction_created"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"broadcast_used"[[:space:]]*:[[:space:]]*false'
+require_text "$PROOF" '"mainnet_supported"[[:space:]]*:[[:space:]]*false'
+
+require_text "$APP_JS" 'verifier result'
+require_text "$APP_JS" 'evidence mode'
+require_text "$APP_JS" 'covenant_id_confirmed'
+require_text "$APP_JS" 'result algorithm'
+require_text "$APP_JS" 'commitment/reveal check status'
+require_text "$APP_JS" 'deterministic derivation check status'
+require_text "$APP_JS" 'future live round transaction evidence'
+require_text "$APP_JS" 'safety flags summary'
+require_text "$APP_JS" 'not_created_not_claimed_future_work'
+
+actual_sample_sha256="$(sha256sum "$SAMPLE" | awk '{print $1}')"
+if [[ "$actual_sample_sha256" != "$EXPECTED_SAMPLE_SHA256" ]]; then
+  printf 'sample-round.json sha256 changed: %s
+' "$actual_sample_sha256" >&2
+  exit 1
+fi
+
+for file in "$UI" "$APP_JS" "$RENDERER_JS"; do
+  reject_text "$file" 'Math\.random'
+  reject_text "$file" 'crypto\.getRandomValues|randomUUID|window\.crypto|globalThis\.crypto|crypto\.subtle'
+done
+
+require_text "$UI" '>Start Wheel<'
+require_text "$UI" '>Reset Round<'
+reject_text "$UI" '>Reveal Result<'
+reject_text "$UI" 'Wheel Visual'
+
+printf 'APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+'

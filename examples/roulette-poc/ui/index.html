@@ -4,18 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kaspa Fair Roulette PoC</title>
-    <link rel="stylesheet" href="styles.css?v=env082-workflow-rebuild" />
+    <link rel="stylesheet" href="styles.css?v=env083e-app-facing-proof" />
   </head>
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">ENV-082 roulette UI workflow/layout rebuild</p>
+        <p class="eyebrow">ENV-083E app-facing Toccata fairness proof artifact</p>
         <h1>Kaspa Fair Roulette PoC</h1>
         <p class="subhead">
-          Table-first static roulette prototype with mock-only chip placement and deterministic result/proof display from sample-round.json only.
+          Table-first static roulette prototype with mock-only chip placement, roulette display from sample-round.json, and Rust-verified Toccata proof fields from a static app-facing artifact.
         </p>
       </div>
-      <div id="overall-status" class="status-pill status-loading">Loading deterministic round and SVG table schema…</div>
+      <div id="overall-status" class="status-pill status-loading">Loading deterministic round, SVG table schema, and app-facing Toccata proof artifact…</div>
     </header>
 
     <main class="layout">
@@ -29,7 +29,7 @@
           <div>
             <h2>Roulette table</h2>
             <p class="table-note">
-              Click the table to place mock chips. Bets are still open while the wheel is spinning; result comes from sample-round.json only.
+              Click the table to place mock chips. Bets are still open while the wheel is spinning; roulette display comes from sample-round.json; verifier proof fields come from toccata-fairness-proof.json.
             </p>
           </div>
           <div class="round-status-box" aria-live="polite">
@@ -55,7 +55,7 @@
         <h2>Schema-driven mock betting surface</h2>
         <p class="note">
           The visible SVG table is the mock betting surface. Clicking table zones adds mock bets only and does not alter the deterministic result,
-          settlement, or proof loaded from sample-round.json.
+          settlement, or proof snapshot loaded from the static verifier artifact.
         </p>
         <div class="bet-toolbar">
           <label>
@@ -98,10 +98,10 @@
         </p>
         <ul class="verification-list">
           <li>Rust verifier logic checks the proof transcript instead of trusting the UI or operator.</li>
-          <li>The verifier checks commitment/reveal consistency: the revealed seed material must match the earlier commitment.</li>
-          <li>The verifier checks deterministic BLAKE3 result derivation, including domain-separated rejection sampling for the roulette number.</li>
-          <li>The verifier binds the proof transcript to live TN10 Toccata covenant evidence, including covenant ID and covenant lineage evidence.</li>
-          <li>Current round-specific commitment/reveal transaction creation is future work and requires explicit authorisation.</li>
+          <li>The verifier checks commitment/reveal consistency from the app-facing proof artifact: the revealed seed material must match the earlier commitment.</li>
+          <li>The verifier checks deterministic BLAKE3 result derivation, including domain-separated rejection sampling for the proof artifact roulette number.</li>
+          <li>The verifier binds the proof transcript to live TN10 Toccata covenant evidence in read-only mode, including covenant ID and covenant lineage evidence.</li>
+          <li>Current round-specific commitment/reveal transaction creation is future work and requires explicit authorisation; live transaction evidence is not_created_not_claimed_future_work.</li>
         </ul>
         <div class="thesis-grid">
           <div>
@@ -120,7 +120,17 @@
         <p class="prototype-note">
           Safety boundary: this is not real betting or production casino randomness. There are no real payouts, custody, wallets, private keys,
           signing, transaction creation, broadcasting, mainnet use, or live round-specific commitment/reveal transactions in this PoC.
+          Browser random APIs are not used for the displayed result.
         </p>
+      </section>
+
+
+      <section class="panel wide" id="verifier-proof-snapshot-panel">
+        <h2>Verifier proof snapshot</h2>
+        <p class="note">
+          Static app-facing mirror/export loaded from toccata-fairness-proof.json. The UI still does not choose the result; the proof artifact is checked by Rust verifier logic, live TN10 evidence is read-only, and round-specific live commitment/reveal transactions remain future work.
+        </p>
+        <ul class="kv-list proof-snapshot-list" id="proof-snapshot-list"></ul>
       </section>
 
       <section class="panel" id="trust-panel">
@@ -166,7 +176,7 @@
       </section>
     </main>
 
-    <script src="roulette-table-renderer.js?v=env082-workflow-rebuild"></script>
-    <script src="app.js?v=env082-workflow-rebuild"></script>
+    <script src="roulette-table-renderer.js?v=env083e-app-facing-proof"></script>
+    <script src="app.js?v=env083e-app-facing-proof"></script>
   </body>
 </html>

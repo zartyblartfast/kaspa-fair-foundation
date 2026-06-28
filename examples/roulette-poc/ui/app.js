@@ -13,7 +13,7 @@ const ROUND_DESCRIPTIONS = {
   NoMoreBets: "No more bets.",
   ResultFinalised: "Result revealed from sample-round.json.",
   Settled: "Settlement shown from sample-round.json.",
-  ProofPublished: "Proof published from sample-round.json.",
+  ProofPublished: "Proof snapshot published from toccata-fairness-proof.json.",
 };
 
 const ROUND_STATUS_LABELS = {
@@ -42,6 +42,7 @@ const ui = {
   stateDescription: document.getElementById("state-description"),
   trustList: document.getElementById("trust-status-list"),
   safetyFlagsList: document.getElementById("safety-flags-list"),
+  proofSnapshotList: document.getElementById("proof-snapshot-list"),
 
   rouletteTableSvgHost: document.getElementById("roulette-table-svg-host"),
   resultNumber: document.getElementById("result-number"),
@@ -64,6 +65,7 @@ const ui = {
 const appState = {
   round: null,
   tableSchema: null,
+  proofArtifact: null,
   uiState: "BetsOpen",
   uiMockBets: [],
   nextMockBetId: 1,
@@ -71,19 +73,22 @@ const appState = {
 };
 
 boot().catch((error) => {
-  showFailure(`Failed to load deterministic round or roulette table schema: ${error.message}`);
+  showFailure(`Failed to load deterministic round, roulette table schema, or Toccata proof artifact: ${error.message}`);
 });
 
 async function boot() {
-  const [round, tableSchema] = await Promise.all([
+  const [round, tableSchema, proofArtifact] = await Promise.all([
     fetchJson("sample-round.json"),
     fetchJson("roulette-table-schema.json"),
+    fetchJson("toccata-fairness-proof.json"),
   ]);
 
   validateRound(round);
   validateTableSchema(tableSchema);
+  validateProofArtifact(proofArtifact);
   appState.round = round;
   appState.tableSchema = tableSchema;
+  appState.proofArtifact = proofArtifact;
   bindEvents();
   renderStaticPanels(round);
   resetRoundFlow();
@@ -148,6 +153,49 @@ function validateTableSchema(tableSchema) {
   }
 }
 
+
+function validateProofArtifact(proofArtifact) {
+  const anchor = proofArtifact.live_tn10_anchor || {};
+  const safety = proofArtifact.safety_flags || {};
+  const transcript = proofArtifact.application_round_transcript || {};
+  const reveal = transcript.reveal || {};
+  const rustOutput = proofArtifact.rust_verifier_output || {};
+  const checks = [
+    ["proof schema", proofArtifact.schema === "kaspa-fair-roulette-ui-toccata-fairness-proof-v1"],
+    ["verifier_result == PASS", proofArtifact.verifier_result === "PASS"],
+    ["network == testnet-10", proofArtifact.network === "testnet-10"],
+    ["evidence_mode == live_readonly_tn10", proofArtifact.evidence_mode === "live_readonly_tn10"],
+    ["anchor evidence_mode == live_readonly_tn10", anchor.evidence_mode === "live_readonly_tn10"],
+    ["anchor verifier_result == PASS", anchor.verifier_result === "PASS"],
+    ["covenant_id_confirmed == true", anchor.covenant_id_confirmed === true],
+    ["covenant id present", typeof proofArtifact.covenant_id === "string" && proofArtifact.covenant_id.length > 0],
+    ["covenant lineage present", typeof proofArtifact.covenant_lineage_reference === "string" && proofArtifact.covenant_lineage_reference.length > 0],
+    ["result algorithm present", proofArtifact.result_algorithm === "blake3-domain-separated-rejection-sampling-v1"],
+    ["commitment/reveal check PASS", proofArtifact.commitment_reveal_check_status === "PASS"],
+    ["deterministic derivation check PASS", proofArtifact.deterministic_derivation_check_status === "PASS"],
+    ["result number matches reveal", proofArtifact["result_number"] === reveal["result_number"]],
+    ["result colour matches reveal", proofArtifact["result_colour"] === reveal["result_colour"]],
+    ["future live round evidence not claimed", proofArtifact.future_live_round_transaction_evidence === "not_created_not_claimed_future_work"],
+    ["Rust verifier checks passed", rustOutput.all_checks_passed === true],
+    ["mock_display_only true", safety.mock_display_only === true],
+    ["real_betting false", safety.real_betting === false],
+    ["real_payouts false", safety.real_payouts === false],
+    ["backend_custody false", safety.backend_custody === false],
+    ["wallet_access_used false", safety.wallet_access_used === false],
+    ["private_key_access_used false", safety.private_key_access_used === false],
+    ["signing_used false", safety.signing_used === false],
+    ["transaction_created false", safety.transaction_created === false],
+    ["broadcast_used false", safety.broadcast_used === false],
+    ["mainnet_supported false", safety.mainnet_supported === false],
+    ["JSON mirror/export only", proofArtifact.json_mirror_export_only === true],
+  ];
+
+  const failedChecks = checks.filter(([, passed]) => !passed).map(([label]) => label);
+  if (failedChecks.length > 0) {
+    throw new Error(`Unsafe or failed Toccata proof artifact: ${failedChecks.join(", ")}`);
+  }
+}
+
 function bindEvents() {
   ui.startWheelButton.addEventListener("click", startWheelFlow);
   ui.resetRoundButton.addEventListener("click", resetRoundFlow);
@@ -188,9 +236,10 @@ function advanceState(nextState) {
 function renderStaticPanels(round) {
   renderTrustPanel(round);
   renderSafetyFlags(round);
+  renderProofSnapshot(appState.proofArtifact);
   renderDeterministicSettlementInput(round);
   ui.resultAlgorithm.textContent = round.result_algorithm;
-  setOverallStatus("PASS — deterministic sample JSON and schema-driven SVG roulette table loaded", true);
+  setOverallStatus("PASS — sample round, schema-driven SVG roulette table, and static Toccata proof artifact loaded", true);
 }
 
 function resetRoundFlow() {
@@ -237,20 +286,65 @@ function renderFlow() {
   renderProof(round, proofVisible);
 }
 
+
+function renderProofSnapshot(proofArtifact) {
+  const safety = proofArtifact.safety_flags;
+  const safetySummary = [
+    `mock_display_only: ${safety.mock_display_only}`,
+    `real_betting: ${safety.real_betting}`,
+    `real_payouts: ${safety.real_payouts}`,
+    `backend_custody: ${safety.backend_custody}`,
+    `wallet_access_used: ${safety.wallet_access_used}`,
+    `private_key_access_used: ${safety.private_key_access_used}`,
+    `signing_used: ${safety.signing_used}`,
+    `transaction_created: ${safety.transaction_created}`,
+    `broadcast_used: ${safety.broadcast_used}`,
+    `mainnet_supported: ${safety.mainnet_supported}`,
+  ].join("; ");
+
+  const rows = [
+    ["verifier result", proofArtifact.verifier_result],
+    ["evidence mode", proofArtifact.evidence_mode],
+    ["live TN10 anchor evidence mode", proofArtifact.live_tn10_anchor.evidence_mode],
+    ["live TN10 anchor verifier result", proofArtifact.live_tn10_anchor.verifier_result],
+    ["covenant_id_confirmed", proofArtifact.live_tn10_anchor.covenant_id_confirmed ? "yes" : "no"],
+    ["covenant ID", proofArtifact.covenant_id],
+    ["covenant lineage reference", proofArtifact.covenant_lineage_reference],
+    ["result algorithm", proofArtifact.result_algorithm],
+    ["commitment/reveal check status", proofArtifact.commitment_reveal_check_status],
+    ["deterministic derivation check status", proofArtifact.deterministic_derivation_check_status],
+    ["proof artifact result number", proofArtifact.result_number],
+    ["proof artifact result colour", proofArtifact.result_colour],
+    ["future live round transaction evidence", proofArtifact.future_live_round_transaction_evidence],
+    ["Rust verifier role", "checks this JSON mirror/export; UI is not proof authority"],
+    ["safety flags summary", safetySummary],
+  ];
+
+  ui.proofSnapshotList.innerHTML = "";
+  rows.forEach(([key, value]) => {
+    const li = document.createElement("li");
+    const valueText = String(value);
+    const pass = ["PASS", "live_readonly_tn10", "yes", "not_created_not_claimed_future_work"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true");
+    li.innerHTML = `<span class="kv-key">${escapeHtml(String(key))}</span><span class="kv-value ${pass ? "pass" : ""}"><code>${escapeHtml(valueText)}</code></span>`;
+    ui.proofSnapshotList.appendChild(li);
+  });
+}
+
 function renderTrustPanel(round) {
   const rows = [
     ["foundation verifier", round.foundation_verifier_result],
     ["foundation network", round.foundation_network],
     ["round id", round.round_id],
     ["round source state", round.round_state],
-    ["deterministic result source", "sample-round.json"],
+    ["roulette mock round source", "sample-round.json"],
+    ["app-facing proof artifact source", "toccata-fairness-proof.json"],
     ["roulette table schema source", "roulette-table-schema.json"],
   ];
 
   ui.trustList.innerHTML = "";
   rows.forEach(([key, value]) => {
     const li = document.createElement("li");
-    const isPass = ["PASS", "testnet-10", "sample-round.json", "roulette-table-schema.json"].includes(String(value));
+    const isPass = ["PASS", "testnet-10", "sample-round.json", "toccata-fairness-proof.json", "roulette-table-schema.json"].includes(String(value));
     li.innerHTML = `<span class="kv-key">${escapeHtml(key)}</span><span class="kv-value ${isPass ? "pass" : ""}">${escapeHtml(String(value))}</span>`;
     ui.trustList.appendChild(li);
   });
@@ -357,6 +451,7 @@ function renderSettlement(round, visible) {
 }
 
 function renderProof(round, visible) {
+  const proofArtifact = appState.proofArtifact;
   ui.proofList.innerHTML = "";
   if (!visible) {
     ui.proofStatus.textContent = "Proof published automatically after settlement display.";
@@ -364,7 +459,7 @@ function renderProof(round, visible) {
     return;
   }
 
-  ui.proofStatus.textContent = `ProofPublished: foundation verifier ${round.foundation_verifier_result}; final_result ${round.final_result}.`;
+  ui.proofStatus.textContent = `ProofPublished: foundation verifier ${round.foundation_verifier_result}; app-facing verifier ${proofArtifact.verifier_result}; final_result ${round.final_result}.`;
   ui.proofStatus.className = "proof-status proof-pass";
 
   const proofRows = [
@@ -375,6 +470,10 @@ function renderProof(round, visible) {
     ["result number", round.result_number],
     ["result colour", round.result_colour],
     ["final_result", round.final_result],
+    ["app-facing proof artifact", "toccata-fairness-proof.json"],
+    ["app-facing verifier_result", proofArtifact.verifier_result],
+    ["app-facing evidence_mode", proofArtifact.evidence_mode],
+    ["future live round transaction evidence", proofArtifact.future_live_round_transaction_evidence],
   ];
 
   proofRows.forEach(([key, value]) => {
@@ -476,7 +575,7 @@ function setOverallStatus(text, pass) {
 function showFailure(message) {
   ui.failurePanel.hidden = false;
   ui.failureMessage.textContent = message;
-  setOverallStatus("FAIL — deterministic round or SVG schema could not be loaded safely", false);
+  setOverallStatus("FAIL — deterministic round, SVG schema, or Toccata proof artifact could not be loaded safely", false);
 }
 
 function escapeHtml(value) {
