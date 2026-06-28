@@ -1,0 +1,69 @@
+{
+  "schema": "kaspa-fair-env086-ranked-workaround-inventory-v1",
+  "recommended_next_env": "ENV-087 \u2014 Authorised TN10 round-specific commitment/reveal transaction spike",
+  "items": [
+    {
+      "rank": 1,
+      "workaround": "round commitment workaround",
+      "current_files_evidence": "examples/roulette-poc/ui/toccata-fairness-proof.json: application_round_transcript.commitment has commitment_hash/evidence_mode=live_readonly_tn10 but no commitment_tx_id; docs/env083f-verifiable-demo-round-generation-path.md:16-17 says anchor remains live_readonly_tn10 and future live round-specific commitment/reveal transaction evidence remains not_created_not_claimed_future_work; crates/kaspa-foundation/src/fairness.rs:667-702 builds commitment JSON locally from explicit demo seed and canonical anchor constants.",
+      "why_not_final": "The current commitment is locally generated and represented in the proof transcript only. It is linked to the canonical ENV-063/064 TN10 anchor, not posted as a live round-specific TN10 commitment transaction and not enforced as a round-specific covenant transition.",
+      "toccata_tn10_replacement": "Create an authorised TN10 round-specific commitment transaction carrying the round commitment under a KIP-20 covenant_id / covenant lineage, preferably with KIP-17 covenant transition constraints; retrieve it read-only and have the verifier prove commitment_tx_id/output/covenant lineage before accepting the JSON mirror.",
+      "requires_tx_sign_broadcast": "yes \u2014 explicit user authorisation required for faucet/wallet/private key/signing/transaction creation/broadcast on TN10; no mainnet.",
+      "recommended_next": "yes \u2014 highest priority and first half of ENV-087."
+    },
+    {
+      "rank": 2,
+      "workaround": "reveal workaround",
+      "current_files_evidence": "examples/roulette-poc/ui/toccata-fairness-proof.json: application_round_transcript.reveal contains revealed_seed_material/reveal_payload_hash/evidence_mode=live_readonly_tn10 but no reveal_tx_id; docs/roulette-poc-architecture.md:352,360 says live round-specific commitment/reveal transactions remain future work; scripts/env083f-round-proof-consistency-smoke.sh:47-48 accepts future_live_round_transaction_evidence not_created_not_claimed_future_work.",
+      "why_not_final": "Reveal material is local/demo transcript data. The verifier checks commitment/reveal consistency off-chain, but there is no live TN10 reveal evidence linked to a live round-specific commitment transition.",
+      "toccata_tn10_replacement": "After the live commitment transaction, create an authorised TN10 reveal transaction in the same covenant lineage, carry reveal payload evidence, and have read-only verifier checks prove commitment-before-reveal linkage by tx/order/lineage evidence.",
+      "requires_tx_sign_broadcast": "yes \u2014 explicit authorisation required; should be in the same spike as the commitment because reveal value depends on live commitment evidence.",
+      "recommended_next": "yes \u2014 paired with rank 1 in exactly one next ENV."
+    },
+    {
+      "rank": 3,
+      "workaround": "live TN10 anchor limitation",
+      "current_files_evidence": "docs/env085-static-mock-verifiable-demo-milestone.md:13,20-21,79-80 says proof is tied to live read-only TN10 Toccata covenant evidence but live round-specific commitment/reveal transactions are not created; examples/roulette-poc/ui/toccata-fairness-proof.json: live_tn10_anchor.env064_spend_txid points to canonical ENV-064 rather than a round transaction and future_live_round_transaction_evidence is not_created_not_claimed_future_work.",
+      "why_not_final": "The live anchor proves the project can inspect TN10 covenant lineage, but it is a reusable canonical anchor, not a per-round commitment/reveal anchor. The PoC still cannot prove this particular round's commitment/reveal lifecycle occurred on TN10.",
+      "toccata_tn10_replacement": "Use the existing read-only evidence path as verification transport for newly authorised per-round TN10 transaction evidence and record txid/output/covenant_id/accepting block in verifier-owned artifacts.",
+      "requires_tx_sign_broadcast": "yes for creating the new round-specific evidence; no for subsequent read-only verification.",
+      "recommended_next": "yes \u2014 same ENV-087 target."
+    },
+    {
+      "rank": 4,
+      "workaround": "covenant enforcement gap",
+      "current_files_evidence": "docs/toccata-fairness-anchor-architecture.md:95-101,390-409 identify KIP-17 covenants and KIP-20 covenant IDs as the stronger Toccata thesis; docs/env083b-toccata-fairness-anchor-feasibility.md:59-64 recommends KIP-20 lineage backed by KIP-17 transition modelling; crates/kaspa-foundation/src/fairness.rs:891-900 verifies commitment/reveal covenant matches anchor off-chain.",
+      "why_not_final": "Current checks are Rust verifier checks over JSON/model fields and canonical anchor fields. The actual round transition is not constrained or linked by a live TN10 covenant state transition.",
+      "toccata_tn10_replacement": "Minimum viable KIP-20 lineage proof with covenant_id/authorizing input/output evidence, then KIP-17 transition constraints for commitment and reveal payload/state progression when tooling permits.",
+      "requires_tx_sign_broadcast": "yes for live covenant transition spike; verifier-only modelling remains no but is already largely done.",
+      "recommended_next": "yes \u2014 included as minimum viable lineage proof in ENV-087; deeper enforcement can follow."
+    },
+    {
+      "rank": 5,
+      "workaround": "static app-facing JSON workaround",
+      "current_files_evidence": "examples/roulette-poc/ui/sample-round.json is a generated JSON display artifact; examples/roulette-poc/ui/toccata-fairness-proof.json is a generated JSON proof mirror; docs/env085-static-mock-verifiable-demo-milestone.md:45 says JSON files are app-facing mirror/export artifacts and Rust verifier logic is the proof authority; docs/roulette-poc-architecture.md:745 says UI only loads these files.",
+      "why_not_final": "The app-facing UI consumes checked files, but the files are still generated from local/demo transcript material and copied into the static UI. They do not yet originate from retrieval of round-specific live TN10 commitment/reveal evidence.",
+      "toccata_tn10_replacement": "Generate verifier-owned artifacts after retrieving live round commitment/reveal evidence, then export UI JSON as a mirror of verified TN10 evidence rather than as a static demo fixture.",
+      "requires_tx_sign_broadcast": "creation of live evidence requires authorisation; read-only artifact generation after evidence exists does not.",
+      "recommended_next": "no \u2014 depends on rank 1/2 live evidence first."
+    },
+    {
+      "rank": 6,
+      "workaround": "explicit demo seed workaround",
+      "current_files_evidence": "crates/kaspa-fair-cli/src/main.rs:184-190 parses --demo-seed; crates/kaspa-foundation/src/fairness.rs:594-605 derives the result from demo_seed_material; examples/roulette-poc/ui/sample-round.json:74-75 records explicit demo seed material; docs/env085-static-mock-verifiable-demo-milestone.md:134-136 states it is repeatable demo input, not production randomness.",
+      "why_not_final": "Explicit demo seed material is valuable for repeatability but does not prove unbiased seed selection and does not remove seed-grinding risk. It can still bind to commitment/reveal evidence but is not a production entropy design.",
+      "toccata_tn10_replacement": "Document a live-round seed/entropy strategy that binds seed material to TN10 commitment/reveal evidence first; later consider public chain event, user seed, or multi-party seed. Do not prioritize production entropy ahead of live anchoring.",
+      "requires_tx_sign_broadcast": "not for documentation; yes if the strategy is tested through live commitment/reveal transactions.",
+      "recommended_next": "no \u2014 lower priority than proving live commitment/reveal anchoring."
+    },
+    {
+      "rank": 7,
+      "workaround": "UI display limitation",
+      "current_files_evidence": "examples/roulette-poc/README.md:30-33 says UI preserves mock round display from sample-round.json and loads proof snapshot from toccata-fairness-proof.json; docs/toccata-fairness-anchor-architecture.md:280-299 says UI is static display/explanation only and must not generate result, sign, access wallets, or broadcast; docs/env085-static-mock-verifiable-demo-milestone.md:105 says UI displays artifacts and does not use random/wallet/signing/broadcast APIs to choose a result.",
+      "why_not_final": "The UI does not fetch live TN10 evidence or trigger verifier artifact generation. This is acceptable because the UI must remain non-trusted; it becomes a limitation only after live evidence exists.",
+      "toccata_tn10_replacement": "Keep UI as non-trusted display; after verifier-owned live artifacts exist, optionally display live tx IDs/covenant lineage from generated artifacts. Do not make UI the proof source.",
+      "requires_tx_sign_broadcast": "no for display work; should not be first priority and must not create/sign/broadcast from UI.",
+      "recommended_next": "no \u2014 UI follows verifier/live evidence work."
+    }
+  ]
+}

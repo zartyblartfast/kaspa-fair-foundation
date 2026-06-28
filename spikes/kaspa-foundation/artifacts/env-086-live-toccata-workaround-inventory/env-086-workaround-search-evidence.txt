@@ -1,0 +1,680 @@
+# ENV-086 workaround search evidence
+
+## Command 1
+
+```bash
+grep -RIn --exclude-dir=target --exclude-dir=.git -E 'offline|simulation|simulate|model-only|model_only|static|fixture|placeholder|demo seed|demo_seed|mock|hard.?wired|sample-round|toccata-fairness-proof|not_created_not_claimed_future_work|live_readonly_tn10|transaction_created|signing_used|broadcast_used|wallet_access_used' docs examples crates scripts spikes/kaspa-foundation/artifacts/env-08* 2>/dev/null || true
+```
+
+```text
+docs/toccata-fairness-anchor-architecture.md:57:* A simple static roulette UI.
+docs/toccata-fairness-anchor-architecture.md:59:* Mock-only bet selection and mock ledger display.
+docs/toccata-fairness-anchor-architecture.md:60:* A fixed sample result currently loaded from `sample-round.json`.
+docs/toccata-fairness-anchor-architecture.md:280:The UI should remain a static mock display and explanation layer.
+docs/toccata-fairness-anchor-architecture.md:303:The project remains mock-only unless explicitly authorised otherwise.
+docs/toccata-fairness-anchor-architecture.md:465:* **Fallback B**: Use an offline Rust covenant-state model while deferring live TN10 covenant evidence until the necessary node/API/tooling support is confirmed.
+docs/toccata-fairness-anchor-architecture.md:523:* Clear statement that the proof is mock/testnet only.
+docs/toccata-fairness-anchor-architecture.md:619:   The PoC remains mock-only unless explicitly authorised otherwise.
+docs/safety-and-secrets.md:3:status: placeholder
+docs/roulette-poc-architecture.md:5:Purpose: define and now demonstrate an interactive static roulette UI flow prototype that displays the deterministic round result and proof/safety status without adding production casino features.
+docs/roulette-poc-architecture.md:36:- `signing_used = false`
+docs/roulette-poc-architecture.md:37:- `transaction_created = false`
+docs/roulette-poc-architecture.md:38:- `broadcast_used = false`
+docs/roulette-poc-architecture.md:39:- `wallet_access_used = false`
+docs/roulette-poc-architecture.md:245:| integration claims | claiming mainnet or wallet/signing support that does not exist | explicit capability flags in proof and docs | foundation JSON already proves `mainnet_supported=false`, `readonly=true`, `signing_used=false`, `transaction_created=false`, `broadcast_used=false`, `wallet_access_used=false` | propagate these flags into roulette proof presentation and reject contradictory product claims |
+docs/roulette-poc-architecture.md:384:- it builds deterministic seed material from the round id, verifier covenant id, verifier ENV-064 spend txid, verifier accepting block hash, and final mock bet-ledger hash
+docs/roulette-poc-architecture.md:387:- it calculates deterministic settlement over mock bets only
+docs/roulette-poc-architecture.md:439:- it uses mock bets only
+docs/roulette-poc-architecture.md:459:ENV-078 adds a simple static UI prototype that displays the existing ENV-077 deterministic engine JSON without changing the underlying result.
+docs/roulette-poc-architecture.md:468:- `examples/roulette-poc/ui/sample-round.json`
+docs/roulette-poc-architecture.md:475:- it displays mock bets, win/loss state, payout units, and net units from the engine JSON
+docs/roulette-poc-architecture.md:488:ENV-079 upgrades the simple display into an interactive static UI flow prototype while preserving the deterministic round result from engine JSON.
+docs/roulette-poc-architecture.md:497:- `examples/roulette-poc/ui/sample-round.json`
+docs/roulette-poc-architecture.md:506:- `Reveal Result` displays the deterministic result from `sample-round.json`
+docs/roulette-poc-architecture.md:507:- `Show Settlement` displays deterministic settlement from `sample-round.json`
+docs/roulette-poc-architecture.md:511:- the UI displays foundation verifier status and safety flags: `testnet-10`, `mainnet_supported: false`, `readonly: true`, `signing_used: false`, `transaction_created: false`, `broadcast_used: false`, `wallet_access_used: false`
+docs/roulette-poc-architecture.md:513:ENV-079 remains intentionally minimal and offline-safe:
+docs/roulette-poc-architecture.md:520:## 17. ENV-080 UI mock bet placement and reset flow
+docs/roulette-poc-architecture.md:522:ENV-080 adds mock UI bet placement and reset/new-round flow on top of the interactive static roulette UI.
+docs/roulette-poc-architecture.md:531:- `examples/roulette-poc/ui/sample-round.json`
+docs/roulette-poc-architecture.md:535:- mock choices include straight number, red, black, odd, even, high, and low
+docs/roulette-poc-architecture.md:541:- reset clears UI-added mock bets and hides result, settlement, and proof again
+docs/roulette-poc-architecture.md:542:- result still loads from deterministic engine JSON in `sample-round.json` only
+docs/roulette-poc-architecture.md:544:- UI-added bets are mock-only prototype display bets
+docs/roulette-poc-architecture.md:546:ENV-080 remains intentionally minimal and offline-safe:
+docs/roulette-poc-architecture.md:560:ENV-080B cleans up the temporary mock bet UI so the current roulette prototype no longer implies full roulette table bet placement support.
+docs/roulette-poc-architecture.md:569:- `examples/roulette-poc/ui/sample-round.json`
+docs/roulette-poc-architecture.md:572:- the current bet control is explicitly labeled as a temporary simple/prototype straight-number mock bet path only
+docs/roulette-poc-architecture.md:575:- simple mock bets remain allowed in `BetsOpen`
+docs/roulette-poc-architecture.md:576:- simple mock bets remain allowed in `SpinVisualStarted`
+docs/roulette-poc-architecture.md:577:- simple mock bets remain blocked after `NoMoreBets`
+docs/roulette-poc-architecture.md:578:- `Reset Round` still clears UI-added mock bets and returns the UI flow to `BetsOpen`
+docs/roulette-poc-architecture.md:579:- deterministic result, settlement, and proof still come from `sample-round.json` only
+docs/roulette-poc-architecture.md:646:- UI-added bets place visible chips and ledger entries on a mock-only basis
+docs/roulette-poc-architecture.md:650:- deterministic result, settlement, and proof still come from `sample-round.json` only
+docs/roulette-poc-architecture.md:652:ENV-081B remains strictly mock-only and safety-bounded:
+docs/roulette-poc-architecture.md:666:ENV-082 rebuilds the static roulette UI layout so the roulette table is the first prominent object on the page.
+docs/roulette-poc-architecture.md:687:- reset clears UI-added mock bets and returns to the initial state without page refresh
+docs/roulette-poc-architecture.md:688:- deterministic result, settlement, and proof still come from `sample-round.json` only
+docs/roulette-poc-architecture.md:690:ENV-082 remains strictly mock-only and safety-bounded:
+docs/roulette-poc-architecture.md:705:ENV-083E connects the static roulette UI to `examples/roulette-poc/ui/toccata-fairness-proof.json`, an app-facing mirror/export derived from the ENV-083C Rust verifier proof artifact and verifier output. The UI still loads `sample-round.json` for the current mock roulette round/result display and does not generate or choose roulette results.
+docs/roulette-poc-architecture.md:708:- roulette mock round display from `sample-round.json`;
+docs/roulette-poc-architecture.md:709:- Rust verifier output fields mirrored in `toccata-fairness-proof.json`;
+docs/roulette-poc-architecture.md:711:- future round-specific live commitment/reveal transaction evidence labelled `not_created_not_claimed_future_work`.
+docs/roulette-poc-architecture.md:713:The verifier proof snapshot displays `verifier_result`, `live_readonly_tn10` evidence mode, `covenant_id_confirmed`, covenant lineage, result algorithm, commitment/reveal check status, deterministic BLAKE3 derivation check status, proof result number/colour, and safety flags. JSON remains a mirror/export only; Rust verifier logic remains the proof authority.
+docs/roulette-poc-architecture.md:715:ENV-083E remains strictly static/read-only and mock-only: no result generation in the UI, no production randomisation, no real betting, no real payouts, no backend custody, no wallet/private-key access, no signing, no transaction creation, no broadcast/submission, no faucet funds, and no mainnet.
+docs/roulette-poc-architecture.md:719:ENV-084 replaces hand-maintained static roulette result fixtures with Rust-owned verifiable demo round generation from explicit demo seed material.
+docs/roulette-poc-architecture.md:740:- `examples/roulette-poc/ui/sample-round.json`
+docs/roulette-poc-architecture.md:741:- `examples/roulette-poc/ui/toccata-fairness-proof.json`
+docs/roulette-poc-architecture.md:745:The UI still does not choose the result. It only loads `sample-round.json` and `toccata-fairness-proof.json`, validates their safety/status fields, and displays the result after the deterministic UI flow reaches result reveal. The UI does not call `Math.random`, browser crypto random APIs, wallet APIs, signing APIs, or transaction broadcast APIs.
+docs/roulette-poc-architecture.md:747:Explicit demo seed material is not production randomness. It lets an operator/test harness produce a different repeatable demo result while keeping result derivation verifiable. It does not prove unbiased seed selection and does not prevent seed grinding. Production entropy design remains future work.
+docs/roulette-poc-architecture.md:763:ENV-084 remains strictly demo/read-only and mock-only: no production randomisation, no UI result generation, no real betting, no real payouts, no backend custody, no wallet/private-key access, no signing, no transaction creation, no broadcast/submission, no faucet funds, and no mainnet.
+docs/kaspa-foundation-architecture.md:319:    fn app_id(&self) -> &'static str;
+docs/kaspa-foundation-architecture.md:548:The rejection probability is negligible, but the procedure removes modulo bias and is exactly replayable by an offline verifier.
+docs/kaspa-foundation-architecture.md:686:The offline verifier should require no RPC connection and no private keys.
+docs/kaspa-foundation-architecture.md:699:ENV-070 implements the first version of this layer as a scaffold and sanity check over the canonical ENV-063/064/065 transcript and committed fixture paths. It is useful, but it is not the final developer value by itself.
+docs/kaspa-foundation-architecture.md:713:ENV-071 starts this layer for TN10/testnet-10 only. It first requires the offline transcript verifier to pass, then compares normalized read-only live-chain observations against the canonical transcript facts. The read-only TN10 API approach follows the already-proven reference spike path using public rusty-kaspa wRPC resolver defaults for testnet-10; endpoint override can be added later without requiring secrets.
+docs/kaspa-foundation-architecture.md:727:This makes the limited Toccata layer operational for developers: offline/unit tests remain deterministic regression and safety checks, while the live command is the explicit way to confirm the canonical ENV-063/064/065 proof transcript against current TN10 chain data before any roulette PoC adapter is built.
+docs/kaspa-foundation-architecture.md:744:  "signing_used": false,
+docs/kaspa-foundation-architecture.md:745:  "transaction_created": false,
+docs/kaspa-foundation-architecture.md:746:  "broadcast_used": false,
+docs/kaspa-foundation-architecture.md:747:  "wallet_access_used": false
+docs/kaspa-foundation-architecture.md:820:default = ["offline"]
+docs/kaspa-foundation-architecture.md:821:offline = []
+docs/kaspa-foundation-architecture.md:829:- offline verification
+docs/kaspa-foundation-architecture.md:851:Use the proven ENV evidence as fixtures.
+docs/kaspa-foundation-architecture.md:912:pub fn verify_proof_transcript_offline(...)
+docs/kaspa-foundation-architecture.md:967:kaspa-fair proof verify-offline
+docs/kaspa-foundation-architecture.md:1093:Convert the proven covenant create/spend/confirmation path into stable verification fixtures.
+docs/kaspa-foundation-architecture.md:1159:The crate now represents the canonical corrected recipe as offline metadata and fixture-backed constants:
+docs/kaspa-foundation-architecture.md:1174:ENV-068 does not expose default live signing, wallet, RPC submit, mainnet, roulette, or web-app APIs. It is an offline/refactor step only.
+docs/env083b-toccata-fairness-anchor-feasibility.md:18:This is not a live roulette anchor implementation. It is a feasibility gate proving that the required covenant-id / lineage evidence can be observed read-only on TN10 for the canonical covenant path and can be used as the evidence pattern for the next offline covenant-state model.
+docs/env083b-toccata-fairness-anchor-feasibility.md:107:5. A live read-only command returned `verifier_result: PASS`, `readonly: true`, `transaction_created: false`, `signing_used: false`, `broadcast_used: false`, `wallet_access_used: false`, and `covenant_id_confirmed: true`.
+docs/env083b-toccata-fairness-anchor-feasibility.md:206:- offline Rust model/schema validation passes;
+docs/env083b-toccata-fairness-anchor-feasibility.md:214:- transaction evidence is accepted or otherwise explicitly marked model-only;
+docs/env083b-toccata-fairness-anchor-feasibility.md:250:Build the covenant-state lifecycle in Rust without transaction creation/signing/broadcasting. Use deterministic artifacts and tests to define the expected covenant fields, state transitions, and verifier checks. Label this as offline covenant model only until live TN10 evidence exists.
+docs/env083b-toccata-fairness-anchor-feasibility.md:292:- no `examples/roulette-poc/ui/sample-round.json` change;
+docs/env083f-verifiable-demo-round-generation-path.md:5:ENV-083F-FIX closes the app-facing consistency gap between the static roulette sample round and the Toccata fairness proof artifact. The Rust/Toccata-bound proof artifact is the stronger source of truth. The displayed sample round has therefore been aligned to the verified proof result instead of weakening or backfitting the proof artifact to the older placeholder result.
+docs/env083f-verifiable-demo-round-generation-path.md:9:- `examples/roulette-poc/ui/sample-round.json` and `examples/roulette-poc/ui/toccata-fairness-proof.json` now agree on the displayed roulette result.
+docs/env083f-verifiable-demo-round-generation-path.md:11:- The UI displays static/mock artifacts only.
+docs/env083f-verifiable-demo-round-generation-path.md:12:- The UI loads the sample round from `sample-round.json`.
+docs/env083f-verifiable-demo-round-generation-path.md:13:- The UI loads the app-facing proof snapshot from `toccata-fairness-proof.json`.
+docs/env083f-verifiable-demo-round-generation-path.md:16:- The Toccata anchor evidence remains `live_readonly_tn10`.
+docs/env083f-verifiable-demo-round-generation-path.md:17:- Future live round-specific commitment/reveal transaction evidence remains labelled `not_created_not_claimed_future_work`.
+docs/env083f-verifiable-demo-round-generation-path.md:41:2. The Rust CLI either generates demo seed material or accepts explicit demo seed material from the operator/test harness.
+docs/env083f-verifiable-demo-round-generation-path.md:46:7. The Toccata anchor remains `live_readonly_tn10` unless and until live round-specific transactions are explicitly authorised.
+docs/env083f-verifiable-demo-round-generation-path.md:53:Version 1 may use operator/demo seed material for repeatable demonstration output, but the grinding caveat must be disclosed:
+docs/env083f-verifiable-demo-round-generation-path.md:57:- operator/demo seed material does not prove unbiased seed selection;
+docs/env083f-verifiable-demo-round-generation-path.md:58:- operator/demo seed material does not fully prevent seed grinding.
+docs/env083f-verifiable-demo-round-generation-path.md:88:ENV-083F is the final bridge/gate ENV for the static artifact consistency phase. The next action must be one of:
+docs/roulette-table-selection-ui-changes.md:36:The UI mock bet ledger above the table now uses a fixed-height scroll area. Adding bets no longer expands that section and pushes the roulette table downward.
+docs/threat-model.md:3:status: placeholder
+docs/env085-static-mock-verifiable-demo-milestone.md:1:# ENV-085 — Static/mock verifiable demo milestone
+docs/env085-static-mock-verifiable-demo-milestone.md:5:This milestone packages the current Roulette PoC as a static/mock verifiable demo. It adds no proof logic and no UI behaviour. It documents how a reviewer can generate, inspect, and verify the current demo artifacts.
+docs/env085-static-mock-verifiable-demo-milestone.md:9:- Rust can generate `sample-round.json` and `toccata-fairness-proof.json` together from one explicit demo seed transcript.
+docs/env085-static-mock-verifiable-demo-milestone.md:19:- It does not prevent seed grinding from operator-chosen demo seed material.
+docs/env085-static-mock-verifiable-demo-milestone.md:37:  -> generated sample-round.json
+docs/env085-static-mock-verifiable-demo-milestone.md:38:  -> generated toccata-fairness-proof.json
+docs/env085-static-mock-verifiable-demo-milestone.md:40:  -> static Roulette UI displays generated artifacts only
+docs/env085-static-mock-verifiable-demo-milestone.md:41:  -> proof artifact references live_readonly_tn10 anchor evidence
+docs/env085-static-mock-verifiable-demo-milestone.md:45:The JSON files are app-facing mirror/export artifacts. Rust verifier logic is the proof authority. The browser is a display surface and mock betting surface only.
+docs/env085-static-mock-verifiable-demo-milestone.md:55:  --out-dir spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check
+docs/env085-static-mock-verifiable-demo-milestone.md:72:scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+docs/env085-static-mock-verifiable-demo-milestone.md:79:- `evidence_mode = live_readonly_tn10`
+docs/env085-static-mock-verifiable-demo-milestone.md:80:- `future_live_round_transaction_evidence = not_created_not_claimed_future_work`
+docs/env085-static-mock-verifiable-demo-milestone.md:84:## Run the UI locally/static
+docs/env085-static-mock-verifiable-demo-milestone.md:101:- `sample-round.json`
+docs/env085-static-mock-verifiable-demo-milestone.md:102:- `toccata-fairness-proof.json`
+docs/env085-static-mock-verifiable-demo-milestone.md:105:The UI displays Start Wheel / Reset Round, mock table bets, generated result display, settlement display, and proof snapshot. It does not use `Math.random`, browser crypto random APIs, wallet APIs, signing APIs, or broadcast APIs to choose a result.
+docs/env085-static-mock-verifiable-demo-milestone.md:124:scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+docs/env085-static-mock-verifiable-demo-milestone.md:129:  --out-dir spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check
+docs/env085-static-mock-verifiable-demo-milestone.md:134:Explicit demo seed material is repeatable demo input. It is not production randomness and must not be described as casino-grade, production-grade, or on-chain random output.
+docs/proof-transcript-format.md:4:Scope: offline/read-only foundation layer only
+docs/proof-transcript-format.md:14:- expose a stable schema that later offline and online verifiers can share
+docs/proof-transcript-format.md:30:- fixture path links into committed evidence directories
+docs/proof-transcript-format.md:31:- explicit safety boundary fields for offline verification work
+docs/proof-transcript-format.md:123:   - fixture path:
+docs/proof-transcript-format.md:124:     `fixtures/tn10-canonical-covenant-path/env-063-corrected-live-covenant-create/`
+docs/proof-transcript-format.md:130:   - fixture path:
+docs/proof-transcript-format.md:131:     `fixtures/tn10-canonical-covenant-path/env-064-live-corrected-covenant-spend/`
+docs/proof-transcript-format.md:137:   - fixture path:
+docs/proof-transcript-format.md:138:     `fixtures/tn10-canonical-covenant-path/env-065-readonly-env064-spend-confirmation/`
+docs/proof-transcript-format.md:140:The transcript itself is offline evidence. It records that ENV-063 and ENV-064 were historically live steps, but using the transcript later must not require replaying them.
+docs/proof-transcript-format.md:163:- fixture path
+docs/proof-transcript-format.md:164:- mode of original step (`live`, `read-only`, `offline`, or `evidence-only`)
+docs/proof-transcript-format.md:172:The canonical ENV-069 transcript must explicitly state that later offline transcript work requires:
+docs/proof-transcript-format.md:202:1. offline verifier first as a deterministic scaffold and safety prerequisite
+docs/pr
+
+... [OUTPUT TRUNCATED - 262795 chars omitted out of 312795 total] ...
+
+29fddbf79ff7","covenant_id_confirmed":true,"covenant_lineage_reference":"tn10-env063-env064-canonical-covenant-lineage","env063_spent_outpoint":"2c7802ff9a6eec2828a96168d8f62a9a276176441ed8cb6086cd5d5d0cb26849:0","env064_spend_txid":"4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c","evidence_mode":"live_readonly_tn10","mainnet_supported":false,"network":"testnet-10","private_key_access_used":false,"signing_used":false,"transaction_created":false,"verifier_result":"PASS","wallet_access_used":false},"network":"testnet-10","round_id":"env-083c-round-0001","safety_flags":{"backend_custody":false,"broadcast_used":false,"mainnet_supported":false,"mock_display_only":true,"private_key_access_used":false,"real_betting":false,"real_payouts":false,"signing_used":false,"transaction_created":false,"wallet_access_used":false},"schema":"kaspa-fair-env083c-toccata-evidence-bound-proof-v1","verifier_transcript":["schema checked by Rust verifier","live TN10 anchor evidence required for Toccata-bound claim","application commitment hash recomputed from reveal material","BLAKE3 domain-separated rejection-sampling result verified","application transcript is not accepted as live round transaction evidence"]},"verifier_output":{"checks":[{"detail":"PASS","name":"schema","passed":true},{"detail":"PASS","name":"round_id","passed":true},{"detail":"PASS","name":"network","passed":true},{"detail":"PASS","name":"claim tier","passed":true},{"detail":"PASS","name":"evidence mode","passed":true},{"detail":"PASS","name":"anchor evidence mode","passed":true},{"detail":"PASS","name":"anchor verifier result","passed":true},{"detail":"PASS","name":"anchor network","passed":true},{"detail":"PASS","name":"anchor covenant id confirmed","passed":true},{"detail":"PASS","name":"anchor covenant id","passed":true},{"detail":"PASS","name":"anchor lineage","passed":true},{"detail":"PASS","name":"anchor txid","passed":true},{"detail":"PASS","name":"anchor accepted tx evidence present","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"anchor safety flag","passed":true},{"detail":"PASS","name":"commitment round id","passed":true},{"detail":"PASS","name":"reveal round id","passed":true},{"detail":"PASS","name":"commitment/reveal round id match","passed":true},{"detail":"PASS","name":"commitment covenant matches anchor","passed":true},{"detail":"PASS","name":"reveal covenant matches anchor","passed":true},{"detail":"PASS","name":"commitment lineage matches anchor","passed":true},{"detail":"PASS","name":"reveal lineage matches anchor","passed":true},{"detail":"PASS","name":"commitment algorithm","passed":true},{"detail":"PASS","name":"reveal algorithm","passed":true},{"detail":"PASS","name":"commitment evidence mode","passed":true},{"detail":"PASS","name":"reveal evidence mode","passed":true},{"detail":"PASS","name":"commitment hash recomputes","passed":true},{"detail":"PASS","name":"result number verifies","passed":true},{"detail":"PASS","name":"result colour verifies","passed":true},{"detail":"PASS","name":"reveal payload hash recomputes","passed":true},{"detail":"PASS","name":"future live round tx not claimed","passed":true},{"detail":"PASS","name":"mock display only","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true},{"detail":"PASS","name":"safety flag false","passed":true}],"round_id":"env-083c-round-0001","schema":"kaspa-fair-env083c-verifier-output-v1","verifier_result":"PASS"}}
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:7:UI did not generate the result. The UI continues to load `sample-round.json` and `toccata-fairness-proof.json` and displays the generated result from those files only.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:9:Explicit demo seed material was used: `env084-demo-seed-0001`.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:11:No production randomness was claimed. This is Rust-owned verifiable demo round generation from explicit demo seed material.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:17:The live TN10 anchor remains read-only with evidence mode `live_readonly_tn10`.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:19:Live round-specific commitment/reveal transactions remain future authorised work, with `future_live_round_transaction_evidence` set to `not_created_not_claimed_future_work`.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:29:- env-084-generated-sample-round.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-summary.md:30:- env-084-generated-toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-verifier-output.json:215:      "name": "mock display only",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/verifier-output.json:215:      "name": "mock display only",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/sample-round.json:54:  "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/sample-round.json:74:  "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/sample-round.json:162:  "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/sample-round.json:163:  "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/sample-round.json:164:  "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:9:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:17:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:31:  "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:32:  "explicit_demo_seed_material_used": true,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:33:  "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:37:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:45:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:49:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:50:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:52:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:58:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:94:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:96:    "mock_display_only": true,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:100:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:101:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:102:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:104:  "schema": "kaspa-fair-roulette-ui-toccata-fairness-proof-v1",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json:107:  "ui_contract": "static_readonly_export_for_roulette_poc",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-git-status.txt:6: M examples/roulette-poc/ui/sample-round.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-git-status.txt:7: M examples/roulette-poc/ui/toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-git-status.txt:14:?? spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-sample-round.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-git-status.txt:15:?? spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-git-status.txt:20:?? spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/sample-round.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-git-status.txt:21:?? spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/generated-check/toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-sample-round.json:54:  "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-sample-round.json:74:  "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-sample-round.json:162:  "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-sample-round.json:163:  "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-sample-round.json:164:  "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:9:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:17:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:31:  "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:32:  "explicit_demo_seed_material_used": true,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:33:  "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:37:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:45:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:49:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:50:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:52:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:58:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:94:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:96:    "mock_display_only": true,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:100:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:101:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:102:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:104:  "schema": "kaspa-fair-roulette-ui-toccata-fairness-proof-v1",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-generated-toccata-fairness-proof.json:107:  "ui_contract": "static_readonly_export_for_roulette_poc",
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-negative-checks.txt:7:- changed demo seed without recomputed proof rejected: yes
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:9:M	examples/roulette-poc/ui/sample-round.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:10:M	examples/roulette-poc/ui/toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:30:- docs/roulette-poc-architecture.md adds the ENV-084 generator section, exact generator commands, app-facing generated files, Rust verifier ownership, UI non-generation boundary, explicit demo seed material boundary, future-work list, and safety boundary.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:31:- examples/roulette-poc/README.md adds the ENV-084 smoke command, generator usage, out-dir usage, Rust verifier agreement contract, UI non-generation boundary, explicit demo seed material boundary, and future authorisation boundary.
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:42:evidence_mode=live_readonly_tn10
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:43:future_live_round_transaction_evidence=not_created_not_claimed_future_work
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:76: M examples/roulette-poc/ui/sample-round.json
+spikes/kaspa-foundation/artifacts/env-084-verifiable-demo-round-generator/env-084-doc-mutation-reconciliation.txt:77: M examples/roulette-poc/ui/toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:9:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:17:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:31:  "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:32:  "explicit_demo_seed_material_used": true,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:33:  "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:37:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:45:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:49:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:50:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:52:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:58:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:94:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:96:    "mock_display_only": true,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:100:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:101:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:102:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:104:  "schema": "kaspa-fair-roulette-ui-toccata-fairness-proof-v1",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json:107:  "ui_contract": "static_readonly_export_for_roulette_poc",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json:4:    "runbook": "docs/env085-static-mock-verifiable-demo-milestone.md"
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json:8:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json:9:    "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json:24:  "schema": "kaspa-fair-env085-static-mock-verifiable-demo-milestone-checklist-v1",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json:25:  "smoke": "scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh"
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/verifier-output.json:215:      "name": "mock display only",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json:54:  "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json:74:  "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json:162:  "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json:163:  "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json:164:  "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:9:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:17:      "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:31:  "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:32:  "explicit_demo_seed_material_used": true,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:33:  "future_live_round_transaction_evidence": "not_created_not_claimed_future_work",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:37:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:45:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:49:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:50:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:52:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:58:    "evidence_mode": "live_readonly_tn10",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:94:    "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:96:    "mock_display_only": true,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:100:    "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:101:    "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:102:    "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:104:  "schema": "kaspa-fair-roulette-ui-toccata-fairness-proof-v1",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json:107:  "ui_contract": "static_readonly_export_for_roulette_poc",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:1:?? docs/env085-static-mock-verifiable-demo-milestone.md
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:3:?? scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:4:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:5:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-demo-command-results.txt
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:6:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:7:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:8:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:9:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-verifier-output.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:10:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/sample-round.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:11:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-git-status.txt:12:?? spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check/verifier-output.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json:54:  "broadcast_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json:74:  "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json:162:  "signing_used": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json:163:  "transaction_created": false,
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json:164:  "wallet_access_used": false
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-demo-command-results.txt:19:PASS scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh -> STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-demo-command-results.txt:21:PASS cargo run -q -p kaspa-fair-cli -- env084-generate-verifiable-demo-round --round-id env-085-demo-round-0001 --demo-seed "env085-demo-seed-0001" --out-dir spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/generated-check -> result_number=21, result_colour=red, verifier_result=PASS
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:1:# ENV-085 — Static/mock verifiable demo milestone
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:27:- evidence_mode: live_readonly_tn10
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:28:- future_live_round_transaction_evidence: not_created_not_claimed_future_work
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:31:- docs/env085-static-mock-verifiable-demo-milestone.md
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:33:- scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:34:- spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-sample-round.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:35:- spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-generated-toccata-fairness-proof.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:36:- spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-verifier-output.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-summary.md:37:- spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-checklist.json
+spikes/kaspa-foundation/artifacts/env-085-static-mock-verifiable-demo-milestone/env-085-verifier-output.json:215:      "name": "mock display only",
+```
+
+## Command 2
+
+```bash
+grep -RIn --exclude-dir=target --exclude-dir=.git -E 'covenant_id|covenant|lineage|commitment|reveal|future_live_round_transaction|live round|round-specific|TN10|Toccata|KIP-17|KIP-20' docs examples crates scripts 2>/dev/null || true
+```
+
+```text
+docs/toccata-fairness-anchor-architecture.md:1:# Toccata Fairness Anchor Architecture
+docs/toccata-fairness-anchor-architecture.md:9:> Kaspa/Toccata can strengthen proof-of-fairness by anchoring round commitments, reveal evidence, and verifier data to a covenant-aware trust layer.
+docs/toccata-fairness-anchor-architecture.md:21:* change proof data after reveal
+docs/toccata-fairness-anchor-architecture.md:23:* obscure whether commitment happened before reveal
+docs/toccata-fairness-anchor-architecture.md:28:Kaspa/Toccata can help close:
+docs/toccata-fairness-anchor-architecture.md:30:* post-commitment result mutation
+docs/toccata-fairness-anchor-architecture.md:34:* weak linkage between commitment, reveal, and verifier evidence
+docs/toccata-fairness-anchor-architecture.md:36:Kaspa/Toccata does not automatically close:
+docs/toccata-fairness-anchor-architecture.md:52:* A limited TN10 Toccata read-only trust layer.
+docs/toccata-fairness-anchor-architecture.md:53:* A live TN10 read-only verifier.
+docs/toccata-fairness-anchor-architecture.md:73:* Toccata covenant-backed round anchoring.
+docs/toccata-fairness-anchor-architecture.md:95:A bare commitment hash could be anchored to a blockchain without Toccata covenants. That would be useful, but it would still leave the round rules mostly enforced by off-chain verifier logic.
+docs/toccata-fairness-anchor-architecture.md:97:The Toccata thesis is stronger: covenant lineage, state transitions, transaction introspection, and covenant IDs should be used where possible so that the fairness lifecycle is not merely recorded, but constrained by the covenant flow.
+docs/toccata-fairness-anchor-architecture.md:101:Do not merely anchor a hash. Use Toccata to prove and constrain the fairness lifecycle.
+docs/toccata-fairness-anchor-architecture.md:103:This explains why the project should use Toccata features rather than a generic “hash on chain” pattern.
+docs/toccata-fairness-anchor-architecture.md:105:The engineering target is therefore not simply to publish proof data. The target is to show what Toccata adds over ordinary anchoring.
+docs/toccata-fairness-anchor-architecture.md:122:The round commitment is anchored through a Toccata-aware covenant flow. After the reveal, the verifier checks that the revealed seed matches the earlier commitment and that the public deterministic algorithm derives the displayed roulette result.
+docs/toccata-fairness-anchor-architecture.md:138:* commitment/reveal proves the seed was not changed after commitment
+docs/toccata-fairness-anchor-architecture.md:139:* deterministic derivation proves the displayed result follows from the revealed seed
+docs/toccata-fairness-anchor-architecture.md:145:The intended roadmap improvement is to bind result derivation to independent or public entropy, such as a TN10 block hash, DAA score, future chain event, user-contributed seed, or multi-party seed material.
+docs/toccata-fairness-anchor-architecture.md:151:The PoC demonstrates verifiable commitment/reveal and deterministic result derivation. It does not yet claim production-grade unbiased casino randomness.
+docs/toccata-fairness-anchor-architecture.md:153:## Toccata opportunity
+docs/toccata-fairness-anchor-architecture.md:155:Toccata is relevant because it introduces features that can support a fairness anchor:
+docs/toccata-fairness-anchor-architecture.md:165:* Covenant IDs / consensus-tracked covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:166:* Lane-based sequencing commitments that may later help prove ordering or activity.
+docs/toccata-fairness-anchor-architecture.md:168:The most important missed opportunity is covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:179:A Toccata covenant model can aim to say:
+docs/toccata-fairness-anchor-architecture.md:182:Here is a round state anchored to a covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:183:Here is the commitment state.
+docs/toccata-fairness-anchor-architecture.md:184:Here is the reveal state.
+docs/toccata-fairness-anchor-architecture.md:186:Here is verifier evidence linking the app proof to the covenant flow.
+docs/toccata-fairness-anchor-architecture.md:202:Toccata covenant-state model
+docs/toccata-fairness-anchor-architecture.md:204:TN10 read-only evidence layer
+docs/toccata-fairness-anchor-architecture.md:206:Later, only if authorised: TN10 testnet transaction creation/broadcast
+docs/toccata-fairness-anchor-architecture.md:215:The Rust verifier owns the mapping between JSON mirror fields and covenant/TN10 evidence.
+docs/toccata-fairness-anchor-architecture.md:219:* the JSON round ID matches the covenant or anchor evidence
+docs/toccata-fairness-anchor-architecture.md:220:* the commitment fields match the on-chain or modelled commitment
+docs/toccata-fairness-anchor-architecture.md:221:* the reveal fields match the commitment
+docs/toccata-fairness-anchor-architecture.md:222:* the derived result matches the revealed seed material
+docs/toccata-fairness-anchor-architecture.md:224:* the claimed Toccata evidence is present and correctly linked
+docs/toccata-fairness-anchor-architecture.md:241:* Commitment/reveal verification.
+docs/toccata-fairness-anchor-architecture.md:256:* TN10 node readiness.
+docs/toccata-fairness-anchor-architecture.md:258:* Toccata transaction field inspection.
+docs/toccata-fairness-anchor-architecture.md:260:* Later covenant UTXO lookup.
+docs/toccata-fairness-anchor-architecture.md:267:SilverScript should be treated as a covenant-authoring candidate, not the foundation of the PoC.
+docs/toccata-fairness-anchor-architecture.md:272:* It supports the required Toccata features.
+docs/toccata-fairness-anchor-architecture.md:273:* Its output can be inspected and verified against rusty-kaspa/TN10 expectations.
+docs/toccata-fairness-anchor-architecture.md:276:If SilverScript is not compatible with the target network or exact covenant features, the PoC should proceed with Rust-native modelling and script construction.
+docs/toccata-fairness-anchor-architecture.md:320:## Toccata-backed fairness model
+docs/toccata-fairness-anchor-architecture.md:325:RoundOpened(commitment)
+docs/toccata-fairness-anchor-architecture.md:335:The covenant-backed version should aim for:
+docs/toccata-fairness-anchor-architecture.md:338:Covenant lineage exists.
+docs/toccata-fairness-anchor-architecture.md:339:Round commitment is anchored.
+docs/toccata-fairness-anchor-architecture.md:340:Reveal material is checked against commitment.
+docs/toccata-fairness-anchor-architecture.md:342:Verifier confirms the app-facing result matches the covenant-backed proof evidence.
+docs/toccata-fairness-anchor-architecture.md:352:covenant_id
+docs/toccata-fairness-anchor-architecture.md:353:covenant_lineage_reference
+docs/toccata-fairness-anchor-architecture.md:354:commitment_tx_id
+docs/toccata-fairness-anchor-architecture.md:355:commitment_output_index
+docs/toccata-fairness-anchor-architecture.md:356:commitment_payload_hash
+docs/toccata-fairness-anchor-architecture.md:357:commitment_payload_fields
+docs/toccata-fairness-anchor-architecture.md:359:reveal_tx_id
+docs/toccata-fairness-anchor-architecture.md:360:reveal_payload_hash
+docs/toccata-fairness-anchor-architecture.md:361:revealed_seed_material
+docs/toccata-fairness-anchor-architecture.md:373:## Commitment/reveal scope
+docs/toccata-fairness-anchor-architecture.md:375:The PoC scope for commitment/reveal is:
+docs/toccata-fairness-anchor-architecture.md:377:* commitment/reveal proves the seed was not changed after commitment
+docs/toccata-fairness-anchor-architecture.md:378:* deterministic derivation proves the displayed result follows from the revealed seed
+docs/toccata-fairness-anchor-architecture.md:386:The PoC demonstrates verifiable commitment/reveal and deterministic result derivation. It does not yet claim production-grade unbiased casino randomness.
+docs/toccata-fairness-anchor-architecture.md:388:## Toccata feature opportunities
+docs/toccata-fairness-anchor-architecture.md:390:### KIP-17 covenants
+docs/toccata-fairness-anchor-architecture.md:400:### KIP-20 covenant IDs
+docs/toccata-fairness-anchor-architecture.md:404:* Establish stable covenant lineage.
+docs/toccata-fairness-anchor-architecture.md:405:* Prove that fairness states belong to a specific covenant instance.
+docs/toccata-fairness-anchor-architecture.md:407:* Make covenant-labelled state harder to forge.
+docs/toccata-fairness-anchor-architecture.md:409:This is probably the strongest immediate Toccata opportunity for the PoC.
+docs/toccata-fairness-anchor-architecture.md:411:### KIP-21 sequencing commitments
+docs/toccata-fairness-anchor-architecture.md:415:* Prove ordering or inclusion of commitment/reveal activity.
+docs/toccata-fairness-anchor-architecture.md:416:* Support “commitment before reveal” evidence.
+docs/toccata-fairness-anchor-architecture.md:437:2. Verification visibly depends on at least one Toccata covenant feature that a plain anchored hash cannot provide.
+docs/toccata-fairness-anchor-architecture.md:438:3. A developer can read the proof transcript, inspect the covenant evidence, and reproduce the displayed result.
+docs/toccata-fairness-anchor-architecture.md:452:### ENV-083B — TN10 Toccata fairness-anchor architecture and toolchain sanity check
+docs/toccata-fairness-anchor-architecture.md:456:Define the correct Toccata-backed fairness architecture before implementing random demo rounds or deeper UI changes.
+docs/toccata-fairness-anchor-architecture.md:458:ENV-083B must treat KIP-20 covenant lineage feasibility as a hard gate.
+docs/toccata-fairness-anchor-architecture.md:460:If covenant IDs / covenant lineage cannot be verified read-only on TN10 with available tooling, ENV-083B must not pretend the architecture is proven.
+docs/toccata-fairness-anchor-architecture.md:464:* **Fallback A**: Use a bare TN10 commitment anchor plus Rust verifier while clearly labelling this as Tier 1 only, not a full Toccata covenant fairness proof.
+docs/toccata-fairness-anchor-architecture.md:465:* **Fallback B**: Use an offline Rust covenant-state model while deferring live TN10 covenant evidence until the necessary node/API/tooling support is confirmed.
+docs/toccata-fairness-anchor-architecture.md:466:* **Fallback C**: Use a local TN10 node or indexed node if public RPC cannot expose the required covenant evidence.
+docs/toccata-fairness-anchor-architecture.md:470:* Identify exact Toccata features relevant to fairness anchoring.
+docs/toccata-fairness-anchor-architecture.md:471:* Confirm whether KIP-17, KIP-20, KIP-21, and KIP-16 are applicable now, later, or not at all.
+docs/toccata-fairness-anchor-architecture.md:474:  * one covenant lineage for the app, with per-round state transitions, or
+docs/toccata-fairness-anchor-architecture.md:475:  * one covenant instance per roulette round.
+docs/toccata-fairness-anchor-architecture.md:476:* Decide the minimum useful covenant state fields.
+docs/toccata-fairness-anchor-architecture.md:478:* Identify what can be verified read-only on TN10.
+docs/toccata-fairness-anchor-architecture.md:479:* Identify what requires a local TN10 node with UTXO index.
+docs/toccata-fairness-anchor-architecture.md:492:No later ENV may claim “Toccata-backed covenant fairness” unless ENV-083B proves the required covenant evidence path.
+docs/toccata-fairness-anchor-architecture.md:494:### ENV-083C — Offline covenant-state artifact and verifier model
+docs/toccata-fairness-anchor-architecture.md:498:Implement a Rust-native model of the proposed covenant fairness lifecycle without signing or broadcasting transactions.
+docs/toccata-fairness-anchor-architecture.md:502:* Round commitment artifact.
+docs/toccata-fairness-anchor-architecture.md:508:* Tests proving commitment/reveal/result consistency.
+docs/toccata-fairness-anchor-architecture.md:526:### ENV-084 — Authorised TN10 covenant transaction spike
+docs/toccata-fairness-anchor-architecture.md:530:Only if explicitly authorised, create/sign/broadcast a minimal TN10 testnet covenant transaction flow.
+docs/toccata-fairness-anchor-architecture.md:597:2. Toccata is not decoration.
+docs/toccata-fairness-anchor-architecture.md:598:   The PoC must use Toccata where it genuinely improves fairness evidence.
+docs/toccata-fairness-anchor-architecture.md:600:3. Toccata must add something beyond bare hash anchoring.
+docs/toccata-fairness-anchor-architecture.md:601:   Toccata-specific claims must describe what is impossible with a plain anchor model.
+docs/toccata-fairness-anchor-architecture.md:604:   If covenant IDs/lineage claims are made, read-only validation must exist and be explicitly documented.
+docs/toccata-fairness-anchor-architecture.md:607:   A JSON proof file is valid only when the Rust verifier proves the mapping to covenant evidence.
+docs/toccata-fairness-anchor-architecture.md:613:   Random-looking outcomes are acceptable only when tied to explicit seed/commitment/reveal evidence.
+docs/toccata-fairness-anchor-architecture.md:615:8. If Toccata evidence is unavailable, the PoC must say so plainly.
+docs/safety-and-secrets.md:5:no live TN10 action
+docs/roulette-poc-architecture.md:34:- `covenant_id_confirmed = true`
+docs/roulette-poc-architecture.md:41:Canonical TN10 proof values:
+docs/roulette-poc-architecture.md:46:- covenant id: `e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7`
+docs/roulette-poc-architecture.md:49:- live TN10 covenant evidence exists
+docs/roulette-poc-architecture.md:52:- the continuing output, value, and covenant id match expected values
+docs/roulette-poc-architecture.md:64:- generic all-Toccata feature coverage
+docs/roulette-poc-architecture.md:75:- the result seed material is fixed after bet close, or revealed from a prior commitment that cannot change
+docs/roulette-poc-architecture.md:93:   - any pre-round commitment format is fixed
+docs/roulette-poc-architecture.md:113:   - this hash becomes the round bet-ledger commitment
+docs/roulette-poc-architecture.md:117:   - option B: a pre-round seed commitment is revealed after bet close and verified against the commitment
+docs/roulette-poc-architecture.md:135:   - the round proof publishes the rule version, payout table version, bet ledger hash, seed material or verified reveal, deterministic result derivation transcript, settlement summary, and foundation live verifier JSON
+docs/roulette-poc-architecture.md:148:- result seed material is fixed only after bets close, or revealed from a pre-round commitment that cannot be changed
+docs/roulette-poc-architecture.md:162:- pre-round commitment revealed after bet close and verified against the earlier commitment
+docs/roulette-poc-architecture.md:163:- mixed model that includes both a pre-round commitment reveal and the final bet-ledger hash
+docs/roulette-poc-architecture.md:238:| post-close seed fixation | choosing result after seeing bet ledger | seed material fixed only after close, or reveal a prior commitment that cannot change | foundation provides read-only TN10 proof JSON, not roulette seed handling | implement seed-material schema, commitment or post-close fixation path, and publication rules |
+docs/roulette-poc-architecture.md:247:## 8. Mapping current Toccata/foundation features to roulette
+docs/roulette-poc-architecture.md:252:- proof that the TN10 covenant evidence exists live
+docs/roulette-poc-architecture.md:255:- proof that the continuing output, continuing output value, and covenant id match expected values
+docs/roulette-poc-architecture.md:263:- the adapter can truthfully state that its trust anchor is TN10 read-only verification only
+docs/roulette-poc-architecture.md:274:- generic all-Toccata feature support
+docs/roulette-poc-architecture.md:309:6. fix or reveal seed material under the declared round mode
+docs/roulette-poc-architecture.md:341:- seed material or verified reveal material
+docs/roulette-poc-architecture.md:348:- capability flags proving read-only TN10 mode only
+docs/roulette-poc-architecture.md:350:## Current Toccata fairness proof explanation milestone
+docs/roulette-poc-architecture.md:352:Rust verifier binds a roulette proof transcript to real TN10 Toccata covenant evidence. Live round-specific commitment/reveal transactions remain future work and require explicit authorisation.
+docs/roulette-poc-architecture.md:354:The UI explanation added in ENV-083D is intentionally user-facing copy only. It clarifies that the UI is not trusted, the spin animation is not the proof, and the displayed result must be checked by Rust verifier logic. The verifier checks commitment/reveal consistency, deterministic BLAKE3 result derivation, and binding to live TN10 Toccata covenant evidence.
+docs/roulette-poc-architecture.md:358:- Tier 2: Toccata covenants add covenant lineage and state-transition evidence beyond a plain anchored hash.
+docs/roulette-poc-architecture.md:360:The PoC still does not create, sign, or broadcast live round-specific commitment/reveal transactions; it does not implement production randomness, real betting, real payouts, custody, wallets, or mainnet support. Commitment/reveal does not by itself prove production-grade unbiased randomness, and seed/entropy hardening remains future work.
+docs/roulette-poc-architecture.md:381:- it consumes the live TN10 foundation verifier JSON contract
+docs/roulette-poc-architecture.md:384:- it builds deterministic seed material from the round id, verifier covenant id, verifier ENV-064 spend txid, verifier accepting block hash, and final mock bet-ledger hash
+docs/roulette-poc-architecture.md:436:- it consumes the live TN10 foundation verifier JSON contract
+docs/roulette-poc-architecture.md:476:- it displays proof fields including covenant id, ENV-064 txid, accepting block hash, and bet ledger hash
+docs/roulette-poc-architecture.md:510:- the roulette table highlights the deterministic result number only after reveal
+docs/roulette-poc-architecture.md:685:- the timed flow moves to `No more bets`, then reveals the deterministic result automatically
+docs/roulette-poc-architecture.md:703:## 22. ENV-083E app-facing Toccata fairness proof artifact integration
+docs/roulette-poc-architecture.md:710:- live read-only TN10 Toccata covenant anchor evidence;
+docs/roulette-poc-architecture.md:711:- future round-specific live commitment/reveal transaction evidence labelled `not_created_not_claimed_future_work`.
+docs/roulette-poc-architecture.md:713:The verifier proof snapshot displays `verifier_result`, `live_readonly_tn10` evidence mode, `covenant_id_confirmed`, covenant lineage, result algorithm, commitment/reveal check status, deterministic BLAKE3 derivation check status, proof result number/colour, and safety flags. JSON remains a mirror/export only; Rust verifier logic remains the proof authority.
+docs/roulette-poc-architecture.md:743:The generator produces both files from one proof transcript. The Rust verifier checks that round ID, result number, result colour, result algorithm, commitment/reveal fields, live read-only TN10 anchor evidence, future-live-transaction status, and safety flags agree.
+docs/roulette-poc-architecture.md:745:The UI still does not choose the result. It only loads `sample-round.json` and `toccata-fairness-proof.json`, validates their safety/status fields, and displays the result after the deterministic UI flow reaches result reveal. The UI does not call `Math.random`, browser crypto random APIs, wallet APIs, signing APIs, or transaction broadcast APIs.
+docs/roulette-poc-architecture.md:759:- live round-specific TN10 commitment/reveal transactions;
+docs/kaspa-foundation-architecture.md:5:This document defines the proposed technical foundation for building applications on Kaspa Toccata features, starting with a roulette proof-of-concept but designed for reuse across future apps and dApps.
+docs/kaspa-foundation-architecture.md:9:- covenant transaction construction
+docs/kaspa-foundation-architecture.md:10:- local covenant verification
+docs/kaspa-foundation-architecture.md:11:- live TN10 covenant submission workflows using Toccata features
+docs/kas
+
+... [OUTPUT TRUNCATED - 86590 chars omitted out of 136590 total] ...
+
+/fairness.rs:904:        str_field(commitment, "result_algorithm")? == ENV083C_RESULT_ALGORITHM,
+crates/kaspa-foundation/src/fairness.rs:908:        "reveal algorithm",
+crates/kaspa-foundation/src/fairness.rs:909:        str_field(reveal, "result_algorithm")? == ENV083C_RESULT_ALGORITHM,
+crates/kaspa-foundation/src/fairness.rs:919:        "sample/reveal algorithm agreement",
+crates/kaspa-foundation/src/fairness.rs:920:        str_field(sample_round, "result_algorithm")? == str_field(reveal, "result_algorithm")?,
+crates/kaspa-foundation/src/fairness.rs:923:    let seed = str_field(reveal, "revealed_seed_material")?;
+crates/kaspa-foundation/src/fairness.rs:924:    let expected_commitment_hash = commitment_hash(
+crates/kaspa-foundation/src/fairness.rs:925:        str_field(commitment, "round_id")?,
+crates/kaspa-foundation/src/fairness.rs:927:        str_field(commitment, "result_algorithm")?,
+crates/kaspa-foundation/src/fairness.rs:928:        str_field(commitment, "rule_version")?,
+crates/kaspa-foundation/src/fairness.rs:929:        str_field(commitment, "anchor_covenant_id")?,
+crates/kaspa-foundation/src/fairness.rs:930:        str_field(commitment, "covenant_lineage_reference")?,
+crates/kaspa-foundation/src/fairness.rs:931:        str_field(commitment, "evidence_mode")?,
+crates/kaspa-foundation/src/fairness.rs:935:        "commitment hash recomputes",
+crates/kaspa-foundation/src/fairness.rs:936:        str_field(commitment, "commitment_hash")? == expected_commitment_hash,
+crates/kaspa-foundation/src/fairness.rs:943:        u8_field(reveal, "result_number")? == expected_number,
+crates/kaspa-foundation/src/fairness.rs:948:        str_field(reveal, "result_colour")? == expected_colour,
+crates/kaspa-foundation/src/fairness.rs:953:        u8_field(sample_round, "result_number")? == u8_field(reveal, "result_number")?
+crates/kaspa-foundation/src/fairness.rs:960:        str_field(sample_round, "result_colour")? == str_field(reveal, "result_colour")?
+crates/kaspa-foundation/src/fairness.rs:964:    let expected_reveal_hash = reveal_payload_hash(
+crates/kaspa-foundation/src/fairness.rs:965:        str_field(reveal, "round_id")?,
+crates/kaspa-foundation/src/fairness.rs:967:        str_field(reveal, "anchor_covenant_id")?,
+crates/kaspa-foundation/src/fairness.rs:968:        str_field(reveal, "covenant_lineage_reference")?,
+crates/kaspa-foundation/src/fairness.rs:969:        str_field(reveal, "result_algorithm")?,
+crates/kaspa-foundation/src/fairness.rs:970:        u8_field(reveal, "result_number")?,
+crates/kaspa-foundation/src/fairness.rs:971:        str_field(reveal, "result_colour")?,
+crates/kaspa-foundation/src/fairness.rs:972:        str_field(reveal, "evidence_mode")?,
+crates/kaspa-foundation/src/fairness.rs:976:        "reveal payload hash recomputes",
+crates/kaspa-foundation/src/fairness.rs:977:        str_field(reveal, "reveal_payload_hash")? == expected_reveal_hash,
+crates/kaspa-foundation/src/fairness.rs:1214:fn commitment_hash(
+crates/kaspa-foundation/src/fairness.rs:1219:    covenant_id: &str,
+crates/kaspa-foundation/src/fairness.rs:1220:    lineage: &str,
+crates/kaspa-foundation/src/fairness.rs:1224:        "domain={ENV083C_COMMITMENT_DOMAIN}\nround_id={round_id}\nrevealed_seed_material={seed}\nresult_algorithm={result_algorithm}\nrule_version={rule_version}\nanchor_covenant_id={covenant_id}\ncovenant_lineage_reference={lineage}\nevidence_mode={evidence_mode}\n"
+crates/kaspa-foundation/src/fairness.rs:1228:fn reveal_payload_hash(
+crates/kaspa-foundation/src/fairness.rs:1231:    covenant_id: &str,
+crates/kaspa-foundation/src/fairness.rs:1232:    lineage: &str,
+crates/kaspa-foundation/src/fairness.rs:1239:        "domain={ENV083C_REVEAL_DOMAIN}\nround_id={round_id}\nrevealed_seed_material={seed}\nanchor_covenant_id={covenant_id}\ncovenant_lineage_reference={lineage}\nresult_algorithm={result_algorithm}\nresult_number={result_number}\nresult_colour={result_colour}\nevidence_mode={evidence_mode}\n"
+crates/kaspa-foundation/src/covenant/constants.rs:1://! Constants for the proven corrected TN10 covenant path.
+crates/kaspa-foundation/src/covenant/constants.rs:4://! `fixtures/tn10-canonical-covenant-path/`, not from live RPC, wallet files, or
+crates/kaspa-foundation/src/covenant/constants.rs:7:/// Canonical recipe id for the corrected ENV-063/064/065 TN10 path.
+crates/kaspa-foundation/src/covenant/constants.rs:8:pub const CORRECTED_TN10_RECIPE_ID: &str = "toccata-v1-keyed-blake3-state-transition";
+crates/kaspa-foundation/src/covenant/constants.rs:14:/// Name used by rusty-kaspa for Toccata transaction version support.
+crates/kaspa-foundation/src/covenant/constants.rs:17:/// Observed Toccata transaction version in the corrected TN10 fixtures.
+crates/kaspa-foundation/src/covenant/constants.rs:30:/// Canonical ENV-064 spend txid accepted on TN10 and later confirmed read-only.
+crates/kaspa-foundation/src/covenant/constants.rs:34:/// ENV-063 covenant outpoint spent by the canonical ENV-064 spend.
+crates/kaspa-foundation/src/covenant/constants.rs:38:/// Continuing covenant output created by the canonical ENV-064 spend.
+crates/kaspa-foundation/src/covenant/constants.rs:45:/// Covenant id preserved through the canonical corrected TN10 transition.
+crates/kaspa-foundation/src/covenant/recipe.rs:1://! Small recipe abstraction for the corrected TN10 covenant path.
+crates/kaspa-foundation/src/covenant/recipe.rs:4:    CORRECTED_TN10_RECIPE_ID, DOMAIN_KEY_POLICY, HASH_OPCODE_NAME, HISTORICAL_ENV060C_RECIPE_ID,
+crates/kaspa-foundation/src/covenant/recipe.rs:8:/// Describes a reusable covenant construction recipe without exposing live
+crates/kaspa-foundation/src/covenant/recipe.rs:22:/// Returns the canonical corrected TN10 recipe proven by ENV-063/064/065.
+crates/kaspa-foundation/src/covenant/recipe.rs:25:        id: CORRECTED_TN10_RECIPE_ID,
+crates/kaspa-foundation/src/covenant/recipe.rs:26:        network: "TN10/testnet-10",
+crates/kaspa-foundation/src/covenant/recipe.rs:30:        script_path: "corrected v1 covenant script path from ENV-062B/ENV-063/ENV-064",
+crates/kaspa-foundation/src/covenant/recipe.rs:32:        notes: "Canonical corrected path: TX_VERSION_TOCCATA, OpBlake3WithKey, 32-byte padded domain keys, continuing output preserves the covenant id.",
+crates/kaspa-foundation/src/covenant/recipe.rs:40:        network: "TN10/testnet-10",
+crates/kaspa-foundation/src/covenant/recipe.rs:46:        notes: "historical, superseded, non-canonical: do not use as the canonical covenant implementation",
+crates/kaspa-fair-cli/README.md:5:## Live TN10 canonical verifier
+crates/kaspa-fair-cli/README.md:19:This command verifies the canonical ENV-063/064/065 proof transcript against public TN10 read-only chain data. It calls the `kaspa-foundation` online verifier library directly and prints either human-readable status or the stable `kaspa-fair-live-verification-result-v1` JSON contract. Both modes perform the same read-only verification and return success only when the final verifier result is `PASS`.
+crates/kaspa-fair-cli/README.md:33:  "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
+crates/kaspa-fair-cli/README.md:39:  "covenant_id_confirmed": true,
+crates/kaspa-fair-cli/README.md:56:Safety boundary: read-only TN10 only; no signing; no transaction creation; no submitting/broadcasting; no wallet/private-key access; no secrets; no mainnet; no roulette implementation. Roulette remains future app adapter work above this foundation verifier contract.
+crates/kaspa-fair-cli/README.md:66:Before the roulette PoC consumes the limited TN10 Toccata layer, run the
+crates/kaspa-fair-cli/README.md:73:`TOCCATA_LAYER_READY=PASS` means the live TN10 verifier JSON contract passed all
+crates/kaspa-fair-cli/README.md:74:readiness assertions and the limited read-only TN10 Toccata layer is ready to be
+crates/kaspa-fair-cli/README.md:97:- consumes the live TN10 verifier JSON contract
+crates/kaspa-fair-cli/README.md:127:- consumes the live TN10 verifier JSON contract
+crates/kaspa-fair-cli/src/roulette.rs:22:    pub covenant_id: String,
+crates/kaspa-fair-cli/src/roulette.rs:327:            "foundation_covenant_id": self.foundation.covenant_id,
+crates/kaspa-fair-cli/src/roulette.rs:337:            "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/roulette.rs:391:        "covenant_id_confirmed",
+crates/kaspa-fair-cli/src/roulette.rs:428:        covenant_id: required_string_field(value, "covenant_id")?,
+crates/kaspa-fair-cli/src/roulette.rs:457:        "foundation_covenant_id": foundation.covenant_id,
+crates/kaspa-fair-cli/src/roulette.rs:467:        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/roulette.rs:684:        "round_id={round_id}\nfoundation_covenant_id={}\nfoundation_env064_spend_txid={}\nfoundation_accepting_block_hash={}\nfinal_mock_bet_ledger_hash={}\n",
+crates/kaspa-fair-cli/src/roulette.rs:685:        foundation.covenant_id,
+crates/kaspa-fair-cli/src/roulette.rs:747:            covenant_id: "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7"
+crates/kaspa-fair-cli/src/roulette.rs:773:            "covenant_id_confirmed": true,
+crates/kaspa-fair-cli/src/roulette.rs:779:            "covenant_id": foundation_fixture().covenant_id,
+crates/kaspa-fair-cli/src/main.rs:25:const COMMAND_VERIFY_LIVE_TN10_CANONICAL: &str = "verify-live-tn10-canonical";
+crates/kaspa-fair-cli/src/main.rs:50:const PUBLIC_TN10_TRANSACTION_API_BASE: &str = "https://api-tn10.kaspa.org";
+crates/kaspa-fair-cli/src/main.rs:109:        Some(COMMAND_VERIFY_LIVE_TN10_CANONICAL) => {
+crates/kaspa-fair-cli/src/main.rs:217:    println!("  {COMMAND_VERIFY_LIVE_TN10_CANONICAL}");
+crates/kaspa-fair-cli/src/main.rs:218:    println!("      Run the canonical ENV-063/064/065 proof transcript verifier against live TN10 read-only data.");
+crates/kaspa-fair-cli/src/main.rs:219:    println!("  {COMMAND_VERIFY_LIVE_TN10_CANONICAL} {FLAG_JSON}");
+crates/kaspa-fair-cli/src/main.rs:229:    println!("      Emit the ENV-083C Rust-verified JSON mirror bound to live read-only TN10 covenant evidence.");
+crates/kaspa-fair-cli/src/main.rs:234:    println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
+crates/kaspa-fair-cli/src/main.rs:261:        return Err("ENV-083C requires live read-only TN10 anchor verifier_result=PASS".into());
+crates/kaspa-fair-cli/src/main.rs:268:        .ok_or("ENV-083C live TN10 anchor missing accepting_block_hash")?;
+crates/kaspa-fair-cli/src/main.rs:284:            println!("ENV-083C Toccata evidence-bound fairness proof verifier");
+crates/kaspa-fair-cli/src/main.rs:348:            println!("future_live_round_transaction_evidence=not_created_not_claimed_future_work");
+crates/kaspa-fair-cli/src/main.rs:446:    covenant_id: String,
+crates/kaspa-fair-cli/src/main.rs:493:        "covenant_id_confirmed",
+crates/kaspa-fair-cli/src/main.rs:530:        covenant_id: required_string_field(value, "covenant_id")?,
+crates/kaspa-fair-cli/src/main.rs:558:        "foundation_covenant_id": foundation.covenant_id,
+crates/kaspa-fair-cli/src/main.rs:568:        "seed_material_description": "utf8 lines: round_id, covenant_id, env064_spend_txid, accepting_block_hash, final_mock_bet_ledger_hash",
+crates/kaspa-fair-cli/src/main.rs:674:        "round_id={ROULETTE_POC_ROUND_ID}\nfoundation_covenant_id={}\nfoundation_env064_spend_txid={}\nfoundation_accepting_block_hash={}\nfinal_mock_bet_ledger_hash={}\n",
+crates/kaspa-fair-cli/src/main.rs:675:        foundation.covenant_id,
+crates/kaspa-fair-cli/src/main.rs:872:        "covenant_id": ENV063_ENV064_COVENANT_ID,
+crates/kaspa-fair-cli/src/main.rs:878:        "covenant_id_confirmed": detail.covenant_id.as_deref() == Some(ENV063_ENV064_COVENANT_ID),
+crates/kaspa-fair-cli/src/main.rs:905:    .map_err(|err| format!("online verifier rejected live TN10 evidence: {err:?}"))?;
+crates/kaspa-fair-cli/src/main.rs:948:    covenant_address_utxo_count: usize,
+crates/kaspa-fair-cli/src/main.rs:964:    covenant_id: Option<String>,
+crates/kaspa-fair-cli/src/main.rs:995:    let covenant_input_txid = Hash::from_str(ENV063_COVENANT_OUTPOINT_TXID)?;
+crates/kaspa-fair-cli/src/main.rs:998:    let covenant_address = Address::try_from(ENV063_ENV064_COVENANT_ADDRESS)?;
+crates/kaspa-fair-cli/src/main.rs:999:    let covenant_utxos = client
+crates/kaspa-fair-cli/src/main.rs:1000:        .get_utxos_by_addresses(vec![covenant_address])
+crates/kaspa-fair-cli/src/main.rs:1003:    let continuing_utxo = covenant_utxos.iter().find(|entry| {
+crates/kaspa-fair-cli/src/main.rs:1011:            input.previous_outpoint.transaction_id == covenant_input_txid
+crates/kaspa-fair-cli/src/main.rs:1064:        covenant_id: match transaction_detail.covenant_id.clone() {
+crates/kaspa-fair-cli/src/main.rs:1065:            Some(covenant_id) => Tn10ReadOnlyObservation::supported(covenant_id),
+crates/kaspa-fair-cli/src/main.rs:1067:                "public TN10 transaction detail API did not expose Toccata covenant_id",
+crates/kaspa-fair-cli/src/main.rs:1078:        covenant_address_utxo_count: covenant_utxos.len(),
+crates/kaspa-fair-cli/src/main.rs:1090:        PUBLIC_TN10_TRANSACTION_API_BASE, ENV064_SPEND_TXID
+crates/kaspa-fair-cli/src/main.rs:1099:        return Err(format!("public TN10 transaction detail API returned {http_status}").into());
+crates/kaspa-fair-cli/src/main.rs:1143:    let covenant_id = output0
+crates/kaspa-fair-cli/src/main.rs:1144:        .and_then(|output| output.get("covenant_id"))
+crates/kaspa-fair-cli/src/main.rs:1151:                .and_then(|input| input.get("covenant_id"))
+crates/kaspa-fair-cli/src/main.rs:1164:        covenant_id,
+crates/kaspa-fair-cli/src/main.rs:1176:    println!("ENV-072 live TN10 canonical verifier");
+crates/kaspa-fair-cli/src/main.rs:1207:        "covenant_address_utxo_count={}",
+crates/kaspa-fair-cli/src/main.rs:1208:        summary.readout.covenant_address_utxo_count
+crates/kaspa-fair-cli/src/main.rs:1239:        "covenant_id_confirmed={}",
+crates/kaspa-fair-cli/src/main.rs:1240:        detail.covenant_id.as_deref().unwrap_or("unavailable")
+crates/kaspa-fair-cli/src/main.rs:1277:            parse_command(&[COMMAND_VERIFY_LIVE_TN10_CANONICAL.to_string()]),
+crates/kaspa-fair-cli/src/main.rs:1284:                COMMAND_VERIFY_LIVE_TN10_CANONICAL.to_string(),
+crates/kaspa-fair-cli/src/main.rs:1378:        assert_eq!(value["covenant_id"], ENV063_ENV064_COVENANT_ID);
+crates/kaspa-fair-cli/src/main.rs:1383:        assert_eq!(value["covenant_id_confirmed"], true);
+crates/kaspa-fair-cli/src/main.rs:1444:                covenant_address_utxo_count: 1,
+crates/kaspa-fair-cli/src/main.rs:1458:                    covenant_id: Some(ENV063_ENV064_COVENANT_ID.to_string()),
+crates/kaspa-fair-cli/src/main.rs:1470:                    covenant_id: Tn10ReadOnlyObservation::supported(
+crates/kaspa-fair-cli/src/main.rs:1476:                transcript_id: "canonical-tn10-covenant-path",
+crates/kaspa-fair-cli/src/main.rs:1491:            "{PUBLIC_TN10_TRANSACTION_API_BASE}/transactions/{ENV064_SPEND_TXID}?inputs=true&outputs=true&resolve_previous_outpoints=light"
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:65:check('reveal-result-button' not in combined_source and 'Reveal Result' not in combined_source, 'Reveal Result control/text remains')
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:72:for status_text in ['Bets open', 'Wheel spinning — bets still open', 'No more bets', 'Result revealed', 'Settlement shown', 'Proof published']:
+scripts/env082-roulette-ui-workflow-rebuild-smoke.sh:86:check('scheduleFlowState("ResultFinalised", SPIN_TO_NO_MORE_BETS_MS + NO_MORE_BETS_TO_RESULT_MS)' in app_js, 'result is not scheduled to reveal automatically after NoMoreBets')
+scripts/env076-roulette-poc-dry-run.sh:34:    ("covenant_id_confirmed == true", foundation.get("covenant_id_confirmed") is True),
+scripts/env083a-roulette-randomness-source-audit.sh:112:    -E 'random|rng|rand|entropy|seed|nonce|commit|reveal|Math\.random|crypto\.getRandomValues|crypto\.randomUUID|OsRng|thread_rng|rand::|getrandom' \
+scripts/env083a-roulette-randomness-source-audit.sh:126:run_capture_allow_fail 'randomness grep' grep -RIn --exclude-dir=target --exclude-dir=.git -E 'random|rng|rand|entropy|seed|nonce|commit|reveal|Math\.random|crypto\.getRandomValues|crypto\.randomUUID|OsRng|thread_rng|rand::|getrandom' examples/roulette-poc docs crates Cargo.toml Cargo.lock scripts
+scripts/env083a-roulette-randomness-source-audit.sh:154:print('- cryptographic commitment/reveal material: architecture docs describe commit/reveal and seed-material models; current sample publishes seed_material_hex and bet_ledger_hash, not a fresh entropy source.')
+scripts/env083a-roulette-randomness-source-audit.sh:155:print('- UI-only timed state transitions: app.js uses setTimeout/scheduleFlowState to reveal the already-loaded sample result; timers do not choose the result.')
+scripts/env074-toccata-layer-ready.sh:77:    ("covenant_id_confirmed == true", data.get("covenant_id_confirmed") is True),
+scripts/env074-toccata-layer-ready.sh:104:# ENV-074 — Limited Toccata layer readiness gate
+scripts/env074-toccata-layer-ready.sh:147:- covenant_id_confirmed == true
+scripts/env074-toccata-layer-ready.sh:156:ENV-074 performed read-only TN10 verification only.
+scripts/env083f-round-proof-consistency-smoke.sh:33:proof_reveal = proof.get("application_round_transcript", {}).get("reveal", {})
+scripts/env083f-round-proof-consistency-smoke.sh:37:require("result_number mismatch", round_data.get("result_number") == proof.get("result_number") == proof_reveal.get("result_number"))
+scripts/env083f-round-proof-consistency-smoke.sh:38:require("result_colour mismatch", round_data.get("result_colour") == proof.get("result_colour") == proof_reveal.get("result_colour"))
+scripts/env083f-round-proof-consistency-smoke.sh:39:require("result_algorithm mismatch", round_data.get("result_algorithm") == proof.get("result_algorithm") == proof_reveal.get("result_algorithm"))
+scripts/env083f-round-proof-consistency-smoke.sh:45:require("covenant_id_confirmed missing", proof_anchor.get("covenant_id_confirmed") is True)
+scripts/env083f-round-proof-consistency-smoke.sh:47:    "future live round transaction evidence incorrectly claimed",
+scripts/env083f-round-proof-consistency-smoke.sh:48:    proof.get("future_live_round_transaction_evidence") in {"not_created_not_claimed_future_work", "not_created_future_work", "not_created"},
+scripts/env083f-round-proof-consistency-smoke.sh:75:! grep -RIn 'Reveal Result' "$APP_JS" "$INDEX_HTML" >/tmp/env083f-reveal-grep.txt || { cat /tmp/env083f-reveal-grep.txt >&2; exit 1; }
+scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh:37:reveal = proof.get('application_round_transcript', {}).get('reveal', {})
+scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh:46:require('sample/proof round_id agreement', sample.get('round_id') == proof.get('round_id') == reveal.get('round_id'))
+scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh:47:require('sample/proof result_number agreement', sample.get('result_number') == proof.get('result_number') == reveal.get('result_number'))
+scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh:48:require('sample/proof result_colour agreement', sample.get('result_colour') == proof.get('result_colour') == reveal.get('result_colour'))
+scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh:49:require('sample/proof result_algorithm agreement', sample.get('result_algorithm') == proof.get('result_algorithm') == reveal.get('result_algorithm'))
+scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh:55:require('future live round transaction evidence not claimed', proof.get('future_live_round_transaction_evidence') == 'not_created_not_claimed_future_work')
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh:30:require_text "$UI" 'live TN10 Toccata covenant evidence'
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh:31:require_text "$UI" 'commitment/reveal'
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh:43:require_text "$UI" 'Toccata adds more than a plain anchored hash'
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh:44:require_text "$UI" 'covenant lineage and state-transition evidence'
+scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh:45:require_text "$UI" 'Current round-specific commitment/reveal transaction creation is future work and requires explicit authorisation'
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:27:jq '{evidence_mode:"live_readonly_tn10", verifier_result:.live_tn10_anchor_evidence.verifier_result, covenant_id_confirmed:.live_tn10_anchor_evidence.covenant_id_confirmed, transaction_created:.live_tn10_anchor_evidence.transaction_created, signing_used:.live_tn10_anchor_evidence.signing_used, broadcast_used:.live_tn10_anchor_evidence.broadcast_used, wallet_access_used:.live_tn10_anchor_evidence.wallet_access_used, mainnet_supported:.live_tn10_anchor_evidence.mainnet_supported, live_tn10_anchor_evidence:.live_tn10_anchor_evidence, proof_anchor:.proof_artifact.live_tn10_anchor}' "$COMBINED" > "$ANCHOR"
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:36:test "$(jq -r '.live_tn10_anchor.covenant_id_confirmed' "$PROOF")" = "true"
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:37:test "$(jq -r '.application_round_transcript.commitment.round_id' "$PROOF")" = "$(jq -r '.round_id' "$PROOF")"
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:38:test "$(jq -r '.application_round_transcript.reveal.round_id' "$PROOF")" = "$(jq -r '.round_id' "$PROOF")"
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:39:test "$(jq -r '.future_live_round_transaction_evidence' "$PROOF")" = "not_created_not_claimed_future_work"
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:48:tampered reveal rejected: tested in Rust
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:49:mismatched covenant_id rejected: tested in Rust
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:51:omitted TN10 anchor rejected for Toccata-bound claim: tested in Rust
+scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh:52:application-only evidence rejected for live round transaction claim: tested in Rust
+scripts/env077-roulette-engine-check.sh:33:    ("covenant_id_confirmed == true", foundation.get("covenant_id_confirmed") is True),
+scripts/env084-verifiable-demo-round-generator-smoke.sh:29:reveal = proof.get('application_round_transcript', {}).get('reveal', {})
+scripts/env084-verifiable-demo-round-generator-smoke.sh:38:require('result_number agreement', sample.get('result_number') == proof.get('result_number') == reveal.get('result_number'))
+scripts/env084-verifiable-demo-round-generator-smoke.sh:39:require('result_colour agreement', sample.get('result_colour') == proof.get('result_colour') == reveal.get('result_colour'))
+scripts/env084-verifiable-demo-round-generator-smoke.sh:40:require('result_algorithm agreement', sample.get('result_algorithm') == proof.get('result_algorithm') == reveal.get('result_algorithm'))
+scripts/env084-verifiable-demo-round-generator-smoke.sh:45:require('future live round transaction evidence safe', proof.get('future_live_round_transaction_evidence') == 'not_created_not_claimed_future_work')
+scripts/env084-verifiable-demo-round-generator-smoke.sh:68:! grep -RIn 'Reveal Result' examples/roulette-poc/ui/app.js examples/roulette-poc/ui/index.html >/tmp/env084-reveal-grep.txt || { cat /tmp/env084-reveal-grep.txt >&2; exit 1; }
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:46:  grep -nE 'Tier 1|Tier 2|covenant lineage|JSON|Rust|RPC|SilverScript|UI|wallet|signing|broadcast|mainnet|ENV-083B|KIP-17|KIP-20|KIP-21|KIP-16' docs/toccata-fairness-anchor-architecture.md || true
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:64:      grep -nEi 'Status:|covenant|covenant_id|RpcTransactionOutput|RpcUtxoEntry|OpInputCovenantId|OpOutputCovenantId|OpCov|sequencing|seqcommit|lane|OpZkPrecompile|Testnet-10|Testnet 12|Experimental|unstable|valid only' "$tmpdir/$file" | head -n 120 || true
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:80:  echo "Suggested Toccata/covenant search"
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:82:    -E 'Toccata|toccata|covenant|covenant_id|Covenant|KIP-17|KIP-20|KIP-21|seqcommit|SeqCommit|GetSeqCommitLaneProof|storageMass|storage_mass|computeBudget|RpcTransactionOutput|RpcUtxoEntry' \
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:101:| Rust | Use now | Truth layer: covenant-state model, commitment/reveal verifier, deterministic derivation, JSON mirror validation, tests. | No wallet/signing/broadcast in ENV-083B. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:102:| RPC / gRPC / node API | Use now as read-only transport | TN10 readiness, UTXO visibility, transaction-detail evidence, covenant IDs and output bindings. | Not proof logic and not transaction submission. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:103:| SilverScript | Do not depend on now | Candidate covenant authoring tool for a later compatibility spike. | Experimental and README says compiled scripts are valid only on Testnet 12, not assumed TN10-compatible. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:106:| Optional local TN10 indexed node | Fallback only | Use if public endpoints cannot expose covenant/UTXO/lane evidence. | Read-only unless explicitly authorized. |
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:111:  "kip20_covenant_lineage_readonly_tn10_verified": true,
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:114:  "recommended_next_step": "ENV-083C offline Rust covenant-state artifact and verifier model; no transaction creation, signing, broadcast, wallet, or mainnet.",
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:115:  "claim_allowed": "Toccata covenant fairness anchor",
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:116:  "reason": "Official Toccata/KIP-20 sources define output covenant bindings and UTXO covenant IDs; local Rust/CLI verifier exposes and checks covenant_id read-only; public TN10 transaction-detail API exposes input covenant_id, output covenant_authorizing_input, and output covenant_id for the canonical accepted TN10 covenant transition; the live read-only CLI verifier returns covenant_id_confirmed=true and verifier_result=PASS."
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:129:Hard gate: KIP-20 covenant lineage read-only TN10 evidence path verified for the canonical covenant path using public TN10 read-only tooling.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:131:Allowed claim after ENV-083B: Toccata covenant fairness anchor.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:133:Recommended next ENV: ENV-083C offline Rust covenant-state artifact and verifier model.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:135:No implementation was added for roulette randomisation, covenant transactions, wallet access, signing, broadcasting, real betting, payouts, custody, UI behaviour, or mainnet.
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:157:    'covenant_id_confirmed': data.get('covenant_id_confirmed') is True,
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:206:    'kip20_covenant_lineage_readonly_tn10_verified',
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:216:if data['claim_allowed'] not in {'Toccata covenant fairness anchor', 'Tier-1 TN10 anchor only', 'offline covenant model only'}:
+scripts/env083b-toccata-fairness-anchor-feasibility.sh:218:if not isinstance(data['kip20_covenant_lineage_readonly_tn10_verified'], bool):
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:42:require_text "$UI" 'live TN10 evidence is read-only'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:43:require_text "$UI" 'round-specific live commitment/reveal transactions remain future work'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:47:require_text "$PROOF" '"covenant_id_confirmed"[[:space:]]*:[[:space:]]*true'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:48:require_text "$PROOF" '"future_live_round_transaction_evidence"[[:space:]]*:[[:space:]]*"not_created_not_claimed_future_work"'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:49:require_text "$PROOF" '"commitment_reveal_check_status"[[:space:]]*:[[:space:]]*"PASS"'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:64:require_text "$APP_JS" 'covenant_id_confirmed'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:66:require_text "$APP_JS" 'commitment/reveal check status'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:68:require_text "$APP_JS" 'future live round transaction evidence'
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:77:reveal = proof.get('application_round_transcript', {}).get('reveal', {})
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:78:assert sample.get('round_id') == proof.get('round_id') == reveal.get('round_id')
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:79:assert sample.get('result_number') == proof.get('result_number') == reveal.get('result_number')
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:80:assert sample.get('result_colour') == proof.get('result_colour') == reveal.get('result_colour')
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:81:assert sample.get('result_algorithm') == proof.get('result_algorithm') == reveal.get('result_algorithm')
+scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh:85:assert proof.get('future_live_round_transaction_evidence') == 'not_created_not_claimed_future_work'
+```

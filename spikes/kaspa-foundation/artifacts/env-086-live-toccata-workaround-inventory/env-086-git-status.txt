@@ -1,0 +1,9 @@
+?? docs/env086-first-live-toccata-replacement-target.md
+?? docs/env086-live-toccata-workaround-inventory.md
+?? scripts/env086-live-toccata-workaround-inventory-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-first-replacement-target.md
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-ranked-inventory.json
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-summary.md
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-workaround-search-evidence.txt

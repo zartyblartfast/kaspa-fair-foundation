@@ -1,0 +1,59 @@
+# ENV-086 command results
+
+Pre-check:
+- git status --short: PASS (clean before ENV-086 edits)
+- git log --oneline -n 10: PASS
+
+Latest baseline observed:
+- f7d9a6f Package static mock verifiable demo milestone
+- 32ebb88 Add Rust-owned verifiable demo round generator
+
+Search evidence:
+- required workaround/static search: PASS (captured in env-086-workaround-search-evidence.txt)
+- required covenant/TN10 search: PASS (captured in env-086-workaround-search-evidence.txt)
+
+Required checks:
+- cargo fmt --check: PASS
+- cargo check -p kaspa-foundation: PASS (Finished `dev` profile)
+- cargo check -p kaspa-fair-cli: PASS (Finished `dev` profile)
+- cargo test -p kaspa-foundation: PASS (24 passed, 0 failed, 1 ignored across test binaries/doc-tests)
+- cargo test -p kaspa-fair-cli: PASS (18 passed, 0 failed)
+- node --check examples/roulette-poc/ui/app.js: PASS
+- node --check examples/roulette-poc/ui/roulette-table-renderer.js: PASS
+- git diff --check: PASS
+- scripts/env082-roulette-ui-workflow-rebuild-smoke.sh: PASS -> ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+- scripts/env083a-roulette-randomness-source-audit.sh: PASS -> ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+- scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh: PASS -> USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+- scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh: PASS -> APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+- scripts/env083f-round-proof-consistency-smoke.sh: PASS -> ROUND_PROOF_CONSISTENCY_READY=PASS
+- scripts/env084-verifiable-demo-round-generator-smoke.sh: PASS -> VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+- scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh: PASS -> STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+- scripts/env086-live-toccata-workaround-inventory-smoke.sh: PASS -> LIVE_TOCCATA_WORKAROUND_INVENTORY_READY=PASS
+
+Required skip:
+- scripts/env083c-toccata-evidence-bound-fairness-verifier-smoke.sh: not run by instruction.
+
+Final git status after restoring older ENV artifact rewrites caused by required smoke execution:
+```text
+?? docs/env086-first-live-toccata-replacement-target.md
+?? docs/env086-live-toccata-workaround-inventory.md
+?? scripts/env086-live-toccata-workaround-inventory-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-first-replacement-target.md
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-ranked-inventory.json
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-summary.md
+?? spikes/kaspa-foundation/artifacts/env-086-live-toccata-workaround-inventory/env-086-workaround-search-evidence.txt```
+
+Git log baseline:
+```text
+f7d9a6f Package static mock verifiable demo milestone
+32ebb88 Add Rust-owned verifiable demo round generator
+1954fa8 Align round proof artifacts and define demo generation path
+e2266d0 Integrate app-facing Toccata fairness proof artifact
+4f57b9f Explain Toccata fairness proof in roulette UI
+01d2008 Add Toccata evidence-bound fairness verifier
+0844dd3 Add Toccata fairness anchor feasibility gate
+7cd9022 Audit roulette result source and randomness candidates
+99fafe2 Refine Toccata fairness anchor architecture
+ba2af42 docs: add toccata fairness anchor architecture```
