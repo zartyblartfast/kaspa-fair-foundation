@@ -1,0 +1,45 @@
+{
+  "schema": "kaspa-fair-env091-full-kip17-toccata-milestone-reviewer-checklist-v1",
+  "env": "ENV-091",
+  "purpose": "Package current full live KIP-17 Toccata milestone as a clean reviewable demo-ready checkpoint.",
+  "implementation_scope": {
+    "adds_new_implementation": false,
+    "creates_transaction": false,
+    "signs_transaction": false,
+    "broadcasts_transaction": false,
+    "uses_wallet_or_private_key": false,
+    "touches_mainnet": false,
+    "adds_real_betting": false,
+    "adds_real_payouts": false,
+    "adds_production_randomness": false,
+    "adds_ui_result_generation": false
+  },
+  "core_evidence": {
+    "commitment_txid": "050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26",
+    "reveal_continuation_txid": "269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620",
+    "claim_level": "full_kip17_covenant_enforced_transition",
+    "verifier_result": "PASS",
+    "kip17_rule_enforced_on_transition": true,
+    "invalid_transition_rejected": true,
+    "direct_tn10_readback_supports_env090_artifacts": true,
+    "ui_accepts_authorised_env090_proof_artifact": true,
+    "unsafe_proof_states_remain_rejected": true
+  },
+  "documents": {
+    "milestone_runbook": "docs/env091-full-kip17-toccata-milestone.md",
+    "nontechnical_summary": "docs/full-kip17-toccata-milestone-summary.md"
+  },
+  "required_smoke": {
+    "script": "scripts/env091-full-kip17-toccata-milestone-smoke.sh",
+    "expected_final_line": "FULL_KIP17_TOCCATA_MILESTONE_READY=PASS"
+  },
+  "not_claimed": {
+    "production_randomness": true,
+    "real_betting": true,
+    "real_payouts": true,
+    "custody_backend_casino_operation": true,
+    "mainnet": true,
+    "ui_result_generation": true
+  },
+  "next_real_development_area": "verifiable_entropy_randomisation"
+}

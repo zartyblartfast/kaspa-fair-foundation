@@ -1,0 +1,142 @@
+ENV-091 command results
+
+Pre-checks:
+
+$ git status --short
+PASS
+Initial status contained only expected in-progress ENV-091 files from the prior interrupted attempt:
+?? docs/env091-full-kip17-toccata-milestone.md
+?? docs/full-kip17-toccata-milestone-summary.md
+?? scripts/env091-full-kip17-toccata-milestone-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-091-full-kip17-toccata-milestone/
+
+$ git log --oneline -n 12
+PASS
+b1fa441 Fix UI validation for ENV-090 KIP-17 proof
+ee82cb7 Add KIP-17 covenant-enforced state transition
+8cff6ad Package live Toccata covenant lineage milestone
+2e17133 Add TN10 covenant lineage commitment reveal flow
+e664ef8 Add TN10 round-specific commitment reveal spike
+628c979 Inventory Toccata workarounds and select live replacement target
+f7d9a6f Package static mock verifiable demo milestone
+32ebb88 Add Rust-owned verifiable demo round generator
+1954fa8 Align round proof artifacts and define demo generation path
+e2266d0 Integrate app-facing Toccata fairness proof artifact
+4f57b9f Explain Toccata fairness proof in roulette UI
+01d2008 Add Toccata evidence-bound fairness verifier
+
+Required checks:
+
+$ cargo fmt --check
+PASS
+exit status: 0
+
+$ cargo check -p kaspa-foundation
+PASS
+exit status: 0
+output: Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+
+$ cargo check -p kaspa-fair-cli
+PASS
+exit status: 0
+output: Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s
+
+$ cargo test -p kaspa-foundation
+PASS
+exit status: 0
+summary: kaspa-foundation unit/integration/doc tests passed; 28 passed, 0 failed, 1 ignored across listed test binaries/doc-tests.
+
+$ cargo test -p kaspa-fair-cli
+PASS
+exit status: 0
+summary: 18 passed, 0 failed.
+
+$ node --check examples/roulette-poc/ui/app.js
+PASS
+exit status: 0
+
+$ node --check examples/roulette-poc/ui/roulette-table-renderer.js
+PASS
+exit status: 0
+
+$ git diff --check
+PASS
+exit status: 0
+
+$ scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+PASS
+exit status: 0
+output: ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+
+$ scripts/env083a-roulette-randomness-source-audit.sh
+PASS
+exit status: 0
+output: ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+
+$ scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+PASS
+exit status: 0
+output: USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+
+$ scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+PASS
+exit status: 0
+output: APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+
+$ scripts/env083f-round-proof-consistency-smoke.sh
+PASS
+exit status: 0
+output: ROUND_PROOF_CONSISTENCY_READY=PASS
+
+$ scripts/env084-verifiable-demo-round-generator-smoke.sh
+PASS
+exit status: 0
+output: VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+
+$ scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+PASS
+exit status: 0
+output: STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+
+$ scripts/env086-live-toccata-workaround-inventory-smoke.sh
+PASS
+exit status: 0
+output: LIVE_TOCCATA_WORKAROUND_INVENTORY_READY=PASS
+
+$ scripts/env087-tn10-round-commit-reveal-spike-smoke.sh
+PASS
+exit status: 0
+output: TN10_ROUND_COMMIT_REVEAL_SPIKE_READY=PASS
+
+$ scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh
+PASS
+exit status: 0
+output: TN10_COVENANT_LINEAGE_COMMIT_REVEAL_READY=PASS
+
+$ scripts/env089-live-toccata-covenant-lineage-milestone-smoke.sh
+PASS
+exit status: 0
+output: LIVE_TOCCATA_COVENANT_LINEAGE_MILESTONE_READY=PASS
+
+$ scripts/env090-kip17-covenant-enforced-transition-smoke.sh
+PASS
+exit status: 0
+output: KIP17_COVENANT_ENFORCED_TRANSITION_READY=PASS
+
+$ scripts/env090-ui-accepts-kip17-proof-smoke.sh
+PASS
+exit status: 0
+output: UI_ACCEPTS_KIP17_PROOF_READY=PASS
+
+$ scripts/env091-full-kip17-toccata-milestone-smoke.sh
+PASS
+exit status: 0
+output: FULL_KIP17_TOCCATA_MILESTONE_READY=PASS
+
+Artifact reconciliation:
+PASS
+Older ENV smoke scripts refreshed tracked older artifact status/evidence files during required checks. Those out-of-scope tracked rewrites were restored. ENV-091 smoke was patched to preserve ENV-090 tracked git-status artifacts when it invokes the ENV-090 smokes.
+
+Safety result:
+PASS
+ENV-091 smoke verified no wallet/private key/secret strings appear in ENV-090/ENV-091 artifacts using high-confidence private-key/token/seed-phrase patterns.
