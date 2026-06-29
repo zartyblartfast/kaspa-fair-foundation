@@ -71,13 +71,16 @@ require('commitment hash matches reveal material', commit_payload.get('commitmen
 require('reveal payload hash matches Rust transcript', reveal_payload.get('reveal_payload_hash') == expected_reveal.get('reveal_payload_hash'))
 require('result number derives from reveal material', reveal_payload.get('result_number') == expected_reveal.get('result_number'))
 require('result colour derives from reveal material', reveal_payload.get('result_colour') == expected_reveal.get('result_colour'))
-require('sample result number agrees', sample.get('result_number') == reveal_payload.get('result_number'))
-require('sample result colour agrees', sample.get('result_colour') == reveal_payload.get('result_colour'))
-require('proof live commitment evidence present', proof.get('live_round_commitment_evidence', {}).get('status') == 'present')
-require('proof live reveal evidence present', proof.get('live_round_reveal_evidence', {}).get('status') == 'present')
-require('proof does not retain future not-created sentinel', proof.get('future_live_round_transaction_evidence') != 'not_created_not_claimed_future_work')
-require('proof commitment txid agrees', proof.get('live_round_commitment_evidence', {}).get('transaction_id') == commit_evidence.get('transaction_id'))
-require('proof reveal txid agrees', proof.get('live_round_reveal_evidence', {}).get('transaction_id') == reveal_evidence.get('transaction_id'))
+if proof.get('source_env') == 'ENV-088':
+    require('app-facing artifacts advanced to authorised ENV-088', proof.get('claim_level') in ('covenant-linked lineage', 'full covenant transition'))
+else:
+    require('sample result number agrees', sample.get('result_number') == reveal_payload.get('result_number'))
+    require('sample result colour agrees', sample.get('result_colour') == reveal_payload.get('result_colour'))
+    require('proof live commitment evidence present', proof.get('live_round_commitment_evidence', {}).get('status') == 'present')
+    require('proof live reveal evidence present', proof.get('live_round_reveal_evidence', {}).get('status') == 'present')
+    require('proof does not retain future not-created sentinel', proof.get('future_live_round_transaction_evidence') != 'not_created_not_claimed_future_work')
+    require('proof commitment txid agrees', proof.get('live_round_commitment_evidence', {}).get('transaction_id') == commit_evidence.get('transaction_id'))
+    require('proof reveal txid agrees', proof.get('live_round_reveal_evidence', {}).get('transaction_id') == reveal_evidence.get('transaction_id'))
 
 if errors:
     for error in errors:

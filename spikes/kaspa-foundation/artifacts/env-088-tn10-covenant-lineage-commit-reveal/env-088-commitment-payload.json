@@ -1,0 +1,17 @@
+{
+  "commitment_domain": "kaspa-fair:env083c:roulette-commitment:v1",
+  "commitment_hash": "2ceb4da7d96972d4b2a50ce1cbc414c9f427f39b3a46d2c3b07554f66bbd60e4",
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "round_id": "env-088-covenant-round-0001",
+  "rule_version": "env-084-rust-owned-demo-round-rules-v1",
+  "safety_flags": {
+    "backend_custody": false,
+    "mainnet_supported": false,
+    "network": "testnet-10",
+    "production_randomness_claimed": false,
+    "real_betting": false,
+    "real_payouts": false
+  },
+  "schema": "kaspa-fair-env088-covenant-lineage-commitment-payload-v1",
+  "toccata_scope": "KIP-20 consensus output covenant binding; payload covenant_id is not accepted as evidence"
+}

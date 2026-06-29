@@ -1,0 +1,19 @@
+{
+  "commitment_txid": "ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65",
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "result_colour": "black",
+  "result_number": 26,
+  "reveal_payload_hash": "2c09fae68ffd9041ac2a82c36028e163f912d35f4ffcf112b235aae7fb9f9e5d",
+  "revealed_seed_material": "env088-demo-seed-0001",
+  "round_id": "env-088-covenant-round-0001",
+  "safety_flags": {
+    "backend_custody": false,
+    "mainnet_supported": false,
+    "network": "testnet-10",
+    "production_randomness_claimed": false,
+    "real_betting": false,
+    "real_payouts": false
+  },
+  "schema": "kaspa-fair-env088-covenant-lineage-reveal-payload-v1",
+  "toccata_scope": "KIP-20 consensus input/output covenant fields; payload covenant_id is not accepted as evidence"
+}

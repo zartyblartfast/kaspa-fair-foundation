@@ -44,8 +44,8 @@ require("evidence_mode live_readonly_tn10 missing", proof.get("evidence_mode") =
 require("anchor evidence_mode live_readonly_tn10 missing", proof_anchor.get("evidence_mode") == "live_readonly_tn10")
 require("covenant_id_confirmed missing", proof_anchor.get("covenant_id_confirmed") is True)
 require(
-    "ENV-087 live round transaction evidence present",
-    proof.get("future_live_round_transaction_evidence") == "replaced_by_env087_live_bare_tn10_anchor_evidence"
+    "ENV-087/ENV-088 live round transaction evidence present",
+    proof.get("future_live_round_transaction_evidence") in ("replaced_by_env087_live_bare_tn10_anchor_evidence", "replaced_by_env088_covenant_linked_lineage_evidence")
     and proof.get("live_round_commitment_evidence", {}).get("status") == "present"
     and proof.get("live_round_reveal_evidence", {}).get("status") == "present",
 )

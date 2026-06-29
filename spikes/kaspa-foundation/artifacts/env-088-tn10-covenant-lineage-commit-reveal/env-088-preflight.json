@@ -1,0 +1,29 @@
+{
+  "broadcast_readback_path_identified": true,
+  "broadcast_requested": true,
+  "claim_level": "preflight only; PASS requires direct TN10 non-null covenant fields",
+  "commitment_payload_hash": "dd281c30eff9faac56587b8abe26f30c3b8ed2f13f236c3d55396e4c4a6bba0d",
+  "compute_budget": 10,
+  "construction_path_can_set_non_null_covenant_fields": true,
+  "covenant_construction_types": [
+    "kaspa_consensus_core::tx::TransactionOutput::with_covenant",
+    "kaspa_consensus_core::tx::CovenantBinding",
+    "kaspa_consensus_core::tx::GenesisCovenantGroup",
+    "kaspa_consensus_core::tx::Transaction::populate_genesis_covenants",
+    "kaspa_consensus_core::tx::UtxoEntry::covenant_id"
+  ],
+  "covenant_construction_types_identified": true,
+  "mainnet_excluded": true,
+  "mainnet_supported": false,
+  "network": "testnet-10",
+  "output_covenant_binding_construction_implemented": true,
+  "private_key_material_written_to_artifacts": false,
+  "result": "READY",
+  "round_id": "env-088-covenant-round-0001",
+  "safe_testnet_key_path_available": true,
+  "schema": "kaspa-fair-env088-preflight-v1",
+  "secret_key_path_outside_repo": true,
+  "storage_mass_handling": "Transaction::new default storage mass; input compute budget set by TransactionInput::new_with_compute_budget",
+  "tn10_testnet_confirmed": true,
+  "transaction_version": 1
+}

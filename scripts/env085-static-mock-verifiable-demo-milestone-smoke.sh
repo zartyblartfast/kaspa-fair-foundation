@@ -52,10 +52,16 @@ require('proof verifier_result PASS', proof.get('verifier_result') == 'PASS')
 require('verifier_output PASS', verifier.get('verifier_result') == 'PASS')
 require('evidence_mode live_readonly_tn10', proof.get('evidence_mode') == 'live_readonly_tn10')
 require('anchor evidence_mode live_readonly_tn10', anchor.get('evidence_mode') == 'live_readonly_tn10')
-require('future live round transaction evidence not claimed', proof.get('future_live_round_transaction_evidence') == 'not_created_not_claimed_future_work')
+require('future/live round transaction evidence not claimed or replaced by authorised later ENV', proof.get('future_live_round_transaction_evidence') in ('not_created_not_claimed_future_work', 'replaced_by_env088_covenant_linked_lineage_evidence'))
 require('mock display only', safety.get('mock_display_only') is True)
-for flag in ['real_betting', 'real_payouts', 'backend_custody', 'wallet_access_used', 'private_key_access_used', 'signing_used', 'transaction_created', 'broadcast_used', 'mainnet_supported']:
+for flag in ['real_betting', 'real_payouts', 'backend_custody', 'mainnet_supported']:
     require(f'safety flag {flag} false', safety.get(flag) is False)
+if proof.get('source_env') == 'ENV-088':
+    for flag in ['wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+        require(f'authorised ENV-088 live tx flag {flag} true', safety.get(flag) is True)
+else:
+    for flag in ['wallet_access_used', 'private_key_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+        require(f'safety flag {flag} false', safety.get(flag) is False)
 if errors:
     for error in errors:
         print(f'FAIL: {error}', file=sys.stderr)

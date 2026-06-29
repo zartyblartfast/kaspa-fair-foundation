@@ -162,12 +162,17 @@ function validateProofArtifact(proofArtifact) {
   const rustOutput = proofArtifact.rust_verifier_output || {};
   const liveCommitment = proofArtifact.live_round_commitment_evidence || {};
   const liveReveal = proofArtifact.live_round_reveal_evidence || {};
-  const hasEnv087LiveRoundEvidence =
-    proofArtifact.future_live_round_transaction_evidence === "replaced_by_env087_live_bare_tn10_anchor_evidence" &&
+  const acceptedLiveEvidenceStates = [
+    "replaced_by_env087_live_bare_tn10_anchor_evidence",
+    "replaced_by_env088_covenant_linked_lineage_evidence",
+  ];
+  const acceptedClaimLevels = ["bare TN10 anchor", "covenant-linked lineage", "full covenant transition"];
+  const hasLiveRoundEvidence =
+    acceptedLiveEvidenceStates.includes(proofArtifact.future_live_round_transaction_evidence) &&
     liveCommitment.status === "present" &&
     liveReveal.status === "present" &&
-    liveCommitment.claim_level === "bare TN10 anchor" &&
-    liveReveal.claim_level === "bare TN10 anchor" &&
+    acceptedClaimLevels.includes(liveCommitment.claim_level) &&
+    acceptedClaimLevels.includes(liveReveal.claim_level) &&
     typeof liveCommitment.transaction_id === "string" &&
     liveCommitment.transaction_id.length === 64 &&
     typeof liveReveal.transaction_id === "string" &&
@@ -188,17 +193,17 @@ function validateProofArtifact(proofArtifact) {
     ["deterministic derivation check PASS", proofArtifact.deterministic_derivation_check_status === "PASS"],
     ["result number matches reveal", proofArtifact["result_number"] === reveal["result_number"]],
     ["result colour matches reveal", proofArtifact["result_colour"] === reveal["result_colour"]],
-    ["live round commitment/reveal evidence present", hasEnv087LiveRoundEvidence],
+    ["live round commitment/reveal evidence present", hasLiveRoundEvidence],
     ["Rust verifier checks passed", rustOutput.all_checks_passed === true],
     ["mock_display_only true", safety.mock_display_only === true],
     ["real_betting false", safety.real_betting === false],
     ["real_payouts false", safety.real_payouts === false],
     ["backend_custody false", safety.backend_custody === false],
-    ["wallet_access_used true for TN10-only ENV-087", safety.wallet_access_used === true],
+    ["wallet_access_used true for authorised TN10-only live ENV", safety.wallet_access_used === true],
     ["private_key_access_used false", safety.private_key_access_used === false],
-    ["signing_used true for TN10-only ENV-087", safety.signing_used === true],
-    ["transaction_created true for TN10-only ENV-087", safety.transaction_created === true],
-    ["broadcast_used true for TN10-only ENV-087", safety.broadcast_used === true],
+    ["signing_used true for authorised TN10-only live ENV", safety.signing_used === true],
+    ["transaction_created true for authorised TN10-only live ENV", safety.transaction_created === true],
+    ["broadcast_used true for authorised TN10-only live ENV", safety.broadcast_used === true],
     ["mainnet_supported false", safety.mainnet_supported === false],
     ["JSON mirror/export only", proofArtifact.json_mirror_export_only === true],
   ];
@@ -337,7 +342,7 @@ function renderProofSnapshot(proofArtifact) {
   rows.forEach(([key, value]) => {
     const li = document.createElement("li");
     const valueText = String(value);
-    const pass = ["PASS", "live_readonly_tn10", "yes", "replaced_by_env087_live_bare_tn10_anchor_evidence"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true") || valueText.includes("transaction_created: true") || valueText.includes("signing_used: true") || valueText.includes("broadcast_used: true") || valueText.includes("wallet_access_used: true");
+    const pass = ["PASS", "live_readonly_tn10", "yes", "replaced_by_env087_live_bare_tn10_anchor_evidence", "replaced_by_env088_covenant_linked_lineage_evidence", "covenant-linked lineage", "full covenant transition"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true") || valueText.includes("transaction_created: true") || valueText.includes("signing_used: true") || valueText.includes("broadcast_used: true") || valueText.includes("wallet_access_used: true");
     li.innerHTML = `<span class="kv-key">${escapeHtml(String(key))}</span><span class="kv-value ${pass ? "pass" : ""}"><code>${escapeHtml(valueText)}</code></span>`;
     ui.proofSnapshotList.appendChild(li);
   });

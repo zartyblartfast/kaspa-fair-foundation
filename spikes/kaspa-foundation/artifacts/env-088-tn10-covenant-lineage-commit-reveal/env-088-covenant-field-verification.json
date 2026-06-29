@@ -1,0 +1,11 @@
+{
+  "any_required_covenant_evidence_non_null": true,
+  "bare_tn10_anchor_rejected_for_env088_pass": true,
+  "claim_level": "covenant-linked lineage",
+  "commitment_output_covenant_evidence_non_null": true,
+  "evidence_source": "direct TN10 transaction readback fields, not payload JSON",
+  "payload_only_covenant_id_rejected": true,
+  "reveal_input_or_output_covenant_evidence_non_null": true,
+  "reveal_links_to_commitment": true,
+  "schema": "kaspa-fair-env088-covenant-field-verification-v1"
+}

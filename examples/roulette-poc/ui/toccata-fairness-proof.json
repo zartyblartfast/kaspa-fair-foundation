@@ -4,11 +4,11 @@
     "commitment": {
       "anchor_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
       "commitment_domain": "kaspa-fair:env083c:roulette-commitment:v1",
-      "commitment_hash": "c2654c1f9e9456ed638452d9b38dad98f62ba88e8afa3ee89e72bc6d39411ee7",
+      "commitment_hash": "2ceb4da7d96972d4b2a50ce1cbc414c9f427f39b3a46d2c3b07554f66bbd60e4",
       "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
       "evidence_mode": "live_readonly_tn10",
       "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
-      "round_id": "env-087-live-round-0001",
+      "round_id": "env-088-covenant-round-0001",
       "rule_version": "env-084-rust-owned-demo-round-rules-v1"
     },
     "reveal": {
@@ -17,31 +17,34 @@
       "evidence_mode": "live_readonly_tn10",
       "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
       "result_colour": "black",
-      "result_number": 24,
-      "reveal_payload_hash": "f0eda2e53b4a6886ec5d97017490df96720b6fbfb4d2a699d7ff8f24bb606245",
-      "revealed_seed_material": "env087-demo-seed-0001",
-      "round_id": "env-087-live-round-0001"
+      "result_number": 26,
+      "reveal_payload_hash": "2c09fae68ffd9041ac2a82c36028e163f912d35f4ffcf112b235aae7fb9f9e5d",
+      "revealed_seed_material": "env088-demo-seed-0001",
+      "round_id": "env-088-covenant-round-0001"
     }
   },
-  "claim_tier": "live_round_commitment_reveal_bare_tn10_anchor",
+  "claim_level": "covenant-linked lineage",
+  "claim_tier": "live_tn10_covenant_linked_lineage",
   "commitment_reveal_check_status": "PASS",
   "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
   "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
   "deterministic_derivation_check_status": "PASS",
   "evidence_mode": "live_readonly_tn10",
   "explicit_demo_seed_material_used": true,
-  "future_live_round_transaction_evidence": "replaced_by_env087_live_bare_tn10_anchor_evidence",
+  "future_live_round_transaction_evidence": "replaced_by_env088_covenant_linked_lineage_evidence",
   "json_mirror_export_only": true,
   "live_round_commitment_evidence": {
-    "claim_level": "bare TN10 anchor",
+    "claim_level": "covenant-linked lineage",
+    "covenant_evidence_non_null": true,
     "status": "present",
-    "transaction_id": "0c0c857b89e3b41a5e1a493309c77ed579a4ca0e02ffade11fc8e0d965d45b0b"
+    "transaction_id": "ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65"
   },
   "live_round_reveal_evidence": {
-    "claim_level": "bare TN10 anchor",
-    "commitment_txid": "0c0c857b89e3b41a5e1a493309c77ed579a4ca0e02ffade11fc8e0d965d45b0b",
+    "claim_level": "covenant-linked lineage",
+    "commitment_txid": "ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65",
+    "covenant_evidence_non_null": true,
     "status": "present",
-    "transaction_id": "b405a92e3e65348767f0d309460e6f0b5f23769dd3f7c24f404de3900f14dc02"
+    "transaction_id": "f8fe14932071ac49cdac9e4f3df1177b9655dffbd0ad66b0e7491d6f78e5654b"
   },
   "live_tn10_anchor": {
     "accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
@@ -75,8 +78,8 @@
   "production_randomness_claimed": false,
   "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
   "result_colour": "black",
-  "result_number": 24,
-  "round_id": "env-087-live-round-0001",
+  "result_number": 26,
+  "round_id": "env-088-covenant-round-0001",
   "rust_owned_generation": true,
   "rust_verifier_output": {
     "all_checks_passed": true,
@@ -96,7 +99,7 @@
       "result_colour_verifies": "PASS",
       "result_number_verifies": "PASS"
     },
-    "round_id": "env-087-live-round-0001",
+    "round_id": "env-088-covenant-round-0001",
     "schema": "kaspa-fair-env083c-verifier-output-v1",
     "verifier_result": "PASS"
   },
@@ -113,7 +116,7 @@
     "wallet_access_used": true
   },
   "schema": "kaspa-fair-roulette-ui-toccata-fairness-proof-v1",
-  "source_env": "ENV-087",
+  "source_env": "ENV-088",
   "source_schema": "kaspa-fair-env084-rust-owned-verifiable-demo-round-v1",
   "ui_contract": "static_readonly_export_for_roulette_poc",
   "ui_does_not_choose_result": true,

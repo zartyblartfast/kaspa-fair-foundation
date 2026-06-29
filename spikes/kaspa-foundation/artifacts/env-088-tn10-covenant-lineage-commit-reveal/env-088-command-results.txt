@@ -1,0 +1,65 @@
+ENV-088 command results (commands executed in this session)
+
+NOTE: live --broadcast command was executed once only; not rerun for transcript refresh.
+
+$ cargo fmt --check
+status: PASS (exit 0)
+
+$ cargo check -p kaspa-foundation
+status: PASS (exit 0)
+
+$ cargo check -p kaspa-fair-cli
+status: PASS (exit 0)
+
+$ cargo test -p kaspa-foundation
+status: PASS (exit 0)
+
+$ cargo test -p kaspa-fair-cli
+status: PASS (exit 0)
+
+$ node --check examples/roulette-poc/ui/app.js
+status: PASS (exit 0)
+
+$ node --check examples/roulette-poc/ui/roulette-table-renderer.js
+status: PASS (exit 0)
+
+$ git diff --check
+status: PASS (exit 0)
+
+$ scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env083a-roulette-randomness-source-audit.sh
+status: PASS (exit 0)
+
+$ scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env083f-round-proof-consistency-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env084-verifiable-demo-round-generator-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env086-live-toccata-workaround-inventory-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env087-tn10-round-commit-reveal-spike-smoke.sh
+status: PASS (exit 0)
+
+$ scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh
+status: PASS (exit 0)
+stdout: TN10_COVENANT_LINEAGE_COMMIT_REVEAL_READY=PASS
+
+$ cargo run -q -p kaspa-fair-cli -- env088-tn10-covenant-lineage-commit-reveal --round-id env-088-covenant-round-0001 --demo-seed "env088-demo-seed-0001" --network tn10 --preflight-only --json
+status: PASS (exit 0)
+
+$ cargo run -q -p kaspa-fair-cli -- env088-tn10-covenant-lineage-commit-reveal --round-id env-088-covenant-round-0001 --demo-seed "env088-demo-seed-0001" --network tn10 --broadcast --json
+status: PASS (exit 0)
+stdout: {"artifact_dir":"/root/kaspa-fair-foundation/crates/kaspa-fair-cli/../../spikes/kaspa-foundation/artifacts/env-088-tn10-covenant-lineage-commit-reveal","claim_level":"covenant-linked lineage","commitment_txid":"ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65","result":"PASS","reveal_txid":"f8fe14932071ac49cdac9e4f3df1177b9655dffbd0ad66b0e7491d6f78e5654b"}
