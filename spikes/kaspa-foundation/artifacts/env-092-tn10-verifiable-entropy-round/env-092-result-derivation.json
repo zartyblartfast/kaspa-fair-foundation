@@ -1,0 +1,8 @@
+{
+  "final_entropy_hash": "f14b87fafbb6d5b8fd3bc1126bf78a87205c1e0e5830543cf13c091eb139df52",
+  "rejection_sampling_counter": 0,
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "result_colour": "red",
+  "result_number": 34,
+  "schema": "kaspa-fair-env092-result-derivation-v1"
+}

@@ -1,0 +1,7 @@
+{
+  "entropy_delay_blue_score": 30,
+  "entropy_target_blue_score": 492892499,
+  "fixed_after_no_more_bets": true,
+  "fixed_by_no_more_bets_txid": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0",
+  "schema": "kaspa-fair-env092-entropy-target-v1"
+}

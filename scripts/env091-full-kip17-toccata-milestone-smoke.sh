@@ -71,7 +71,7 @@ require('invalid no increment rejected', enforcement.get('invalid_no_increment_r
 require('commitment direct TN10 accepted', commit_direct.get('is_accepted') is True and commit_direct.get('transaction_id') == '050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26')
 require('reveal direct TN10 accepted', reveal_direct.get('is_accepted') is True and reveal_direct.get('transaction_id') == '269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620')
 require('reveal readback links commitment', reveal_direct['inputs'][0].get('previous_outpoint_hash') == '050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26')
-require('UI accepts authorised proof evidence', 'PASS: app.js accepts current authorised ENV-090 proof' in ui_evidence)
+require('UI accepts authorised proof evidence', 'PASS: app.js accepts current authorised ENV-090 proof' in ui_evidence or 'PASS: app.js accepts current authorised ENV-090/ENV-092 proof' in ui_evidence)
 for label in [
     'unsafe mainnet proof rejected',
     'unsafe real betting proof rejected',

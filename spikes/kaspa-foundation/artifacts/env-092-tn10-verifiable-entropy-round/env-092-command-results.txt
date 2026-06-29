@@ -1,0 +1,23 @@
+ENV-092 command results
+
+Pre-check:
+git status --short: PASS (clean before implementation)
+git log --oneline -n 12: PASS (latest 0ad27a9, b1fa441, ee82cb7 present)
+
+ENV-092 preflight command: PASS
+cargo run -q -p kaspa-fair-cli -- env092-tn10-verifiable-entropy-round --round-id env-092-entropy-round-0001 --operator-seed env092-operator-seed-0001 --network tn10 --entropy-delay-blue-score 30 --preflight-only --json
+
+ENV-092 live command: PASS
+cargo run -q -p kaspa-fair-cli -- env092-tn10-verifiable-entropy-round --round-id env-092-entropy-round-0001 --operator-seed env092-operator-seed-0001 --network tn10 --entropy-delay-blue-score 30 --broadcast --json
+commitment_txid=dc1759cda016bf8a9b314daf7b6f82b628187affc2d58c4af8b5437810acf332
+no_more_bets_txid=fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0
+reveal_txid=31bb9a588e83b5299b5453f6451772e5c24b7ad8d02c9f0ba005b571a2efa5aa
+entropy_target_blue_score=492892499
+entropy_value_used_in_transcript=76b09cd0f4eaaaaa668df0af324a920fd44b4d5f75a0ef327df9e5d41c24cbe3
+result_number=34
+result_colour=red
+verifier_result=PASS
+claim_level=full_kip17_covenant_enforced_transition_with_live_tn10_entropy
+
+Required checks: all listed final acceptance commands passed in this session.
+Smoke readiness line: TN10_VERIFIABLE_ENTROPY_ROUND_READY=PASS

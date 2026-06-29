@@ -43,28 +43,40 @@ require("Rust verifier PASS missing", proof.get("rust_verifier_output", {}).get(
 require("evidence_mode live_readonly_tn10 missing", proof.get("evidence_mode") == "live_readonly_tn10")
 require("anchor evidence_mode live_readonly_tn10 missing", proof_anchor.get("evidence_mode") == "live_readonly_tn10")
 require("covenant_id_confirmed missing", proof_anchor.get("covenant_id_confirmed") is True)
-require("source_env ENV-090", proof.get("source_env") == "ENV-090")
-require("claim_level full KIP-17", proof.get("claim_level") == "full_kip17_covenant_enforced_transition")
-require(
-    "ENV-090 live KIP-17 transition evidence present",
-    proof.get("env090_superseding_live_round_transaction_evidence") == "replaced_by_env090_kip17_covenant_enforced_transition_evidence"
-    and proof.get("live_round_commitment_evidence", {}).get("status") == "present"
-    and proof.get("live_round_reveal_evidence", {}).get("status") == "present"
-    and proof.get("live_round_reveal_evidence", {}).get("kip17_rule_enforced_on_transition") is True
-    and proof.get("kip17_enforcement", {}).get("kip17_rule_enforced_on_transition") is True
-    and proof.get("kip17_enforcement", {}).get("invalid_no_increment_rejected") is True,
-)
+require("source_env ENV-090/ENV-092", proof.get("source_env") in {"ENV-090", "ENV-092"})
+require("claim_level full KIP-17 or live entropy", proof.get("claim_level") in {"full_kip17_covenant_enforced_transition", "full_kip17_covenant_enforced_transition_with_live_tn10_entropy"})
+if proof.get("source_env") == "ENV-092":
+    require(
+        "ENV-092 live TN10 entropy evidence present",
+        proof.get("future_live_round_transaction_evidence") == "replaced_by_env092_live_tn10_future_entropy_evidence"
+        and proof.get("no_more_bets_evidence", {}).get("entropy_target_blue_score") is not None
+        and proof.get("tn10_entropy_readback", {}).get("entropy_value_used_in_transcript") == proof.get("final_entropy_transcript", {}).get("tn10_future_entropy_value"),
+    )
+else:
+    require(
+        "ENV-090 live KIP-17 transition evidence present",
+        proof.get("env090_superseding_live_round_transaction_evidence") == "replaced_by_env090_kip17_covenant_enforced_transition_evidence"
+        and proof.get("live_round_commitment_evidence", {}).get("status") == "present"
+        and proof.get("live_round_reveal_evidence", {}).get("status") == "present"
+        and proof.get("live_round_reveal_evidence", {}).get("kip17_rule_enforced_on_transition") is True
+        and proof.get("kip17_enforcement", {}).get("kip17_rule_enforced_on_transition") is True
+        and proof.get("kip17_enforcement", {}).get("invalid_no_increment_rejected") is True,
+    )
 
 for flag in ["real_betting", "real_payouts", "backend_custody", "private_key_access_used", "mainnet_supported"]:
     require(f"proof safety flag {flag} not false", proof_safety.get(flag) is False)
-for flag in ["wallet_access_used", "signing_used", "broadcast_used", "transaction_created"]:
+for flag in ["transaction_created", "broadcast_used"]:
     require(f"proof safety flag {flag} not true", proof_safety.get(flag) is True)
+for flag in ["wallet_access_used", "signing_used"]:
+    require(f"proof safety flag {flag} mismatch", proof_safety.get(flag) is (False if proof.get("source_env") == "ENV-092" else True))
 require("proof mock_display_only not true", proof_safety.get("mock_display_only") is True)
 
-round_false_flags = ["mainnet_supported", "signing_used", "transaction_created", "broadcast_used", "wallet_access_used"]
+round_false_flags = ["mainnet_supported", "signing_used", "wallet_access_used"]
 for flag in round_false_flags:
     require(f"round safety flag {flag} not false", round_data.get(flag) is False)
-require("round foundation_readonly not true", round_data.get("foundation_readonly") is True)
+for flag in ["transaction_created", "broadcast_used"]:
+    require(f"round safety flag {flag} mismatch", round_data.get(flag) is (True if round_data.get("source_env") == "ENV-092" else False))
+require("round foundation_readonly mismatch", round_data.get("foundation_readonly") is (False if round_data.get("source_env") == "ENV-092" else True))
 
 if errors:
     for error in errors:

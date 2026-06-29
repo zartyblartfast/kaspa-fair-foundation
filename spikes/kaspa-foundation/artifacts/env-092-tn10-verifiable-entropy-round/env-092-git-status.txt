@@ -1,0 +1,34 @@
+M crates/kaspa-fair-cli/src/main.rs
+ M crates/kaspa-foundation/src/fairness.rs
+ M examples/roulette-poc/README.md
+ M examples/roulette-poc/ui/app.js
+ M examples/roulette-poc/ui/sample-round.json
+ M examples/roulette-poc/ui/toccata-fairness-proof.json
+ M scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+ M scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+ M scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+ M scripts/env083f-round-proof-consistency-smoke.sh
+ M scripts/env086-live-toccata-workaround-inventory-smoke.sh
+ M scripts/env087-tn10-round-commit-reveal-spike-smoke.sh
+ M scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh
+ M scripts/env090-kip17-covenant-enforced-transition-smoke.sh
+ M scripts/env090-ui-accepts-kip17-proof-smoke.sh
+ M scripts/env091-full-kip17-toccata-milestone-smoke.sh
+?? crates/kaspa-foundation/tests/env092_tn10_verifiable_entropy_round.rs
+?? docs/env092-tn10-verifiable-entropy-round.md
+?? scripts/env092-tn10-verifiable-entropy-round-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-commitment-payload.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-entropy-target.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-final-entropy-transcript.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-negative-checks.txt
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-no-more-bets-evidence.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-preflight.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-result-derivation.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-reveal-payload.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-safety-flags.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-secret-scan.txt
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-summary.md
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-tn10-entropy-readback.json
+?? spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round/env-092-verifier-output.json

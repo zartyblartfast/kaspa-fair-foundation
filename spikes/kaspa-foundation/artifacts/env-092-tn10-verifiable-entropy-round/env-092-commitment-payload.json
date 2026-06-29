@@ -1,0 +1,17 @@
+{
+  "commitment_hash": "293c769ee41d89ecd830175504a086faa6bc4ff0b57351cad49b99f19ebab0d2",
+  "kip17_state": "RoundOpenedCommitment",
+  "network": "testnet-10",
+  "operator_seed_revealed": false,
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "round_id": "env-092-entropy-round-0001",
+  "rule_version": "env-092-live-tn10-entropy-rules-v1",
+  "safety_flags": {
+    "backend_custody": false,
+    "mainnet_supported": false,
+    "production_randomness_claimed": false,
+    "real_betting": false,
+    "real_payouts": false
+  },
+  "schema": "kaspa-fair-env092-commitment-payload-v1"
+}

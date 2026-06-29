@@ -1,0 +1,52 @@
+{
+  "accepting_block_hash": "9fe820642de24be7693b8d8a3e426a4a778dfeaa16dac624ed99ef5ecf32f578",
+  "entropy_delay_blue_score": 30,
+  "entropy_target_blue_score": 492892499,
+  "is_accepted": true,
+  "no_more_bets_accepting_blue_score": 492892469,
+  "no_more_bets_txid": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0",
+  "readback": {
+    "accepting_block_blue_score": 492892469,
+    "accepting_block_hash": "9fe820642de24be7693b8d8a3e426a4a778dfeaa16dac624ed99ef5ecf32f578",
+    "accepting_block_time": 1782738351789,
+    "block_hash": [
+      "893637083b2246ced0498dd8090ccf6d4f38ca1622b6175bcd1be7ce664237ad"
+    ],
+    "block_time": 1782738351277,
+    "hash": "4d346911f0cbe132c19f6f4c9415899a15bf7511e03065fc9294eec7dbd08ae8",
+    "inputs": [
+      {
+        "compute_budget": 10,
+        "covenant_id": "c49d4acec1a99f34d92c96277f6a1176081735c738874b443050417f4d91fcbc",
+        "index": 0,
+        "previous_outpoint_address": "kaspatest:pp2rws0p75dxm6mnv888hgvnfpqdfqpnx8x9v89g3cy6uhqndclsqcm282z9l",
+        "previous_outpoint_amount": 97300000,
+        "previous_outpoint_hash": "dc1759cda016bf8a9b314daf7b6f82b628187affc2d58c4af8b5437810acf332",
+        "previous_outpoint_index": "0",
+        "sig_op_count": null,
+        "signature_script": "3e080200000000000000b9008800cb5188000051bc013e88005152bc58888b58cd587c7e005a00c9bc7eaa040000aa207c7e01877e0000cc000000ccc7c887",
+        "transaction_id": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0"
+      }
+    ],
+    "is_accepted": true,
+    "mass": "2001",
+    "outputs": [
+      {
+        "amount": 97000000,
+        "covenant_authorizing_input": 0,
+        "covenant_id": "c49d4acec1a99f34d92c96277f6a1176081735c738874b443050417f4d91fcbc",
+        "index": 0,
+        "script_public_key": "aa20ed4f20543c31164b21842b1c269b93249fcd6880a91e82bee51116eb5bb86e9387",
+        "script_public_key_address": "kaspatest:prk57gz58sc3vjepss43cf5mjvjflntgsz53aq47u5g3d66mhphfxjrhdq7hn",
+        "script_public_key_type": "scripthash",
+        "transaction_id": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0"
+      }
+    ],
+    "payload": "7b22636f6d6d69746d656e745f74786964223a2264633137353963646130313662663861396233313464616637623666383262363238313837616666633264353863346166386235343337383130616366333332222c22656e74726f70795f64656c61795f626c75655f73636f7265223a33302c226e6574776f726b223a22746573746e65742d3130222c22726f756e645f6964223a22656e762d3039322d656e74726f70792d726f756e642d30303031222c22736368656d61223a226b617370612d666169722d656e763039322d6e6f2d6d6f72652d626574732d7061796c6f61642d7631222c227374617465223a224e6f4d6f726542657473222c227461726765745f666f726d756c61223a226e6f5f6d6f72655f626574735f616363657074696e675f626c75655f73636f7265202b20656e74726f70795f64656c61795f626c75655f73636f7265227d",
+    "subnetwork_id": "0000000000000000000000000000000000000000",
+    "transaction_id": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0",
+    "version": 1
+  },
+  "schema": "kaspa-fair-env092-no-more-bets-evidence-v1",
+  "target_formula": "no_more_bets_accepting_blue_score + entropy_delay_blue_score"
+}

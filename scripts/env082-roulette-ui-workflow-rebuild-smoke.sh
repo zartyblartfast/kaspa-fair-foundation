@@ -118,10 +118,11 @@ check('return "2 to 1";' in renderer_js, 'column visible label 2 to 1 missing')
 check('RouletteTableRenderer.render(ui.rouletteTableSvgHost, appState.tableSchema' in app_js, 'table is not rendered from loaded schema state')
 check('flattenHotspotZones(schema).forEach((zone) => appendZone(svg, zone, options));' in renderer_js, 'hotspots are not rendered from schema')
 
+allows_live_env092 = round_json.get('source_env') == 'ENV-092'
 check(round_json['mainnet_supported'] is False, 'sample round mainnet_supported must be false')
 check(round_json['signing_used'] is False, 'sample round signing_used must be false')
-check(round_json['transaction_created'] is False, 'sample round transaction_created must be false')
-check(round_json['broadcast_used'] is False, 'sample round broadcast_used must be false')
+check(round_json['transaction_created'] is (True if allows_live_env092 else False), 'sample round transaction_created safety flag mismatch')
+check(round_json['broadcast_used'] is (True if allows_live_env092 else False), 'sample round broadcast_used safety flag mismatch')
 check(round_json['wallet_access_used'] is False, 'sample round wallet_access_used must be false')
 check(schema['mock_only'] is True and schema['mainnet_supported'] is False, 'table schema safety flags not preserved')
 PY

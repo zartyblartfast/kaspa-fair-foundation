@@ -1,0 +1,26 @@
+{
+  "broadcast_requested": false,
+  "commitment_hash": "293c769ee41d89ecd830175504a086faa6bc4ff0b57351cad49b99f19ebab0d2",
+  "entropy_delay_blue_score": 30,
+  "entropy_target_readback_path_identified": "https://api-tn10.kaspa.org/blocks-from-bluescore?blueScoreGte=<target>&includeTransactions=false",
+  "kip17_lifecycle_command_path_available": true,
+  "kip17_starting_transition_readback_available": true,
+  "kip17_starting_transition_txid": "269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620",
+  "local_kip17_negative_check": {
+    "invalid_no_increment_rejected": true,
+    "invalid_reuse_previous_state_rejected": true,
+    "invalid_skip_state_rejected": true,
+    "valid_increment_transition_passed": true
+  },
+  "mainnet_impossible": true,
+  "mainnet_supported": false,
+  "network": "testnet-10",
+  "no_secrets_in_repo_expected": true,
+  "no_ui_randomness": true,
+  "operator_seed_not_written_before_reveal": true,
+  "result": "PREFLIGHT_ONLY",
+  "resume_requested": false,
+  "schema": "kaspa-fair-env092-preflight-v1",
+  "testnet_only_funds_key_path_safe": "no new helper key required for continuation spend; existing KIP-17 covenant output spend path used",
+  "tn10_only": true
+}

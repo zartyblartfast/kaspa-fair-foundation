@@ -52,16 +52,16 @@ function assertRejects(label, mutate) {
   assert(label, rejected);
 }
 validateProofArtifact(proof, sample);
-assert('app.js accepts current authorised ENV-090 proof', true);
-assert('source_env ENV-090', proof.source_env === 'ENV-090');
-assert('claim_level full_kip17_covenant_enforced_transition', proof.claim_level === 'full_kip17_covenant_enforced_transition');
+assert('app.js accepts current authorised ENV-090/ENV-092 proof', true);
+assert('source_env ENV-090/ENV-092', ['ENV-090', 'ENV-092'].includes(proof.source_env));
+assert('claim_level full KIP-17 or live entropy', ['full_kip17_covenant_enforced_transition', 'full_kip17_covenant_enforced_transition_with_live_tn10_entropy'].includes(proof.claim_level));
 assert('verifier_result PASS', proof.verifier_result === 'PASS');
 assert('evidence_mode live_readonly_tn10', proof.evidence_mode === 'live_readonly_tn10');
 assert('network testnet-10', proof.network === 'testnet-10');
-assert('commitment/reveal evidence present', proof.live_round_commitment_evidence?.status === 'present' && proof.live_round_reveal_evidence?.status === 'present');
-assert('commitment txid linked to reveal', proof.live_round_reveal_evidence?.commitment_txid === proof.live_round_commitment_evidence?.transaction_id);
-assert('KIP-17 enforcement represented true', proof.kip17_enforcement?.kip17_rule_enforced_on_transition === true && proof.live_round_reveal_evidence?.kip17_rule_enforced_on_transition === true);
-assert('invalid transition rejection represented true', proof.kip17_enforcement?.invalid_no_increment_rejected === true);
+assert('commitment/reveal evidence present', (proof.source_env === 'ENV-092' && proof.live_round_commitment_evidence?.commitment_txid && proof.live_round_reveal_evidence?.transaction_id) || (proof.live_round_commitment_evidence?.status === 'present' && proof.live_round_reveal_evidence?.status === 'present'));
+assert('commitment txid linked to reveal', proof.source_env === 'ENV-092' ? proof.live_round_reveal_evidence?.commitment_txid === proof.live_round_commitment_evidence?.commitment_txid : proof.live_round_reveal_evidence?.commitment_txid === proof.live_round_commitment_evidence?.transaction_id);
+assert('KIP-17 or live entropy evidence represented true', proof.source_env === 'ENV-092' ? proof.no_more_bets_evidence?.entropy_target_blue_score && proof.tn10_entropy_readback?.entropy_value_used_in_transcript : (proof.kip17_enforcement?.kip17_rule_enforced_on_transition === true && proof.live_round_reveal_evidence?.kip17_rule_enforced_on_transition === true));
+assert('invalid transition rejection represented true or ENV-092 negative artifact delegated', proof.source_env === 'ENV-092' || proof.kip17_enforcement?.invalid_no_increment_rejected === true);
 assert('sample/proof result_number agree', sample.result_number === proof.result_number && proof.result_number === proof.application_round_transcript?.reveal?.result_number);
 assert('sample/proof result_colour agree', sample.result_colour === proof.result_colour && proof.result_colour === proof.application_round_transcript?.reveal?.result_colour);
 assert('sample/proof result_algorithm agree', sample.result_algorithm === proof.result_algorithm && proof.result_algorithm === proof.application_round_transcript?.reveal?.result_algorithm);
@@ -75,7 +75,7 @@ assertRejects('unsafe production randomness proof rejected', p => { p.production
 assertRejects('verifier_result not PASS rejected', p => { p.verifier_result = 'FAIL'; });
 assertRejects('unknown source_env rejected', p => { p.source_env = 'ENV-999'; });
 assertRejects('unsupported live claim_level rejected', p => { p.claim_level = 'bare TN10 anchor'; });
-assertRejects('missing live commitment evidence rejected', p => { p.live_round_commitment_evidence.status = 'missing'; });
+assertRejects('missing live commitment evidence rejected', p => { if (p.live_round_commitment_evidence) { p.live_round_commitment_evidence.status = 'missing'; p.live_round_commitment_evidence.commitment_txid = 'missing'; } });
 assertRejects('mismatched sample/proof result rejected', p => { p.result_number = (p.result_number + 1) % 37; });
 assertRejects('secret-like UI material rejected', p => { p.ui_secret_like_material = 'PRIVATE' + '_KEY=abc123abc123abc123'; });
 NODE

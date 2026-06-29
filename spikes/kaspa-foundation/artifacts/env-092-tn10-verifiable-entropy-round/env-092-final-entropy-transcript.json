@@ -1,0 +1,16 @@
+{
+  "commitment_hash": "293c769ee41d89ecd830175504a086faa6bc4ff0b57351cad49b99f19ebab0d2",
+  "commitment_txid": "dc1759cda016bf8a9b314daf7b6f82b628187affc2d58c4af8b5437810acf332",
+  "domain": "kaspa-fair:env092:final-entropy-transcript:v1",
+  "entropy_source_blue_score": 492892499,
+  "entropy_source_type": "tn10_block_hash_at_or_after_target_blue_score",
+  "entropy_target_blue_score": 492892499,
+  "no_more_bets_txid": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0",
+  "operator_seed": "env092-operator-seed-0001",
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "reveal_txid": "31bb9a588e83b5299b5453f6451772e5c24b7ad8d02c9f0ba005b571a2efa5aa",
+  "round_id": "env-092-entropy-round-0001",
+  "rule_version": "env-092-live-tn10-entropy-rules-v1",
+  "schema": "kaspa-fair-env092-final-entropy-transcript-v1",
+  "tn10_future_entropy_value": "76b09cd0f4eaaaaa668df0af324a920fd44b4d5f75a0ef327df9e5d41c24cbe3"
+}

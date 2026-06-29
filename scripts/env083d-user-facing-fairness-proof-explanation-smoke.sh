@@ -62,9 +62,11 @@ assert isinstance(sample.get('result_number'), int) and 0 <= sample['result_numb
 assert sample.get('result_colour') in {'green', 'red', 'black'}
 assert sample.get('foundation_verifier_result') == 'PASS'
 assert sample.get('foundation_network') == 'testnet-10'
-assert sample.get('foundation_readonly') is True
-for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+assert sample.get('foundation_readonly') is (False if sample.get('source_env') == 'ENV-092' else True)
+for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used']:
     assert sample.get(flag) is False
+for flag in ['transaction_created', 'broadcast_used']:
+    assert sample.get(flag) is (True if sample.get('source_env') == 'ENV-092' else False)
 PY
 
 require_text "$UI" '>Start Wheel<'

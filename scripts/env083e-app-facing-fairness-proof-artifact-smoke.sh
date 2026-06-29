@@ -45,9 +45,9 @@ require_text "$UI" 'ENV-087 adds authorised TN10-only live round-specific commit
 require_text "$PROOF" '"verifier_result"[[:space:]]*:[[:space:]]*"PASS"'
 require_text "$PROOF" '"evidence_mode"[[:space:]]*:[[:space:]]*"live_readonly_tn10"'
 require_text "$PROOF" '"covenant_id_confirmed"[[:space:]]*:[[:space:]]*true'
-require_text "$PROOF" '"source_env"[[:space:]]*:[[:space:]]*"ENV-090"'
-require_text "$PROOF" '"claim_level"[[:space:]]*:[[:space:]]*"full_kip17_covenant_enforced_transition"'
-require_text "$PROOF" '"env090_superseding_live_round_transaction_evidence"[[:space:]]*:[[:space:]]*"replaced_by_env090_kip17_covenant_enforced_transition_evidence"'
+require_text "$PROOF" '"source_env"[[:space:]]*:[[:space:]]*"ENV-(090|092)"'
+require_text "$PROOF" '"claim_level"[[:space:]]*:[[:space:]]*"(full_kip17_covenant_enforced_transition|full_kip17_covenant_enforced_transition_with_live_tn10_entropy)"'
+require_text "$PROOF" '"(env090_superseding_live_round_transaction_evidence|future_live_round_transaction_evidence)"[[:space:]]*:[[:space:]]*"(replaced_by_env090_kip17_covenant_enforced_transition_evidence|replaced_by_env092_live_tn10_future_entropy_evidence)"'
 require_text "$PROOF" '"live_round_commitment_evidence"'
 require_text "$PROOF" '"live_round_reveal_evidence"'
 require_text "$PROOF" '"commitment_reveal_check_status"[[:space:]]*:[[:space:]]*"PASS"'
@@ -56,9 +56,9 @@ require_text "$PROOF" '"mock_display_only"[[:space:]]*:[[:space:]]*true'
 require_text "$PROOF" '"real_betting"[[:space:]]*:[[:space:]]*false'
 require_text "$PROOF" '"real_payouts"[[:space:]]*:[[:space:]]*false'
 require_text "$PROOF" '"backend_custody"[[:space:]]*:[[:space:]]*false'
-require_text "$PROOF" '"wallet_access_used"[[:space:]]*:[[:space:]]*true'
+require_text "$PROOF" '"wallet_access_used"[[:space:]]*:[[:space:]]*(true|false)'
 require_text "$PROOF" '"private_key_access_used"[[:space:]]*:[[:space:]]*false'
-require_text "$PROOF" '"signing_used"[[:space:]]*:[[:space:]]*true'
+require_text "$PROOF" '"signing_used"[[:space:]]*:[[:space:]]*(true|false)'
 require_text "$PROOF" '"transaction_created"[[:space:]]*:[[:space:]]*true'
 require_text "$PROOF" '"broadcast_used"[[:space:]]*:[[:space:]]*true'
 require_text "$PROOF" '"mainnet_supported"[[:space:]]*:[[:space:]]*false'
@@ -89,20 +89,31 @@ assert sample.get('result_algorithm') == proof.get('result_algorithm') == reveal
 assert sample.get('final_result') == 'PASS'
 assert proof.get('verifier_result') == 'PASS'
 assert proof.get('evidence_mode') == 'live_readonly_tn10'
-assert proof.get('source_env') == 'ENV-090'
-assert proof.get('claim_level') == 'full_kip17_covenant_enforced_transition'
-assert proof.get('env090_superseding_live_round_transaction_evidence') == 'replaced_by_env090_kip17_covenant_enforced_transition_evidence'
-assert proof.get('live_round_commitment_evidence', {}).get('status') == 'present'
-assert proof.get('live_round_reveal_evidence', {}).get('status') == 'present'
-assert proof.get('live_round_reveal_evidence', {}).get('kip17_rule_enforced_on_transition') is True
-assert proof.get('kip17_enforcement', {}).get('kip17_rule_enforced_on_transition') is True
-assert proof.get('kip17_enforcement', {}).get('invalid_no_increment_rejected') is True
-for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+assert proof.get('source_env') in {'ENV-090', 'ENV-092'}
+assert proof.get('claim_level') in {'full_kip17_covenant_enforced_transition', 'full_kip17_covenant_enforced_transition_with_live_tn10_entropy'}
+if proof.get('source_env') == 'ENV-092':
+    assert proof.get('future_live_round_transaction_evidence') == 'replaced_by_env092_live_tn10_future_entropy_evidence'
+    assert proof.get('no_more_bets_evidence', {}).get('entropy_target_blue_score') is not None
+    assert proof.get('tn10_entropy_readback', {}).get('entropy_value_used_in_transcript') == proof.get('final_entropy_transcript', {}).get('tn10_future_entropy_value')
+else:
+    assert proof.get('env090_superseding_live_round_transaction_evidence') == 'replaced_by_env090_kip17_covenant_enforced_transition_evidence'
+    assert proof.get('live_round_commitment_evidence', {}).get('status') == 'present'
+    assert proof.get('live_round_reveal_evidence', {}).get('status') == 'present'
+    assert proof.get('live_round_reveal_evidence', {}).get('kip17_rule_enforced_on_transition') is True
+    assert proof.get('kip17_enforcement', {}).get('kip17_rule_enforced_on_transition') is True
+if proof.get('source_env') != 'ENV-092':
+    assert proof.get('kip17_enforcement', {}).get('invalid_no_increment_rejected') is True
+sample_live_env092 = sample.get('source_env') == 'ENV-092'
+for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used']:
     assert sample.get(flag) is False
+for flag in ['transaction_created', 'broadcast_used']:
+    assert sample.get(flag) is (True if sample_live_env092 else False)
 for flag in ['real_betting', 'real_payouts', 'backend_custody', 'private_key_access_used', 'mainnet_supported']:
     assert proof.get('safety_flags', {}).get(flag) is False
-for flag in ['wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
+for flag in ['transaction_created', 'broadcast_used']:
     assert proof.get('safety_flags', {}).get(flag) is True
+for flag in ['wallet_access_used', 'signing_used']:
+    assert proof.get('safety_flags', {}).get(flag) is (False if proof.get('source_env') == 'ENV-092' else True)
 PY
 
 for file in "$UI" "$APP_JS" "$RENDERER_JS"; do

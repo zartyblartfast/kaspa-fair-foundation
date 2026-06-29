@@ -1,0 +1,112 @@
+{
+  "checks": [
+    {
+      "detail": "PASS",
+      "name": "source env",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "verifier result",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "claim level",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "network",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "round id agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/proof result number agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/proof result colour agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/proof algorithm agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "commitment hash matches reveal",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "target recorded",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "entropy after target",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "entropy value present",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "transcript includes entropy",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "final entropy hash",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "result number verifies",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "result colour verifies",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "safety flag false",
+      "passed": true
+    }
+  ],
+  "round_id": "env-092-entropy-round-0001",
+  "schema": "kaspa-fair-env083c-verifier-output-v1",
+  "verifier_result": "PASS"
+}

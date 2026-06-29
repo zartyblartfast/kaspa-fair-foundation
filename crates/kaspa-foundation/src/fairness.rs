@@ -780,6 +780,211 @@ pub fn build_env084_verifiable_demo_round(
     Ok((sample_round, proof_artifact, verifier_output))
 }
 
+pub const ENV092_RULE_VERSION: &str = "env-092-live-tn10-entropy-rules-v1";
+pub const ENV092_CLAIM_LEVEL: &str =
+    "full_kip17_covenant_enforced_transition_with_live_tn10_entropy";
+pub const ENV092_TRANSCRIPT_DOMAIN: &str = "kaspa-fair:env092:final-entropy-transcript:v1";
+
+pub fn env092_operator_commitment_hash(
+    round_id: &str,
+    operator_seed: &str,
+    result_algorithm: &str,
+    rule_version: &str,
+) -> String {
+    let transcript = json!({
+        "domain": "kaspa-fair:env092:operator-seed-commitment:v1",
+        "round_id": round_id,
+        "operator_seed": operator_seed,
+        "result_algorithm": result_algorithm,
+        "rule_version": rule_version,
+        "network": ENV083C_NETWORK,
+    });
+    blake3::hash(&serde_json::to_vec(&transcript).unwrap())
+        .to_hex()
+        .to_string()
+}
+
+pub fn env092_final_entropy_hash(transcript: &Value) -> Result<String, String> {
+    let mut hasher = blake3::Hasher::new();
+    hasher.update(ENV092_TRANSCRIPT_DOMAIN.as_bytes());
+    hasher.update(&serde_json::to_vec(transcript).map_err(|err| err.to_string())?);
+    Ok(hasher.finalize().to_hex().to_string())
+}
+
+pub fn env092_build_result_derivation(
+    transcript: &Value,
+) -> Result<(String, u8, String, u64), String> {
+    let final_entropy_hash = env092_final_entropy_hash(transcript)?;
+    let seed_bytes = final_entropy_hash.as_bytes();
+    let result_number = derive_roulette_number(seed_bytes)?;
+    let result_colour = colour_for_number(result_number)?.to_string();
+    Ok((final_entropy_hash, result_number, result_colour, 0))
+}
+
+pub fn verify_env092_generated_artifacts(
+    sample_round: &Value,
+    proof_artifact: &Value,
+) -> Result<VerificationReport, String> {
+    let mut checks = Vec::new();
+    let round_id = str_field(sample_round, "round_id")?;
+    check(
+        &mut checks,
+        "source env",
+        str_field(sample_round, "source_env")? == "ENV-092"
+            && str_field(proof_artifact, "source_env")? == "ENV-092",
+    );
+    check(
+        &mut checks,
+        "verifier result",
+        str_field(proof_artifact, "verifier_result")? == "PASS",
+    );
+    check(
+        &mut checks,
+        "claim level",
+        str_field(proof_artifact, "claim_level")? == ENV092_CLAIM_LEVEL,
+    );
+    check(
+        &mut checks,
+        "network",
+        str_field(proof_artifact, "network")? == ENV083C_NETWORK,
+    );
+    check(
+        &mut checks,
+        "round id agreement",
+        str_field(proof_artifact, "round_id")? == round_id,
+    );
+    check(
+        &mut checks,
+        "sample/proof result number agreement",
+        u8_field(sample_round, "result_number")? == u8_field(proof_artifact, "result_number")?,
+    );
+    check(
+        &mut checks,
+        "sample/proof result colour agreement",
+        str_field(sample_round, "result_colour")? == str_field(proof_artifact, "result_colour")?,
+    );
+    check(
+        &mut checks,
+        "sample/proof algorithm agreement",
+        str_field(sample_round, "result_algorithm")?
+            == str_field(proof_artifact, "result_algorithm")?,
+    );
+    check(
+        &mut checks,
+        "sample production randomness false",
+        !bool_field(sample_round, "production_randomness_claimed")?,
+    );
+    let transcript = proof_artifact
+        .get("final_entropy_transcript")
+        .ok_or("missing final_entropy_transcript")?;
+    let operator_seed = str_field(transcript, "operator_seed")?;
+    let commitment = proof_artifact
+        .get("application_round_transcript")
+        .and_then(|v| v.get("commitment"))
+        .ok_or("missing commitment")?;
+    let expected_commitment_hash = env092_operator_commitment_hash(
+        round_id,
+        operator_seed,
+        str_field(transcript, "result_algorithm")?,
+        str_field(transcript, "rule_version")?,
+    );
+    check(
+        &mut checks,
+        "commitment hash matches reveal",
+        str_field(commitment, "commitment_hash")? == expected_commitment_hash,
+    );
+    let no_more = proof_artifact
+        .get("no_more_bets_evidence")
+        .ok_or("missing no_more_bets_evidence")?;
+    let entropy = proof_artifact
+        .get("tn10_entropy_readback")
+        .ok_or("missing tn10_entropy_readback")?;
+    check(
+        &mut checks,
+        "target recorded",
+        u64_field(no_more, "entropy_target_blue_score")?
+            >= u64_field(no_more, "no_more_bets_accepting_blue_score")?
+                + u64_field(no_more, "entropy_delay_blue_score")?,
+    );
+    check(
+        &mut checks,
+        "entropy after target",
+        u64_field(entropy, "entropy_source_blue_score")?
+            >= u64_field(no_more, "entropy_target_blue_score")?,
+    );
+    check(
+        &mut checks,
+        "entropy value present",
+        !str_field(entropy, "entropy_value_used_in_transcript")?.is_empty(),
+    );
+    check(
+        &mut checks,
+        "transcript includes entropy",
+        str_field(transcript, "tn10_future_entropy_value")?
+            == str_field(entropy, "entropy_value_used_in_transcript")?,
+    );
+    let (expected_hash, expected_number, expected_colour, _) =
+        env092_build_result_derivation(transcript)?;
+    check(
+        &mut checks,
+        "final entropy hash",
+        str_field(proof_artifact, "final_entropy_hash")? == expected_hash,
+    );
+    check(
+        &mut checks,
+        "result number verifies",
+        u8_field(proof_artifact, "result_number")? == expected_number,
+    );
+    check(
+        &mut checks,
+        "result colour verifies",
+        str_field(proof_artifact, "result_colour")? == expected_colour,
+    );
+    let safety = proof_artifact
+        .get("safety_flags")
+        .ok_or("missing safety_flags")?;
+    for flag in [
+        "real_betting",
+        "real_payouts",
+        "backend_custody",
+        "production_randomness_claimed",
+        "mainnet_supported",
+    ] {
+        check(&mut checks, "safety flag false", !bool_field(safety, flag)?);
+    }
+    if checks.iter().all(|c| c.passed) {
+        Ok(VerificationReport {
+            schema: ENV083C_VERIFIER_SCHEMA.to_string(),
+            round_id: round_id.to_string(),
+            verifier_result: "PASS".to_string(),
+            checks,
+        })
+    } else {
+        Err(format!(
+            "ENV-092 verifier rejected generated artifacts: {}",
+            checks
+                .iter()
+                .filter(|c| !c.passed)
+                .map(|c| c.name)
+                .collect::<Vec<_>>()
+                .join(", ")
+        ))
+    }
+}
+
+fn u64_field<'a>(value: &'a Value, field: &str) -> Result<u64, String> {
+    value
+        .get(field)
+        .and_then(Value::as_u64)
+        .or_else(|| {
+            value
+                .get(field)
+                .and_then(Value::as_str)
+                .and_then(|s| s.parse().ok())
+        })
+        .ok_or_else(|| format!("missing/invalid u64 field {field}"))
+}
+
 pub fn verify_env084_generated_artifacts(
     sample_round: &Value,
     proof_artifact: &Value,

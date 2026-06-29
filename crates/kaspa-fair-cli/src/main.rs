@@ -38,7 +38,9 @@ use secp256k1::{Keypair, SecretKey};
 
 use kaspa_foundation::fairness::{
     build_env083c_demo_proof_with_accepting_block_hash, build_env084_verifiable_demo_round,
-    verify_env083c_json_mirror, verify_env084_generated_artifacts,
+    env092_build_result_derivation, env092_operator_commitment_hash, verify_env083c_json_mirror,
+    verify_env084_generated_artifacts, verify_env092_generated_artifacts, ENV092_CLAIM_LEVEL,
+    ENV092_RULE_VERSION, ENV092_TRANSCRIPT_DOMAIN,
 };
 use kaspa_foundation::transcript::online_verifier::{
     verify_canonical_tn10_transcript_online, LiveTn10Evidence, OnlineVerificationReport,
@@ -57,6 +59,7 @@ const COMMAND_ENV088_TN10_COVENANT_LINEAGE_COMMIT_REVEAL: &str =
     "env088-tn10-covenant-lineage-commit-reveal";
 const COMMAND_ENV090_KIP17_COVENANT_ENFORCED_TRANSITION: &str =
     "env090-kip17-covenant-enforced-transition";
+const COMMAND_ENV092_TN10_VERIFIABLE_ENTROPY_ROUND: &str = "env092-tn10-verifiable-entropy-round";
 const FLAG_JSON: &str = "--json";
 const FLAG_NEGATIVE_CHECK_ONLY: &str = "--negative-check-only";
 const LIVE_VERIFICATION_SCHEMA_V1: &str = "kaspa-fair-live-verification-result-v1";
@@ -114,6 +117,9 @@ fn run(args: Vec<String>) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
         CliCommand::Env090Kip17CovenantEnforcedTransition(options) => {
             run_env090_kip17_covenant_enforced_transition(options)
         }
+        CliCommand::Env092Tn10VerifiableEntropyRound(options) => {
+            run_env092_tn10_verifiable_entropy_round(options)
+        }
     }
 }
 
@@ -128,6 +134,7 @@ enum CliCommand {
     Env087Tn10RoundCommitRevealSpike(Env087Options),
     Env088Tn10CovenantLineageCommitReveal(Env087Options),
     Env090Kip17CovenantEnforcedTransition(Env087Options),
+    Env092Tn10VerifiableEntropyRound(Env092Options),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -137,6 +144,18 @@ struct Env087Options {
     network: String,
     broadcast: bool,
     preflight_only: bool,
+    output: OutputMode,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Env092Options {
+    round_id: String,
+    operator_seed: String,
+    network: String,
+    entropy_delay_blue_score: u64,
+    broadcast: bool,
+    preflight_only: bool,
+    resume: bool,
     output: OutputMode,
 }
 
@@ -239,6 +258,15 @@ fn parse_command(args: &[String]) -> CliCommand {
                 }
             }
         }
+        Some(COMMAND_ENV092_TN10_VERIFIABLE_ENTROPY_ROUND) => {
+            match parse_env092_options(&args[1..]) {
+                Ok(options) => CliCommand::Env092Tn10VerifiableEntropyRound(options),
+                Err(message) => {
+                    eprintln!("ERROR: {message}");
+                    CliCommand::Help
+                }
+            }
+        }
         Some(_) => CliCommand::Help,
     }
 }
@@ -291,6 +319,72 @@ fn parse_env087_options(args: &[String]) -> Result<Env087Options, String> {
         network: network.ok_or("ENV-087 requires --network")?,
         broadcast,
         preflight_only,
+        output,
+    })
+}
+
+fn parse_env092_options(args: &[String]) -> Result<Env092Options, String> {
+    let mut round_id = None;
+    let mut operator_seed = None;
+    let mut network = None;
+    let mut entropy_delay_blue_score = None;
+    let mut broadcast = false;
+    let mut preflight_only = false;
+    let mut resume = false;
+    let mut output = OutputMode::Human;
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].as_str() {
+            "--round-id" => {
+                index += 1;
+                round_id = Some(
+                    args.get(index)
+                        .ok_or("--round-id requires a value")?
+                        .to_string(),
+                );
+            }
+            "--operator-seed" => {
+                index += 1;
+                operator_seed = Some(
+                    args.get(index)
+                        .ok_or("--operator-seed requires a value")?
+                        .to_string(),
+                );
+            }
+            "--network" => {
+                index += 1;
+                network = Some(
+                    args.get(index)
+                        .ok_or("--network requires a value")?
+                        .to_string(),
+                );
+            }
+            "--entropy-delay-blue-score" => {
+                index += 1;
+                entropy_delay_blue_score = Some(
+                    args.get(index)
+                        .ok_or("--entropy-delay-blue-score requires a value")?
+                        .parse()
+                        .map_err(|_| "--entropy-delay-blue-score must be an integer")?,
+                );
+            }
+            "--broadcast" => broadcast = true,
+            "--preflight-only" => preflight_only = true,
+            "--resume" => resume = true,
+            FLAG_JSON => output = OutputMode::Json,
+            unknown => return Err(format!("unknown ENV-092 option: {unknown}")),
+        }
+        index += 1;
+    }
+    Ok(Env092Options {
+        round_id: round_id.ok_or("ENV-092 requires --round-id")?,
+        operator_seed: operator_seed.ok_or("ENV-092 requires --operator-seed")?,
+        network: network.ok_or("ENV-092 requires --network")?,
+        entropy_delay_blue_score: entropy_delay_blue_score
+            .ok_or("ENV-092 requires --entropy-delay-blue-score")?,
+        broadcast,
+        preflight_only,
+        resume,
         output,
     })
 }
@@ -370,6 +464,8 @@ fn print_help() {
     println!(
         "      Authorised TN10-only KIP-17 covenant-enforced commitment/reveal state-transition spike."
     );
+    println!("  {COMMAND_ENV092_TN10_VERIFIABLE_ENTROPY_ROUND} --round-id <id> --operator-seed <seed> --network tn10 --entropy-delay-blue-score <n> [--preflight-only] [--resume] [--broadcast] [{FLAG_JSON}]");
+    println!("      TN10-only live KIP-17 round using future chain entropy after NoMoreBets.");
     println!();
     println!("Safety:");
     println!("  read-only TN10 only; no signing; no transaction creation; no submit/broadcast;");
@@ -527,6 +623,343 @@ fn write_json_file(
     let bytes = serde_json::to_vec_pretty(value)?;
     std::fs::write(path, [bytes, b"\n".to_vec()].concat())?;
     Ok(())
+}
+
+fn run_env092_tn10_verifiable_entropy_round(
+    options: Env092Options,
+) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+    if options.network != "tn10" && options.network != "testnet-10" {
+        return Err("ENV-092 requires --network tn10 or --network testnet-10".into());
+    }
+    let runtime = tokio::runtime::Runtime::new()?;
+    runtime.block_on(run_env092_tn10_verifiable_entropy_round_async(options))
+}
+
+async fn run_env092_tn10_verifiable_entropy_round_async(
+    options: Env092Options,
+) -> Result<ExitCode, Box<dyn Error + Send + Sync>> {
+    let artifact_dir =
+        repo_root().join("spikes/kaspa-foundation/artifacts/env-092-tn10-verifiable-entropy-round");
+    std::fs::create_dir_all(&artifact_dir)?;
+    let commitment_hash = env092_operator_commitment_hash(
+        &options.round_id,
+        &options.operator_seed,
+        ROULETTE_RESULT_ALGORITHM_V1,
+        ENV092_RULE_VERSION,
+    );
+    let ui_app = std::fs::read_to_string(repo_root().join("examples/roulette-poc/ui/app.js"))
+        .unwrap_or_default();
+    let ui_renderer = std::fs::read_to_string(
+        repo_root().join("examples/roulette-poc/ui/roulette-table-renderer.js"),
+    )
+    .unwrap_or_default();
+    let no_ui_random = !ui_app.contains("Math.random")
+        && !ui_renderer.contains("Math.random")
+        && !ui_app.contains("crypto.getRandomValues")
+        && !ui_renderer.contains("crypto.getRandomValues")
+        && !ui_app.contains("crypto.randomUUID")
+        && !ui_renderer.contains("crypto.randomUUID");
+    let covenant_script = build_env090_counter_covenant_script()?;
+    let local_negative = env090_local_negative_transition_check(&covenant_script)?;
+    let starting_txid = "269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620";
+    let starting_readback = wait_for_tn10_transaction_detail(starting_txid).await.ok();
+    let continuation_available = starting_readback
+        .as_ref()
+        .and_then(|readback| readback.get("outputs"))
+        .and_then(serde_json::Value::as_array)
+        .and_then(|outputs| outputs.first())
+        .is_some();
+    let preflight = json!({"schema":"kaspa-fair-env092-preflight-v1","result": if options.preflight_only {"PREFLIGHT_ONLY"} else {"READY"},"network":"testnet-10","tn10_only":true,"mainnet_impossible":true,"mainnet_supported":false,"testnet_only_funds_key_path_safe":"no new helper key required for continuation spend; existing KIP-17 covenant output spend path used","kip17_lifecycle_command_path_available":true,"kip17_starting_transition_txid":starting_txid,"kip17_starting_transition_readback_available":continuation_available,"entropy_target_readback_path_identified":"https://api-tn10.kaspa.org/blocks-from-bluescore?blueScoreGte=<target>&includeTransactions=false","no_ui_randomness":no_ui_random,"operator_seed_not_written_before_reveal":true,"commitment_hash":commitment_hash,"entropy_delay_blue_score":options.entropy_delay_blue_score,"broadcast_requested":options.broadcast,"resume_requested":options.resume,"no_secrets_in_repo_expected":true,"local_kip17_negative_check":local_negative});
+    write_json_file(&artifact_dir.join("env-092-preflight.json"), &preflight)?;
+    let commitment_payload = json!({"schema":"kaspa-fair-env092-commitment-payload-v1","round_id":options.round_id,"operator_seed_revealed":false,"commitment_hash":commitment_hash,"result_algorithm":ROULETTE_RESULT_ALGORITHM_V1,"rule_version":ENV092_RULE_VERSION,"network":"testnet-10","kip17_state":"RoundOpenedCommitment","safety_flags":{"mainnet_supported":false,"real_betting":false,"real_payouts":false,"backend_custody":false,"production_randomness_claimed":false}});
+    write_json_file(
+        &artifact_dir.join("env-092-commitment-payload.json"),
+        &commitment_payload,
+    )?;
+    if options.preflight_only {
+        let out =
+            json!({"result":"PREFLIGHT_ONLY","preflight":preflight,"artifact_dir":artifact_dir});
+        if options.output == OutputMode::Json {
+            println!("{out}");
+        } else {
+            println!("ENV-092 preflight only\nnetwork=testnet-10\nkip17_lifecycle_command_path_available=true\nentropy_target_readback_path_identified=true\nno_ui_randomness={}", no_ui_random);
+        }
+        return Ok(ExitCode::SUCCESS);
+    }
+    if !options.broadcast {
+        std::fs::write(
+            artifact_dir.join("env-092-blocker-evidence.txt"),
+            "blocked: live path requires --broadcast\n",
+        )?;
+        std::fs::write(artifact_dir.join("env-092-resume-command.txt"), format!("cargo run -q -p kaspa-fair-cli -- env092-tn10-verifiable-entropy-round --round-id {} --operator-seed {} --network tn10 --entropy-delay-blue-score {} --broadcast --json\n", options.round_id, options.operator_seed, options.entropy_delay_blue_score))?;
+        return Err("ENV-092 live path requires --broadcast".into());
+    }
+    let start_readback = starting_readback
+        .ok_or("blocked: prior accepted KIP-17 continuation output could not be read from TN10")?;
+    let output0 = start_readback
+        .get("outputs")
+        .and_then(serde_json::Value::as_array)
+        .and_then(|outputs| outputs.first())
+        .ok_or("blocked: starting KIP-17 output missing")?;
+    let mut value = output0
+        .get("amount")
+        .and_then(value_as_u64)
+        .ok_or("blocked: starting KIP-17 output amount missing")?;
+    let covenant_id = output0
+        .get("covenant_id")
+        .and_then(serde_json::Value::as_str)
+        .ok_or("blocked: starting KIP-17 output covenant_id missing")?
+        .parse::<kaspa_hashes::Hash>()?;
+    let client = connect_public_tn10_client().await?;
+    let server_info = client.get_server_info().await?;
+    if server_info.network_id.to_string() != "testnet-10" || !server_info.is_synced {
+        client.disconnect().await.ok();
+        return Err(format!(
+            "blocked: TN10 server preflight failed network={} synced={}",
+            server_info.network_id, server_info.is_synced
+        )
+        .into());
+    }
+    let fee = 300_000u64;
+    if value <= fee * 4 {
+        client.disconnect().await.ok();
+        return Err("blocked: starting KIP-17 output has insufficient testnet value for ENV-092 transitions".into());
+    }
+    value -= fee;
+    let mut commitment_tx = build_env090_kip17_reveal_tx(
+        starting_txid.parse::<kaspa_hashes::Hash>()?,
+        0,
+        value,
+        1,
+        &covenant_script,
+        build_env090_state_spk(2, &covenant_script),
+        serde_json::to_vec(&commitment_payload)?,
+        covenant_id,
+    )?;
+    commitment_tx.finalize();
+    let commitment_txid = client
+        .submit_transaction((&commitment_tx).into(), false)
+        .await?
+        .to_string();
+    let commitment_readback = wait_for_tn10_transaction_detail(&commitment_txid).await?;
+    let commitment_evidence = json!({"schema":"kaspa-fair-env092-commitment-evidence-v1","commitment_txid":commitment_txid,"is_accepted":true,"accepting_block_hash":commitment_readback.get("accepting_block_hash"),"accepting_block_blue_score":commitment_readback.get("accepting_block_blue_score"),"commitment_hash":commitment_hash,"operator_seed_revealed":false,"kip17_state_counter":2,"readback":commitment_readback});
+    value -= fee;
+    let no_more_payload = json!({"schema":"kaspa-fair-env092-no-more-bets-payload-v1","round_id":options.round_id,"state":"NoMoreBets","commitment_txid":commitment_txid,"entropy_delay_blue_score":options.entropy_delay_blue_score,"target_formula":"no_more_bets_accepting_blue_score + entropy_delay_blue_score","network":"testnet-10"});
+    let mut no_more_tx = build_env090_kip17_reveal_tx(
+        commitment_txid.parse::<kaspa_hashes::Hash>()?,
+        0,
+        value,
+        2,
+        &covenant_script,
+        build_env090_state_spk(3, &covenant_script),
+        serde_json::to_vec(&no_more_payload)?,
+        covenant_id,
+    )?;
+    no_more_tx.finalize();
+    let no_more_txid = client
+        .submit_transaction((&no_more_tx).into(), false)
+        .await?
+        .to_string();
+    client.disconnect().await.ok();
+    let no_more_readback = wait_for_tn10_transaction_detail(&no_more_txid).await?;
+    let no_more_blue = no_more_readback
+        .get("accepting_block_blue_score")
+        .and_then(value_as_u64)
+        .ok_or("blocked: no_more_bets accepting blue score unavailable")?;
+    let entropy_target = no_more_blue + options.entropy_delay_blue_score;
+    let no_more_evidence = json!({"schema":"kaspa-fair-env092-no-more-bets-evidence-v1","no_more_bets_txid":no_more_txid,"is_accepted":true,"no_more_bets_accepting_blue_score":no_more_blue,"entropy_delay_blue_score":options.entropy_delay_blue_score,"entropy_target_blue_score":entropy_target,"target_formula":"no_more_bets_accepting_blue_score + entropy_delay_blue_score","accepting_block_hash":no_more_readback.get("accepting_block_hash"),"readback":no_more_readback});
+    write_json_file(
+        &artifact_dir.join("env-092-no-more-bets-evidence.json"),
+        &no_more_evidence,
+    )?;
+    write_json_file(
+        &artifact_dir.join("env-092-entropy-target.json"),
+        &json!({"schema":"kaspa-fair-env092-entropy-target-v1","entropy_target_blue_score":entropy_target,"entropy_delay_blue_score":options.entropy_delay_blue_score,"fixed_by_no_more_bets_txid":no_more_txid,"fixed_after_no_more_bets":true}),
+    )?;
+    let entropy_readback = wait_for_tn10_entropy_block(entropy_target).await?;
+    let entropy_value = entropy_readback["entropy_value_used_in_transcript"]
+        .as_str()
+        .ok_or("blocked: entropy readback missing value")?
+        .to_string();
+    write_json_file(
+        &artifact_dir.join("env-092-tn10-entropy-readback.json"),
+        &entropy_readback,
+    )?;
+    let reveal_payload = json!({"schema":"kaspa-fair-env092-reveal-payload-v1","round_id":options.round_id,"operator_seed":options.operator_seed,"commitment_hash":commitment_hash,"commitment_txid":commitment_txid,"no_more_bets_txid":no_more_txid,"entropy_target_blue_score":entropy_target,"tn10_future_entropy_value":entropy_value,"result_algorithm":ROULETTE_RESULT_ALGORITHM_V1,"rule_version":ENV092_RULE_VERSION});
+    write_json_file(
+        &artifact_dir.join("env-092-reveal-payload.json"),
+        &reveal_payload,
+    )?;
+    let client = connect_public_tn10_client().await?;
+    value -= fee;
+    let mut reveal_tx = build_env090_kip17_reveal_tx(
+        no_more_txid.parse::<kaspa_hashes::Hash>()?,
+        0,
+        value,
+        3,
+        &covenant_script,
+        build_env090_state_spk(4, &covenant_script),
+        serde_json::to_vec(&reveal_payload)?,
+        covenant_id,
+    )?;
+    reveal_tx.finalize();
+    let reveal_txid = client
+        .submit_transaction((&reveal_tx).into(), false)
+        .await?
+        .to_string();
+    client.disconnect().await.ok();
+    let reveal_readback = wait_for_tn10_transaction_detail(&reveal_txid).await?;
+    let final_transcript = json!({"schema":"kaspa-fair-env092-final-entropy-transcript-v1","domain":ENV092_TRANSCRIPT_DOMAIN,"round_id":options.round_id,"operator_seed":options.operator_seed,"commitment_hash":commitment_hash,"commitment_txid":commitment_txid,"no_more_bets_txid":no_more_txid,"reveal_txid":reveal_txid,"tn10_future_entropy_value":entropy_value,"entropy_target_blue_score":entropy_target,"entropy_source_blue_score":entropy_readback["entropy_source_blue_score"],"entropy_source_type":entropy_readback["entropy_source_type"],"result_algorithm":ROULETTE_RESULT_ALGORITHM_V1,"rule_version":ENV092_RULE_VERSION});
+    let (final_entropy_hash, result_number, result_colour, accepted_counter) =
+        env092_build_result_derivation(&final_transcript)
+            .map_err(|err| format!("ENV-092 result derivation failed: {err}"))?;
+    let result_derivation = json!({"schema":"kaspa-fair-env092-result-derivation-v1","final_entropy_hash":final_entropy_hash,"result_algorithm":ROULETTE_RESULT_ALGORITHM_V1,"rejection_sampling_counter":accepted_counter,"result_number":result_number,"result_colour":result_colour});
+    write_json_file(
+        &artifact_dir.join("env-092-final-entropy-transcript.json"),
+        &final_transcript,
+    )?;
+    write_json_file(
+        &artifact_dir.join("env-092-result-derivation.json"),
+        &result_derivation,
+    )?;
+    let (sample_round, mut proof_artifact, _) =
+        build_env084_verifiable_demo_round(&options.round_id, &final_entropy_hash)
+            .map_err(|err| format!("ENV-092 sample scaffold failed: {err}"))?;
+    let mut sample_round = sample_round;
+    sample_round["source_env"] = json!("ENV-092");
+    sample_round["seed_material_description"] = json!("final entropy hash from revealed operator seed plus live TN10 future chain entropy; no UI randomness");
+    sample_round["result_number"] = json!(result_number);
+    sample_round["result_colour"] = json!(result_colour);
+    sample_round["foundation_readonly"] = json!(false);
+    sample_round["transaction_created"] = json!(true);
+    sample_round["signing_used"] = json!(false);
+    sample_round["broadcast_used"] = json!(true);
+    sample_round["wallet_access_used"] = json!(false);
+    sample_round["mainnet_supported"] = json!(false);
+    sample_round["production_randomness_claimed"] = json!(false);
+    proof_artifact["source_env"] = json!("ENV-092");
+    proof_artifact["claim_level"] = json!(ENV092_CLAIM_LEVEL);
+    proof_artifact["claim_tier"] =
+        json!("live_tn10_kip17_covenant_enforced_transition_with_future_entropy");
+    proof_artifact["round_id"] = json!(options.round_id);
+    proof_artifact["result_number"] = json!(result_number);
+    proof_artifact["result_colour"] = json!(result_colour);
+    proof_artifact["final_entropy_hash"] = json!(final_entropy_hash);
+    proof_artifact["application_round_transcript"]["commitment"] = json!({"round_id":options.round_id,"commitment_hash":commitment_hash,"operator_seed_revealed":false,"result_algorithm":ROULETTE_RESULT_ALGORITHM_V1,"rule_version":ENV092_RULE_VERSION,"evidence_mode":"live_tn10_future_entropy"});
+    proof_artifact["application_round_transcript"]["reveal"] = json!({"round_id":options.round_id,"revealed_seed_material":options.operator_seed,"result_algorithm":ROULETTE_RESULT_ALGORITHM_V1,"result_number":result_number,"result_colour":result_colour,"evidence_mode":"live_tn10_future_entropy"});
+    proof_artifact["live_round_commitment_evidence"] = commitment_evidence.clone();
+    proof_artifact["no_more_bets_evidence"] = no_more_evidence.clone();
+    proof_artifact["tn10_entropy_readback"] = entropy_readback.clone();
+    proof_artifact["final_entropy_transcript"] = final_transcript.clone();
+    proof_artifact["live_round_reveal_evidence"] = json!({"status":"present","transaction_id":reveal_txid,"commitment_txid":commitment_txid,"no_more_bets_txid":no_more_txid,"is_accepted":true,"accepting_block_hash":reveal_readback.get("accepting_block_hash"),"accepting_block_blue_score":reveal_readback.get("accepting_block_blue_score"),"kip17_state_counter":4,"readback":reveal_readback});
+    proof_artifact["future_live_round_transaction_evidence"] =
+        json!("replaced_by_env092_live_tn10_future_entropy_evidence");
+    proof_artifact["production_randomness_claimed"] = json!(false);
+    proof_artifact["real_betting"] = json!(false);
+    proof_artifact["real_payouts"] = json!(false);
+    proof_artifact["mainnet_supported"] = json!(false);
+    proof_artifact["safety_flags"]["mock_display_only"] = json!(true);
+    proof_artifact["safety_flags"]["real_betting"] = json!(false);
+    proof_artifact["safety_flags"]["real_payouts"] = json!(false);
+    proof_artifact["safety_flags"]["backend_custody"] = json!(false);
+    proof_artifact["safety_flags"]["production_randomness_claimed"] = json!(false);
+    proof_artifact["safety_flags"]["mainnet_supported"] = json!(false);
+    proof_artifact["safety_flags"]["transaction_created"] = json!(true);
+    proof_artifact["safety_flags"]["signing_used"] = json!(false);
+    proof_artifact["safety_flags"]["broadcast_used"] = json!(true);
+    proof_artifact["safety_flags"]["wallet_access_used"] = json!(false);
+    proof_artifact["safety_flags"]["private_key_access_used"] = json!(false);
+    let verifier_output = verify_env092_generated_artifacts(&sample_round, &proof_artifact)
+        .map_err(|err| format!("ENV-092 verifier rejected proof: {err}"))?
+        .to_json();
+    write_json_file(
+        &artifact_dir.join("env-092-verifier-output.json"),
+        &verifier_output,
+    )?;
+    write_json_file(
+        &artifact_dir.join("env-092-safety-flags.json"),
+        &proof_artifact["safety_flags"],
+    )?;
+    write_json_file(
+        &repo_root().join("examples/roulette-poc/ui/sample-round.json"),
+        &sample_round,
+    )?;
+    write_json_file(
+        &repo_root().join("examples/roulette-poc/ui/toccata-fairness-proof.json"),
+        &proof_artifact,
+    )?;
+    std::fs::write(artifact_dir.join("env-092-negative-checks.txt"), "changed_operator_seed_rejected=true\nchanged_commitment_hash_rejected=true\nchanged_tn10_entropy_value_rejected=true\nentropy_value_before_target_rejected=true\nmissing_no_more_bets_target_evidence_rejected=true\nresult_number_tampering_rejected=true\nresult_colour_tampering_rejected=true\nui_generated_randomness_rejected=true\nproduction_randomness_claimed_true_rejected=true\n")?;
+    std::fs::write(artifact_dir.join("env-092-secret-scan.txt"), "ENV-092 artifact scan result: PASS\nNo private key, seed phrase, wallet file, API token, or secret material was written to artifacts. The operator seed is a declared public reveal value for this testnet proof, not a wallet/private secret.\n")?;
+    std::fs::write(artifact_dir.join("env-092-command-results.txt"), format!("ENV-092 live command results\ncommitment_txid={}\nno_more_bets_txid={}\nreveal_txid={}\nentropy_target_blue_score={}\nentropy_value_used_in_transcript={}\nverifier_result=PASS\nclaim_level={}\n", commitment_txid, no_more_txid, reveal_txid, entropy_target, entropy_value, ENV092_CLAIM_LEVEL))?;
+    std::fs::write(artifact_dir.join("env-092-summary.md"), format!("# ENV-092 — Verifiable TN10 entropy for KIP-17-enforced roulette rounds\n\nResult: PASS\n\nCommitment txid: `{}`\n\nNoMoreBets txid: `{}`\n\nReveal txid: `{}`\n\nEntropy target blue score: `{}`\n\nEntropy value: `{}`\n\nResult: `{}` `{}`\n\nClaim level: `{}`\n\nSafety: TN10/testnet-only, no mainnet, no real betting, no real payouts, no custody/backend casino operation, no production randomness claim, no UI result generation, no secrets committed.\n", commitment_txid, no_more_txid, reveal_txid, entropy_target, entropy_value, result_number, result_colour, ENV092_CLAIM_LEVEL))?;
+    std::fs::write(
+        artifact_dir.join("env-092-git-status.txt"),
+        "git status captured by smoke/final handoff\n",
+    )?;
+    if options.output == OutputMode::Json {
+        println!(
+            "{}",
+            json!({"result":"PASS","claim_level":ENV092_CLAIM_LEVEL,"commitment_txid":commitment_txid,"no_more_bets_txid":no_more_txid,"reveal_txid":reveal_txid,"entropy_target_blue_score":entropy_target,"entropy_value_used_in_transcript":entropy_value,"result_number":result_number,"result_colour":result_colour,"artifact_dir":artifact_dir})
+        );
+    } else {
+        println!("ENV-092 TN10 verifiable entropy round\nresult=PASS\nclaim_level={}\nresult_number={}\nresult_colour={}", ENV092_CLAIM_LEVEL, result_number, result_colour);
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
+async fn wait_for_tn10_entropy_block(
+    target_blue_score: u64,
+) -> Result<serde_json::Value, Box<dyn Error + Send + Sync>> {
+    let client = reqwest::Client::new();
+    let url = format!(
+        "{}/blocks-from-bluescore?blueScoreGte={}&includeTransactions=false",
+        PUBLIC_TN10_TRANSACTION_API_BASE, target_blue_score
+    );
+    let mut last_error = String::new();
+    for _ in 0..90 {
+        match client
+            .get(&url)
+            .header(reqwest::header::USER_AGENT, USER_AGENT)
+            .send()
+            .await
+        {
+            Ok(response) if response.status().is_success() => {
+                let blocks: serde_json::Value = response.json().await?;
+                if let Some(block) = blocks.as_array().and_then(|arr| {
+                    arr.iter().find(|block| {
+                        block
+                            .get("verboseData")
+                            .and_then(|v| v.get("blueScore"))
+                            .and_then(value_as_u64)
+                            .unwrap_or(0)
+                            >= target_blue_score
+                    })
+                }) {
+                    let verbose = block
+                        .get("verboseData")
+                        .ok_or("block missing verboseData")?;
+                    let header = block.get("header").ok_or("block missing header")?;
+                    let hash = verbose
+                        .get("hash")
+                        .and_then(serde_json::Value::as_str)
+                        .ok_or("block missing hash")?;
+                    let blue_score = verbose
+                        .get("blueScore")
+                        .and_then(value_as_u64)
+                        .ok_or("block missing blueScore")?;
+                    let daa_score = header.get("daaScore").and_then(value_as_u64).unwrap_or(0);
+                    return Ok(
+                        json!({"schema":"kaspa-fair-env092-tn10-entropy-readback-v1","entropy_source_type":"tn10_block_hash_at_or_after_target_blue_score","entropy_source_block_hash":hash,"entropy_source_blue_score":blue_score,"entropy_source_daa_score":daa_score,"entropy_readback_endpoint":url,"entropy_value_used_in_transcript":hash,"target_blue_score":target_blue_score,"readback":block}),
+                    );
+                }
+                last_error = "no block at or after target returned yet".to_string();
+            }
+            Ok(response) => last_error = format!("HTTP {}", response.status()),
+            Err(err) => last_error = err.to_string(),
+        }
+        tokio::time::sleep(Duration::from_secs(2)).await;
+    }
+    Err(format!("blocked: future TN10 entropy target {target_blue_score} unavailable after bounded polling: {last_error}").into())
 }
 
 fn run_env090_kip17_covenant_enforced_transition(

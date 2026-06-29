@@ -95,4 +95,20 @@ The `--demo-seed` value is explicit demo seed material. It is useful for repeata
 
 Round and proof artifacts must be generated together because JSON is only a mirror/export format. Rust verifier logic is the authority for whether the app-facing round and proof agree.
 
-Future work remains production entropy design, live round-specific TN10 commitment/reveal transactions, and any wallet/faucet/signing/broadcast flow. Those require explicit authorisation before implementation.
+## ENV-092 live TN10 entropy round
+
+ENV-092 adds a TN10/testnet-only live proof path:
+
+```bash
+cargo run -q -p kaspa-fair-cli -- env092-tn10-verifiable-entropy-round \
+  --round-id env-092-entropy-round-0001 \
+  --operator-seed env092-operator-seed-0001 \
+  --network tn10 \
+  --entropy-delay-blue-score 30 \
+  --preflight-only \
+  --json
+```
+
+The live `--broadcast` mode is an authorised transaction path only. It records a KIP-17 commitment transition, a NoMoreBets transition that fixes a future TN10 blue-score target, a direct TN10 future block-hash readback, and a reveal transition. The app-facing JSON displays the resulting proof and result; the UI still does not choose entropy or generate the result.
+
+This is not production casino randomness, real betting, real payouts, custody, mainnet support, or a production casino deployment.

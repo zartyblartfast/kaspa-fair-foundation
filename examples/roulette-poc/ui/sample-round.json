@@ -51,28 +51,28 @@
       "stake_units": 8
     }
   ],
-  "broadcast_used": false,
+  "broadcast_used": true,
   "final_result": "PASS",
   "foundation_accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
   "foundation_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
   "foundation_env064_spend_txid": "4cb31dbad4465665b978ba3ec5eeecb21824a3ea686f5085b46a97066446466c",
   "foundation_network": "testnet-10",
-  "foundation_readonly": true,
+  "foundation_readonly": false,
   "foundation_verifier_result": "PASS",
   "foundation_verifier_schema": "kaspa-fair-live-verification-result-v1",
   "mainnet_supported": false,
   "payout_table_version": "env-084-rust-owned-demo-round-payouts-v1",
   "private_key_access_used": false,
   "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
-  "result_colour": "black",
-  "result_number": 24,
+  "result_colour": "red",
+  "result_number": 34,
   "roulette_variant": "european",
-  "round_id": "env-090-kip17-round-0001",
+  "round_id": "env-092-entropy-round-0001",
   "round_state": "ProofPublished",
   "rule_version": "env-084-rust-owned-demo-round-rules-v1",
   "schema": "kaspa-fair-roulette-engine-round-v1",
-  "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
-  "seed_material_hex": "656e763039302d64656d6f2d736565642d30303031",
+  "seed_material_description": "final entropy hash from revealed operator seed plus live TN10 future chain entropy; no UI randomness",
+  "seed_material_hex": "66313462383766616662623664356238666433626331313236626637386138373230356331653065353833303534336366313363303931656231333964663532",
   "settlement": [
     {
       "bet_id": "bet-001",
@@ -80,8 +80,8 @@
       "net_units": -10,
       "payout_multiplier": 35,
       "payout_units": 0,
-      "result_colour": "black",
-      "result_number": 24,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "17",
       "stake_units": 10,
       "won": false
@@ -89,26 +89,26 @@
     {
       "bet_id": "bet-002",
       "bet_type": "colour",
-      "net_units": -5,
+      "net_units": 5,
       "payout_multiplier": 1,
-      "payout_units": 0,
-      "result_colour": "black",
-      "result_number": 24,
+      "payout_units": 10,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "red",
       "stake_units": 5,
-      "won": false
+      "won": true
     },
     {
       "bet_id": "bet-003",
       "bet_type": "colour",
-      "net_units": 4,
+      "net_units": -4,
       "payout_multiplier": 1,
-      "payout_units": 8,
-      "result_colour": "black",
-      "result_number": 24,
+      "payout_units": 0,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "black",
       "stake_units": 4,
-      "won": true
+      "won": false
     },
     {
       "bet_id": "bet-004",
@@ -116,8 +116,8 @@
       "net_units": -7,
       "payout_multiplier": 1,
       "payout_units": 0,
-      "result_colour": "black",
-      "result_number": 24,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "odd",
       "stake_units": 7,
       "won": false
@@ -128,8 +128,8 @@
       "net_units": 6,
       "payout_multiplier": 1,
       "payout_units": 12,
-      "result_colour": "black",
-      "result_number": 24,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "even",
       "stake_units": 6,
       "won": true
@@ -140,8 +140,8 @@
       "net_units": 9,
       "payout_multiplier": 1,
       "payout_units": 18,
-      "result_colour": "black",
-      "result_number": 24,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "high",
       "stake_units": 9,
       "won": true
@@ -152,14 +152,16 @@
       "net_units": -8,
       "payout_multiplier": 1,
       "payout_units": 0,
-      "result_colour": "black",
-      "result_number": 24,
+      "result_colour": "red",
+      "result_number": 34,
       "selection_value": "low",
       "stake_units": 8,
       "won": false
     }
   ],
   "signing_used": false,
-  "transaction_created": false,
-  "wallet_access_used": false
+  "source_env": "ENV-092",
+  "transaction_created": true,
+  "wallet_access_used": false,
+  "production_randomness_claimed": false
 }

@@ -103,16 +103,17 @@ async function fetchJson(path) {
 }
 
 function validateRound(round) {
+  const allowsLiveEnv092 = round.source_env === "ENV-092";
   const checks = [
     ["final_result == PASS", round.final_result === "PASS"],
     ["round_state == ProofPublished", round.round_state === "ProofPublished"],
     ["foundation_verifier_result == PASS", round.foundation_verifier_result === "PASS"],
     ["foundation_network == testnet-10", round.foundation_network === "testnet-10"],
     ["mainnet_supported == false", round.mainnet_supported === false],
-    ["foundation_readonly == true", round.foundation_readonly === true],
+    ["foundation_readonly safe", allowsLiveEnv092 ? round.foundation_readonly === false : round.foundation_readonly === true],
     ["signing_used == false", round.signing_used === false],
-    ["transaction_created == false", round.transaction_created === false],
-    ["broadcast_used == false", round.broadcast_used === false],
+    ["transaction_created safe", allowsLiveEnv092 ? round.transaction_created === true : round.transaction_created === false],
+    ["broadcast_used safe", allowsLiveEnv092 ? round.broadcast_used === true : round.broadcast_used === false],
     ["wallet_access_used == false", round.wallet_access_used === false],
     ["result_number in 0..36", Number.isInteger(round.result_number) && round.result_number >= 0 && round.result_number <= 36],
     ["result_colour in green/red/black", ["green", "red", "black"].includes(round.result_colour)],
@@ -214,6 +215,7 @@ const authorisedProofContracts = {
     futureEvidence: "replaced_by_env088_covenant_linked_lineage_evidence",
   }),
   "ENV-090": acceptsEnv090Kip17Proof,
+  "ENV-092": acceptsEnv092Tn10EntropyProof,
 };
 
 function acceptsStaticFutureProof(proofArtifact) {
@@ -262,6 +264,30 @@ function acceptsEnv090Kip17Proof(proofArtifact) {
     enforcement.invalid_no_increment_rejected === true &&
     enforcement.kip20_lineage_only_rejected_for_env090_pass === true &&
     enforcement.bare_tn10_anchor_rejected_for_env090_pass === true;
+}
+
+function acceptsEnv092Tn10EntropyProof(proofArtifact) {
+  const safety = proofArtifact.safety_flags || {};
+  const liveCommitment = proofArtifact.live_round_commitment_evidence || {};
+  const liveReveal = proofArtifact.live_round_reveal_evidence || {};
+  const noMoreBets = proofArtifact.no_more_bets_evidence || {};
+  const entropy = proofArtifact.tn10_entropy_readback || {};
+  const transcript = proofArtifact.final_entropy_transcript || {};
+  return proofArtifact.claim_level === "full_kip17_covenant_enforced_transition_with_live_tn10_entropy" &&
+    proofArtifact.future_live_round_transaction_evidence === "replaced_by_env092_live_tn10_future_entropy_evidence" &&
+    isTxid(liveCommitment.commitment_txid) &&
+    isTxid(noMoreBets.no_more_bets_txid) &&
+    isTxid(liveReveal.transaction_id) &&
+    typeof entropy.entropy_value_used_in_transcript === "string" &&
+    entropy.entropy_value_used_in_transcript.length > 0 &&
+    Number(entropy.entropy_source_blue_score) >= Number(noMoreBets.entropy_target_blue_score) &&
+    transcript.tn10_future_entropy_value === entropy.entropy_value_used_in_transcript &&
+    safety.wallet_access_used === false &&
+    safety.private_key_access_used === false &&
+    safety.signing_used === false &&
+    safety.transaction_created === true &&
+    safety.broadcast_used === true &&
+    safety.production_randomness_claimed === false;
 }
 
 function isTn10Network(network) {

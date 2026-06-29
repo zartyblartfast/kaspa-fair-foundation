@@ -58,11 +58,10 @@ require('claim level not bare', verifier.get('claim_level') != 'bare_tn10_anchor
 require('verifier pass', verifier.get('verifier_result') == 'PASS')
 require('commitment hash matches reveal', verifier.get('commitment_hash_matches_reveal_material') is True)
 require('result derives', verifier.get('result_derives_from_reveal_material') is True)
-if proof.get('source_env') == 'ENV-090':
-    # ENV-090 is an authorised later app-facing proof source. Keep ENV-088
-    # artifact validation strict, but do not require current proof txids/results
-    # to equal the historical ENV-088 transaction pair.
-    require('app-facing artifacts advanced to ENV-090', proof.get('claim_level') == 'full_kip17_covenant_enforced_transition')
+if proof.get('source_env') in ('ENV-090', 'ENV-092'):
+    # Later authorised app-facing proof source. Keep ENV-088 artifact validation strict,
+    # but do not require current proof txids/results to equal the historical ENV-088 pair.
+    require('app-facing artifacts advanced to later milestone', proof.get('claim_level') in ('full_kip17_covenant_enforced_transition', 'full_kip17_covenant_enforced_transition_with_live_tn10_entropy'))
 else:
     require('sample result number agrees', sample.get('result_number') == verifier.get('result_number'))
     require('sample result colour agrees', sample.get('result_colour') == verifier.get('result_colour'))
