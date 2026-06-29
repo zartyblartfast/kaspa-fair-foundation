@@ -1,0 +1,14 @@
+# ENV-093 git status
+
+Final status after restoring out-of-scope older smoke artifact rewrites:
+
+```text
+?? docs/env093-verifiable-tn10-entropy-milestone.md
+?? docs/verifiable-tn10-entropy-milestone-summary.md
+?? scripts/env093-verifiable-tn10-entropy-milestone-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-093-verifiable-tn10-entropy-milestone/env-093-claim-boundary.md
+?? spikes/kaspa-foundation/artifacts/env-093-verifiable-tn10-entropy-milestone/env-093-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-093-verifiable-tn10-entropy-milestone/env-093-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-093-verifiable-tn10-entropy-milestone/env-093-reviewer-checklist.json
+?? spikes/kaspa-foundation/artifacts/env-093-verifiable-tn10-entropy-milestone/env-093-summary.md
+```

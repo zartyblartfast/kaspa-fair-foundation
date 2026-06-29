@@ -1,0 +1,62 @@
+{
+  "schema": "kaspa-fair-env093-verifiable-tn10-entropy-milestone-reviewer-checklist-v1",
+  "env": "ENV-093",
+  "purpose": "Package the current verifiable TN10 entropy milestone as a clean reviewable demo-ready checkpoint.",
+  "implementation_scope": {
+    "adds_new_implementation": false,
+    "creates_transaction": false,
+    "signs_transaction": false,
+    "broadcasts_transaction": false,
+    "uses_wallet_or_private_key": false,
+    "touches_mainnet": false,
+    "adds_real_betting": false,
+    "adds_real_payouts": false,
+    "adds_production_randomness_claim": false,
+    "adds_ui_result_generation": false
+  },
+  "core_evidence": {
+    "source_env": "ENV-092",
+    "no_more_bets_txid": "fd02e7d66ebe06aa50a106b02b3fad976a4e700323b40a4e48a9574108bf34c0",
+    "no_more_bets_accepting_blue_score": 492892469,
+    "entropy_delay_blue_score": 30,
+    "entropy_target_blue_score": 492892499,
+    "entropy_source_type": "tn10_block_hash_at_or_after_target_blue_score",
+    "entropy_source_block_hash": "76b09cd0f4eaaaaa668df0af324a920fd44b4d5f75a0ef327df9e5d41c24cbe3",
+    "entropy_source_blue_score": 492892499,
+    "entropy_source_daa_score": 503799370,
+    "final_entropy_hash": "f14b87fafbb6d5b8fd3bc1126bf78a87205c1e0e5830543cf13c091eb139df52",
+    "result_number": 34,
+    "result_colour": "red",
+    "verifier_result": "PASS",
+    "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+    "ui_does_not_choose_result": true,
+    "json_mirror_export_only": true
+  },
+  "documents": {
+    "milestone_runbook": "docs/env093-verifiable-tn10-entropy-milestone.md",
+    "nontechnical_summary": "docs/verifiable-tn10-entropy-milestone-summary.md"
+  },
+  "required_smoke": {
+    "script": "scripts/env093-verifiable-tn10-entropy-milestone-smoke.sh",
+    "expected_final_line": "VERIFIABLE_TN10_ENTROPY_MILESTONE_READY=PASS"
+  },
+  "not_claimed": {
+    "production_casino_randomness": true,
+    "real_betting": true,
+    "real_payouts": true,
+    "custody_backend_casino_operation": true,
+    "mainnet": true,
+    "ui_result_generation": true
+  },
+  "known_remaining_risk": {
+    "operator_abort_griefing_future_work": true,
+    "user_multi_party_entropy_future_work": true,
+    "kip21_sequencing_lane_proof_optional_strengthening": true
+  },
+  "next_real_development_options": [
+    "A. KIP-21 sequencing/lane proof strengthening",
+    "B. user/multi-party entropy",
+    "C. UX/performance cleanup",
+    "D. stop and review product/demo positioning"
+  ]
+}

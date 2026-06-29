@@ -1,0 +1,32 @@
+# ENV-093 command results
+
+All required commands were run from `/root/kaspa-fair-foundation`.
+
+- `git status --short`: PASS — initial output: <clean>
+- `git log --oneline -n 12`: PASS — latest commit c30435a Add TN10 verifiable entropy round
+- `cargo fmt --check`: PASS — exit 0
+- `cargo check -p kaspa-foundation`: PASS — Finished dev profile
+- `cargo check -p kaspa-fair-cli`: PASS — Finished dev profile
+- `cargo test -p kaspa-foundation`: PASS — all tests passed; 30 passed, 0 failed, 1 ignored across unit/integration/doc test groups
+- `cargo test -p kaspa-fair-cli`: PASS — 18 passed, 0 failed
+- `node --check examples/roulette-poc/ui/app.js`: PASS — exit 0
+- `node --check examples/roulette-poc/ui/roulette-table-renderer.js`: PASS — exit 0
+- `git diff --check`: PASS — exit 0
+- `scripts/env082-roulette-ui-workflow-rebuild-smoke.sh`: PASS — ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+- `scripts/env083a-roulette-randomness-source-audit.sh`: PASS — ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+- `scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh`: PASS — USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+- `scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh`: PASS — APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+- `scripts/env083f-round-proof-consistency-smoke.sh`: PASS — ROUND_PROOF_CONSISTENCY_READY=PASS
+- `scripts/env084-verifiable-demo-round-generator-smoke.sh`: PASS — VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+- `scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh`: PASS — STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+- `scripts/env086-live-toccata-workaround-inventory-smoke.sh`: PASS — LIVE_TOCCATA_WORKAROUND_INVENTORY_READY=PASS
+- `scripts/env087-tn10-round-commit-reveal-spike-smoke.sh`: PASS — TN10_ROUND_COMMIT_REVEAL_SPIKE_READY=PASS
+- `scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh`: PASS — TN10_COVENANT_LINEAGE_COMMIT_REVEAL_READY=PASS
+- `scripts/env089-live-toccata-covenant-lineage-milestone-smoke.sh`: PASS — LIVE_TOCCATA_COVENANT_LINEAGE_MILESTONE_READY=PASS
+- `scripts/env090-kip17-covenant-enforced-transition-smoke.sh`: PASS — KIP17_COVENANT_ENFORCED_TRANSITION_READY=PASS
+- `scripts/env090-ui-accepts-kip17-proof-smoke.sh`: PASS — UI_ACCEPTS_KIP17_PROOF_READY=PASS
+- `scripts/env091-full-kip17-toccata-milestone-smoke.sh`: PASS — FULL_KIP17_TOCCATA_MILESTONE_READY=PASS
+- `scripts/env092-tn10-verifiable-entropy-round-smoke.sh`: PASS — TN10_VERIFIABLE_ENTROPY_ROUND_READY=PASS
+- `scripts/env093-verifiable-tn10-entropy-milestone-smoke.sh`: PASS — VERIFIABLE_TN10_ENTROPY_MILESTONE_READY=PASS
+
+Out-of-scope older artifact rewrites produced by legacy smoke scripts were restored after the required runs. Final changed scope is limited to ENV-093 docs, script, and artifacts.
