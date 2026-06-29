@@ -101,7 +101,7 @@
           <li>The verifier checks commitment/reveal consistency from the app-facing proof artifact: the revealed seed material must match the earlier commitment.</li>
           <li>The verifier checks deterministic BLAKE3 result derivation, including domain-separated rejection sampling for the proof artifact roulette number.</li>
           <li>The verifier binds the proof transcript to live TN10 Toccata covenant evidence in read-only mode, including covenant ID and covenant lineage evidence.</li>
-          <li>Current round-specific commitment/reveal transaction creation is future work and requires explicit authorisation; live transaction evidence is not_created_not_claimed_future_work.</li>
+          <li>ENV-087 adds authorised TN10-only live round-specific commitment/reveal transaction evidence for this demo round; it is a bare TN10 anchor, not a production covenant-enforced lifecycle or production randomness claim.</li>
         </ul>
         <div class="thesis-grid">
           <div>
@@ -128,7 +128,7 @@
       <section class="panel wide" id="verifier-proof-snapshot-panel">
         <h2>Verifier proof snapshot</h2>
         <p class="note">
-          Static app-facing mirror/export loaded from toccata-fairness-proof.json. The UI still does not choose the result; the proof artifact is checked by Rust verifier logic, live TN10 evidence is read-only, and round-specific live commitment/reveal transactions remain future work.
+          Static app-facing mirror/export loaded from toccata-fairness-proof.json. The UI still does not choose the result; the proof artifact is checked by Rust verifier logic and now includes ENV-087 TN10-only live round commitment/reveal anchor evidence for this demo round.
         </p>
         <ul class="kv-list proof-snapshot-list" id="proof-snapshot-list"></ul>
       </section>

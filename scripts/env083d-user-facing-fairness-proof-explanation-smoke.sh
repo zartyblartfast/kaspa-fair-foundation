@@ -42,7 +42,7 @@ require_text "$UI" 'Kaspa beats a private operator database'
 require_text "$UI" 'public PoW DAG'
 require_text "$UI" 'Toccata adds more than a plain anchored hash'
 require_text "$UI" 'covenant lineage and state-transition evidence'
-require_text "$UI" 'Current round-specific commitment/reveal transaction creation is future work and requires explicit authorisation'
+require_text "$UI" 'ENV-087 adds authorised TN10-only live round-specific commitment/reveal transaction evidence'
 
 for file in "$UI" "$APP_JS" "$RENDERER_JS"; do
   reject_text "$file" 'Math\.random'

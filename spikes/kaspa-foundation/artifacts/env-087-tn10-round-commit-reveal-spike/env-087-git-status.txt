@@ -1,0 +1,18 @@
+ M crates/kaspa-fair-cli/Cargo.toml
+ M crates/kaspa-fair-cli/src/main.rs
+ M crates/kaspa-foundation/Cargo.toml
+ M examples/roulette-poc/ui/app.js
+ M examples/roulette-poc/ui/index.html
+ M examples/roulette-poc/ui/sample-round.json
+ M examples/roulette-poc/ui/toccata-fairness-proof.json
+ M scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+ M scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+ M scripts/env083f-round-proof-consistency-smoke.sh
+ M scripts/env086-live-toccata-workaround-inventory-smoke.sh
+ M spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-command-results.txt
+ M spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-git-status.txt
+ M spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-randomness-search-evidence.txt
+ M spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-result-source-evidence.txt
+ M spikes/kaspa-foundation/artifacts/env-083a-roulette-randomness-source-audit/env-083a-summary.md
+?? scripts/env087-tn10-round-commit-reveal-spike-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-087-tn10-round-commit-reveal-spike/

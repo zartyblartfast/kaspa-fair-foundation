@@ -1,0 +1,14 @@
+{
+  "backend_custody": false,
+  "broadcast_used": true,
+  "mainnet_supported": false,
+  "network": "testnet-10",
+  "private_key_material_written_to_artifacts": false,
+  "production_randomness_claimed": false,
+  "real_betting": false,
+  "real_payouts": false,
+  "secret_material_path_outside_repo": true,
+  "signing_used": true,
+  "transaction_created": true,
+  "wallet_access_used": true
+}

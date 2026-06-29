@@ -44,13 +44,16 @@ require("evidence_mode live_readonly_tn10 missing", proof.get("evidence_mode") =
 require("anchor evidence_mode live_readonly_tn10 missing", proof_anchor.get("evidence_mode") == "live_readonly_tn10")
 require("covenant_id_confirmed missing", proof_anchor.get("covenant_id_confirmed") is True)
 require(
-    "future live round transaction evidence incorrectly claimed",
-    proof.get("future_live_round_transaction_evidence") in {"not_created_not_claimed_future_work", "not_created_future_work", "not_created"},
+    "ENV-087 live round transaction evidence present",
+    proof.get("future_live_round_transaction_evidence") == "replaced_by_env087_live_bare_tn10_anchor_evidence"
+    and proof.get("live_round_commitment_evidence", {}).get("status") == "present"
+    and proof.get("live_round_reveal_evidence", {}).get("status") == "present",
 )
 
-for flag in ["real_betting", "real_payouts", "backend_custody", "wallet_access_used", "private_key_access_used", "signing_used", "broadcast_used", "mainnet_supported"]:
+for flag in ["real_betting", "real_payouts", "backend_custody", "private_key_access_used", "mainnet_supported"]:
     require(f"proof safety flag {flag} not false", proof_safety.get(flag) is False)
-require("proof safety flag transaction_created not false", proof_safety.get("transaction_created") is False)
+for flag in ["wallet_access_used", "signing_used", "broadcast_used", "transaction_created"]:
+    require(f"proof safety flag {flag} not true", proof_safety.get(flag) is True)
 require("proof mock_display_only not true", proof_safety.get("mock_display_only") is True)
 
 round_false_flags = ["mainnet_supported", "signing_used", "transaction_created", "broadcast_used", "wallet_access_used"]

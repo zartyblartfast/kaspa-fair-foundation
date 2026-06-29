@@ -1,0 +1,269 @@
+{
+  "checks": [
+    {
+      "detail": "PASS",
+      "name": "sample schema",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof schema",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "round id agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample final result",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof verifier result",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample network",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof network",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample readonly",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof evidence mode",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "future live round tx not claimed",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "anchor evidence mode",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "anchor verifier result",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "anchor covenant id",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "anchor covenant id confirmed",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "anchor lineage",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "commitment round id",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "reveal round id",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "commitment/reveal round id match",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "commitment covenant matches anchor",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "reveal covenant matches anchor",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "commitment algorithm",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "reveal algorithm",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/proof algorithm agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/reveal algorithm agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "commitment hash recomputes",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "result number verifies",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "result colour verifies",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/proof result number agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "sample/proof result colour agreement",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "reveal payload hash recomputes",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "execution safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "mock display only",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "proof safety flag false",
+      "passed": true
+    }
+  ],
+  "env087_live_round_commitment_evidence": "present",
+  "env087_live_round_reveal_evidence": "present",
+  "round_id": "env-087-live-round-0001",
+  "schema": "kaspa-fair-env083c-verifier-output-v1",
+  "verifier_result": "PASS"
+}

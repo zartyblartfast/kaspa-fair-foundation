@@ -160,6 +160,19 @@ function validateProofArtifact(proofArtifact) {
   const transcript = proofArtifact.application_round_transcript || {};
   const reveal = transcript.reveal || {};
   const rustOutput = proofArtifact.rust_verifier_output || {};
+  const liveCommitment = proofArtifact.live_round_commitment_evidence || {};
+  const liveReveal = proofArtifact.live_round_reveal_evidence || {};
+  const hasEnv087LiveRoundEvidence =
+    proofArtifact.future_live_round_transaction_evidence === "replaced_by_env087_live_bare_tn10_anchor_evidence" &&
+    liveCommitment.status === "present" &&
+    liveReveal.status === "present" &&
+    liveCommitment.claim_level === "bare TN10 anchor" &&
+    liveReveal.claim_level === "bare TN10 anchor" &&
+    typeof liveCommitment.transaction_id === "string" &&
+    liveCommitment.transaction_id.length === 64 &&
+    typeof liveReveal.transaction_id === "string" &&
+    liveReveal.transaction_id.length === 64 &&
+    liveReveal.commitment_txid === liveCommitment.transaction_id;
   const checks = [
     ["proof schema", proofArtifact.schema === "kaspa-fair-roulette-ui-toccata-fairness-proof-v1"],
     ["verifier_result == PASS", proofArtifact.verifier_result === "PASS"],
@@ -175,17 +188,17 @@ function validateProofArtifact(proofArtifact) {
     ["deterministic derivation check PASS", proofArtifact.deterministic_derivation_check_status === "PASS"],
     ["result number matches reveal", proofArtifact["result_number"] === reveal["result_number"]],
     ["result colour matches reveal", proofArtifact["result_colour"] === reveal["result_colour"]],
-    ["future live round evidence not claimed", proofArtifact.future_live_round_transaction_evidence === "not_created_not_claimed_future_work"],
+    ["live round commitment/reveal evidence present", hasEnv087LiveRoundEvidence],
     ["Rust verifier checks passed", rustOutput.all_checks_passed === true],
     ["mock_display_only true", safety.mock_display_only === true],
     ["real_betting false", safety.real_betting === false],
     ["real_payouts false", safety.real_payouts === false],
     ["backend_custody false", safety.backend_custody === false],
-    ["wallet_access_used false", safety.wallet_access_used === false],
+    ["wallet_access_used true for TN10-only ENV-087", safety.wallet_access_used === true],
     ["private_key_access_used false", safety.private_key_access_used === false],
-    ["signing_used false", safety.signing_used === false],
-    ["transaction_created false", safety.transaction_created === false],
-    ["broadcast_used false", safety.broadcast_used === false],
+    ["signing_used true for TN10-only ENV-087", safety.signing_used === true],
+    ["transaction_created true for TN10-only ENV-087", safety.transaction_created === true],
+    ["broadcast_used true for TN10-only ENV-087", safety.broadcast_used === true],
     ["mainnet_supported false", safety.mainnet_supported === false],
     ["JSON mirror/export only", proofArtifact.json_mirror_export_only === true],
   ];
@@ -324,7 +337,7 @@ function renderProofSnapshot(proofArtifact) {
   rows.forEach(([key, value]) => {
     const li = document.createElement("li");
     const valueText = String(value);
-    const pass = ["PASS", "live_readonly_tn10", "yes", "not_created_not_claimed_future_work"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true");
+    const pass = ["PASS", "live_readonly_tn10", "yes", "replaced_by_env087_live_bare_tn10_anchor_evidence"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true") || valueText.includes("transaction_created: true") || valueText.includes("signing_used: true") || valueText.includes("broadcast_used: true") || valueText.includes("wallet_access_used: true");
     li.innerHTML = `<span class="kv-key">${escapeHtml(String(key))}</span><span class="kv-value ${pass ? "pass" : ""}"><code>${escapeHtml(valueText)}</code></span>`;
     ui.proofSnapshotList.appendChild(li);
   });

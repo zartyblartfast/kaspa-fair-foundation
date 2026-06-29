@@ -1,0 +1,164 @@
+## cargo fmt --check
+EXIT_STATUS=0
+
+## cargo check -p kaspa-foundation
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+EXIT_STATUS=0
+
+## cargo check -p kaspa-fair-cli
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.29s
+EXIT_STATUS=0
+
+## cargo test -p kaspa-foundation
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running unittests src/lib.rs (target/debug/deps/kaspa_foundation-edcc454566b1d180)
+
+running 4 tests
+test covenant::recipe::tests::corrected_recipe_is_canonical ... ok
+test evidence::canonical_fixtures::tests::canonical_values_are_consistent ... ok
+test safety::tests::defaults_are_safe ... ok
+test verifier::tests::canonical_sanity_passes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env068_canonical_recipe.rs (target/debug/deps/env068_canonical_recipe-2ea1ce344a8afa04)
+
+running 5 tests
+test canonical_env064_fixture_values_are_represented ... ok
+test corrected_recipe_identity_and_network_are_canonical ... ok
+test corrected_recipe_records_toccata_keyed_blake3_and_domain_policy ... ok
+test historical_env060c_recipe_is_not_canonical ... ok
+test default_foundation_capabilities_do_not_expose_sign_or_submit ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env069_proof_transcript.rs (target/debug/deps/env069_proof_transcript-94fbadc830b7f097)
+
+running 5 tests
+test canonical_env_sequence_is_exactly_env063_env064_env065 ... ok
+test canonical_transcript_is_offline_readonly_evidence_only_and_safe ... ok
+test canonical_transcript_links_to_fixture_paths_that_exist ... ok
+test transcript_schema_versions_are_stable ... ok
+test canonical_transcript_records_proven_tn10_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env070_offline_transcript_verifier.rs (target/debug/deps/env070_offline_transcript_verifier-4340599dac968fd5)
+
+running 6 tests
+test canonical_transcript_verifies_successfully ... ok
+test mainnet_and_unsafe_requirements_are_rejected ... ok
+test missing_fixture_path_is_rejected ... ok
+test wrong_canonical_values_are_rejected ... ok
+test wrong_env_sequence_is_rejected ... ok
+test wrong_schema_versions_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env071_online_tn10_readonly_verifier.rs (target/debug/deps/env071_online_tn10_readonly_verifier-a977fba99ea5d475)
+
+running 5 tests
+test live_tn10_readonly_verification_is_optional_and_gated ... ignored, optional live TN10 read-only integration test; requires explicit KASPA_FOUNDATION_RUN_LIVE_TN10=1
+test online_verifier_config_and_client_are_read_only ... ok
+test canonical_transcript_can_be_prepared_for_tn10_online_verification ... ok
+test online_verifier_refuses_mainnet_config ... ok
+test online_verifier_report_represents_pass_fail_and_skipped_checks ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env083c_fairness_verifier.rs (target/debug/deps/env083c_fairness_verifier-9a494690da0d14d8)
+
+running 2 tests
+test env083c_demo_proof_binds_round_transcript_to_live_tn10_anchor ... ok
+test env083c_negative_cases_reject_tampering_and_claim_upgrades ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/env084_verifiable_demo_round_generator.rs (target/debug/deps/env084_verifiable_demo_round_generator-18b05d9a1d775e55)
+
+running 2 tests
+test env084_generator_builds_matching_sample_and_proof_from_explicit_seed ... ok
+test env084_negative_checks_reject_tampering_and_false_live_claims ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kaspa_foundation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+EXIT_STATUS=0
+
+## cargo test -p kaspa-fair-cli
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running unittests src/main.rs (target/debug/deps/kaspa_fair_cli-a5a8a38260d015df)
+
+running 18 tests
+test roulette::tests::deterministic_algorithm_label_is_stable ... ok
+test roulette::tests::candidate_stream_changes_when_seed_changes ... ok
+test roulette::tests::european_colour_table_is_complete_and_exact ... ok
+test roulette::tests::engine_round_reaches_proof_published_and_pass ... ok
+test roulette::tests::foundation_contract_validator_rejects_unsafe_flags ... ok
+test roulette::tests::foundation_contract_validator_accepts_passing_contract ... ok
+test roulette::tests::mock_ledger_hash_is_stable ... ok
+test roulette::tests::mock_settlement_is_reproducible ... ok
+test roulette::tests::same_ledger_hash_is_stable_and_changed_ledger_differs ... ok
+test roulette::tests::same_seed_material_gives_same_result_and_result_is_in_range ... ok
+test roulette::tests::roulette_engine_json_contains_required_contract_fields ... ok
+test roulette::tests::state_machine_rejects_invalid_transitions ... ok
+test tests::json_result_labels_match_app_contract ... ok
+test tests::command_parser_selects_live_verifier_command ... ok
+test tests::result_labels_match_cli_contract ... ok
+test tests::live_verifier_json_schema_and_safety_fields_are_stable ... ok
+test tests::roulette_poc_rejects_unsafe_foundation_contract ... ok
+test tests::roulette_poc_round_json_is_stable_for_passing_foundation_contract ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+EXIT_STATUS=0
+
+## node --check examples/roulette-poc/ui/app.js
+EXIT_STATUS=0
+
+## node --check examples/roulette-poc/ui/roulette-table-renderer.js
+EXIT_STATUS=0
+
+## git diff --check
+EXIT_STATUS=0
+
+## scripts/env082-roulette-ui-workflow-rebuild-smoke.sh
+ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env083a-roulette-randomness-source-audit.sh
+ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh
+USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh
+APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env083f-round-proof-consistency-smoke.sh
+ROUND_PROOF_CONSISTENCY_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env084-verifiable-demo-round-generator-smoke.sh
+VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh
+STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env086-live-toccata-workaround-inventory-smoke.sh
+LIVE_TOCCATA_WORKAROUND_INVENTORY_READY=PASS
+EXIT_STATUS=0
+
+## scripts/env087-tn10-round-commit-reveal-spike-smoke.sh
+TN10_ROUND_COMMIT_REVEAL_SPIKE_READY=PASS
+EXIT_STATUS=0

@@ -1,0 +1,21 @@
+ENV-087 direct TN10 readback verification
+
+commitment transaction_id = 0c0c857b89e3b41a5e1a493309c77ed579a4ca0e02ffade11fc8e0d965d45b0b: PASS
+commitment is_accepted = true: PASS
+commitment accepting_block_hash = d18d1dec4d1f21dc0cdb4119f9c1b582cacf73ca3b170b96998da507ad379814: PASS
+commitment accepting_block_blue_score = 492714891: PASS
+commitment covenant_id = null: PASS
+commitment covenant_authorizing_input = null: PASS
+reveal transaction_id = b405a92e3e65348767f0d309460e6f0b5f23769dd3f7c24f404de3900f14dc02: PASS
+reveal is_accepted = true: PASS
+reveal accepting_block_hash = dde404c1fc9fc874da1f013db8a3d45d6504583db97b95b2e847c691dad5fb55: PASS
+reveal accepting_block_blue_score = 492714971: PASS
+reveal input previous_outpoint_hash = 0c0c857b89e3b41a5e1a493309c77ed579a4ca0e02ffade11fc8e0d965d45b0b: PASS
+reveal input previous_outpoint_index = 0: PASS
+reveal covenant_id = null: PASS
+reveal covenant_authorizing_input = null: PASS
+
+Conclusion:
+- ENV-087 direct TN10 readback independently supports the live bare-anchor PASS claim.
+- ENV-087 does not support a full covenant-transition claim.
+- ENV-088 should target non-null covenant_id / covenant_authorizing_input evidence.

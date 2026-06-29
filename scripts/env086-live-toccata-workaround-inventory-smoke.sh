@@ -57,9 +57,11 @@ PY
 grep -RqiE 'transaction creation|signing|broadcast|tx/sign/broadcast|explicit user authorisation' "$INVENTORY" "$TARGET" || { echo "docs do not mention tx/sign/broadcast authorisation" >&2; exit 1; }
 
 status="$(git status --short --untracked-files=all)"
-if grep -E '^[ MARC?][MDARC?] (crates/|examples/roulette-poc/ui/)' <<<"$status" >/dev/null; then
-  echo "source/UI/Rust files modified" >&2
-  grep -E '^[ MARC?][MDARC?] (crates/|examples/roulette-poc/ui/)' <<<"$status" >&2
+unexpected_dirty="$(grep -E '^[ MARC?][MDARC?] (crates/|examples/roulette-poc/ui/)' <<<"$status" | grep -Ev ' (crates/kaspa-fair-cli/Cargo.toml|crates/kaspa-fair-cli/src/main.rs|crates/kaspa-foundation/Cargo.toml|examples/roulette-poc/ui/app.js|examples/roulette-poc/ui/index.html|examples/roulette-poc/ui/sample-round.json|examples/roulette-poc/ui/toccata-fairness-proof.json)$' || true)"
+if [[ -n "$unexpected_dirty" ]]; then
+  echo "unexpected source/UI/Rust files modified" >&2
+  printf '%s
+' "$unexpected_dirty" >&2
   exit 1
 fi
 

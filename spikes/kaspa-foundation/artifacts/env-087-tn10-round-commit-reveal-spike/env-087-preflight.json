@@ -1,0 +1,18 @@
+{
+  "broadcast_requested": true,
+  "broadcast_used": false,
+  "claim_level": "bare TN10 anchor preflight; not covenant transition",
+  "commitment_payload_hash": "6196c06540d3743b93fb73505a58f1e6cbd9cc2323ce1176a0e6937319499f21",
+  "mainnet_excluded": true,
+  "mainnet_supported": false,
+  "network": "testnet-10",
+  "private_key_material_written_to_artifacts": false,
+  "result": "READY",
+  "round_id": "env-087-live-round-0001",
+  "schema": "kaspa-fair-env087-tn10-round-commit-reveal-spike-preflight-v1",
+  "signing_used": false,
+  "testnet_only_signing_source_outside_repo": true,
+  "tn10_testnet_confirmed": true,
+  "transaction_created": false,
+  "wallet_access_used": false
+}
