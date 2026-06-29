@@ -1,0 +1,8 @@
+?? docs/env089-live-toccata-covenant-lineage-milestone.md
+?? docs/live-toccata-covenant-lineage-summary.md
+?? scripts/env089-live-toccata-covenant-lineage-milestone-smoke.sh
+?? spikes/kaspa-foundation/artifacts/env-089-live-toccata-covenant-lineage-milestone/env-089-claim-boundary.md
+?? spikes/kaspa-foundation/artifacts/env-089-live-toccata-covenant-lineage-milestone/env-089-command-results.txt
+?? spikes/kaspa-foundation/artifacts/env-089-live-toccata-covenant-lineage-milestone/env-089-git-status.txt
+?? spikes/kaspa-foundation/artifacts/env-089-live-toccata-covenant-lineage-milestone/env-089-reviewer-checklist.json
+?? spikes/kaspa-foundation/artifacts/env-089-live-toccata-covenant-lineage-milestone/env-089-summary.md

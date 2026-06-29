@@ -1,0 +1,59 @@
+{
+  "schema": "kaspa-fair-env089-reviewer-checklist-v1",
+  "milestone": "ENV-089 live Toccata covenant lineage milestone",
+  "expected_readiness_line": "LIVE_TOCCATA_COVENANT_LINEAGE_MILESTONE_READY=PASS",
+  "core_identifiers": {
+    "commitment_txid": "ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65",
+    "reveal_continuation_txid": "f8fe14932071ac49cdac9e4f3df1177b9655dffbd0ad66b0e7491d6f78e5654b",
+    "covenant_id": "9931b78d93e1019ed132d52ccc8dc0b812b7fb5fa41cb561342c184afd11735c"
+  },
+  "claimed": [
+    "Live TN10 KIP-20 covenant-linked lineage",
+    "Commitment transaction has non-null covenant evidence",
+    "Reveal/continuation transaction spends the covenant-bound commitment output",
+    "Covenant evidence comes from direct TN10 transaction fields, not payload JSON"
+  ],
+  "not_claimed": [
+    "Full KIP-17 covenant-enforced state transition",
+    "Production randomness",
+    "Real betting",
+    "Real payouts",
+    "Mainnet"
+  ],
+  "reviewer_commands": [
+    "git status --short",
+    "git log --oneline -n 10",
+    "cargo fmt --check",
+    "cargo check -p kaspa-foundation",
+    "cargo check -p kaspa-fair-cli",
+    "cargo test -p kaspa-foundation",
+    "cargo test -p kaspa-fair-cli",
+    "node --check examples/roulette-poc/ui/app.js",
+    "node --check examples/roulette-poc/ui/roulette-table-renderer.js",
+    "git diff --check",
+    "scripts/env082-roulette-ui-workflow-rebuild-smoke.sh",
+    "scripts/env083a-roulette-randomness-source-audit.sh",
+    "scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh",
+    "scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh",
+    "scripts/env083f-round-proof-consistency-smoke.sh",
+    "scripts/env084-verifiable-demo-round-generator-smoke.sh",
+    "scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh",
+    "scripts/env086-live-toccata-workaround-inventory-smoke.sh",
+    "scripts/env087-tn10-round-commit-reveal-spike-smoke.sh",
+    "scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh",
+    "scripts/env089-live-toccata-covenant-lineage-milestone-smoke.sh"
+  ],
+  "safety": {
+    "packaging_documentation_checks_only": true,
+    "new_transaction_created": false,
+    "signing_performed": false,
+    "broadcast_performed": false,
+    "wallet_private_key_access": false,
+    "mainnet": false,
+    "real_betting": false,
+    "real_payouts": false,
+    "backend_custody": false,
+    "production_randomness_claimed": false,
+    "secrets_added": false
+  }
+}
