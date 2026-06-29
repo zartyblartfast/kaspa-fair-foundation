@@ -1,0 +1,26 @@
+PASS: app.js accepts current authorised ENV-090 proof
+PASS: source_env ENV-090
+PASS: claim_level full_kip17_covenant_enforced_transition
+PASS: verifier_result PASS
+PASS: evidence_mode live_readonly_tn10
+PASS: network testnet-10
+PASS: commitment/reveal evidence present
+PASS: commitment txid linked to reveal
+PASS: KIP-17 enforcement represented true
+PASS: invalid transition rejection represented true
+PASS: sample/proof result_number agree
+PASS: sample/proof result_colour agree
+PASS: sample/proof result_algorithm agree
+PASS: safety flags reject real betting/payouts/backend/mainnet/production randomness
+PASS: private key access not exposed
+PASS: unsafe mainnet proof rejected
+PASS: unsafe real betting proof rejected
+PASS: unsafe real payouts proof rejected
+PASS: unsafe backend custody proof rejected
+PASS: unsafe production randomness proof rejected
+PASS: verifier_result not PASS rejected
+PASS: unknown source_env rejected
+PASS: unsupported live claim_level rejected
+PASS: missing live commitment evidence rejected
+PASS: mismatched sample/proof result rejected
+PASS: secret-like UI material rejected

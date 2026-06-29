@@ -45,7 +45,9 @@ require_text "$UI" 'ENV-087 adds authorised TN10-only live round-specific commit
 require_text "$PROOF" '"verifier_result"[[:space:]]*:[[:space:]]*"PASS"'
 require_text "$PROOF" '"evidence_mode"[[:space:]]*:[[:space:]]*"live_readonly_tn10"'
 require_text "$PROOF" '"covenant_id_confirmed"[[:space:]]*:[[:space:]]*true'
-require_text "$PROOF" '"future_live_round_transaction_evidence"[[:space:]]*:[[:space:]]*"replaced_by_env0(87_live_bare_tn10_anchor_evidence|88_covenant_linked_lineage_evidence)"'
+require_text "$PROOF" '"source_env"[[:space:]]*:[[:space:]]*"ENV-090"'
+require_text "$PROOF" '"claim_level"[[:space:]]*:[[:space:]]*"full_kip17_covenant_enforced_transition"'
+require_text "$PROOF" '"env090_superseding_live_round_transaction_evidence"[[:space:]]*:[[:space:]]*"replaced_by_env090_kip17_covenant_enforced_transition_evidence"'
 require_text "$PROOF" '"live_round_commitment_evidence"'
 require_text "$PROOF" '"live_round_reveal_evidence"'
 require_text "$PROOF" '"commitment_reveal_check_status"[[:space:]]*:[[:space:]]*"PASS"'
@@ -70,6 +72,9 @@ require_text "$APP_JS" 'deterministic derivation check status'
 require_text "$APP_JS" 'future live round transaction evidence'
 require_text "$APP_JS" 'safety flags summary'
 require_text "$APP_JS" 'replaced_by_env088_covenant_linked_lineage_evidence'
+require_text "$APP_JS" 'full_kip17_covenant_enforced_transition'
+require_text "$APP_JS" 'kip17_rule_enforced_on_transition'
+require_text "$APP_JS" 'invalid_no_increment_rejected'
 
 python3 - <<'PY'
 import json
@@ -84,9 +89,14 @@ assert sample.get('result_algorithm') == proof.get('result_algorithm') == reveal
 assert sample.get('final_result') == 'PASS'
 assert proof.get('verifier_result') == 'PASS'
 assert proof.get('evidence_mode') == 'live_readonly_tn10'
-assert proof.get('future_live_round_transaction_evidence') in ('replaced_by_env087_live_bare_tn10_anchor_evidence', 'replaced_by_env088_covenant_linked_lineage_evidence')
+assert proof.get('source_env') == 'ENV-090'
+assert proof.get('claim_level') == 'full_kip17_covenant_enforced_transition'
+assert proof.get('env090_superseding_live_round_transaction_evidence') == 'replaced_by_env090_kip17_covenant_enforced_transition_evidence'
 assert proof.get('live_round_commitment_evidence', {}).get('status') == 'present'
 assert proof.get('live_round_reveal_evidence', {}).get('status') == 'present'
+assert proof.get('live_round_reveal_evidence', {}).get('kip17_rule_enforced_on_transition') is True
+assert proof.get('kip17_enforcement', {}).get('kip17_rule_enforced_on_transition') is True
+assert proof.get('kip17_enforcement', {}).get('invalid_no_increment_rejected') is True
 for flag in ['mainnet_supported', 'wallet_access_used', 'signing_used', 'transaction_created', 'broadcast_used']:
     assert sample.get(flag) is False
 for flag in ['real_betting', 'real_payouts', 'backend_custody', 'private_key_access_used', 'mainnet_supported']:

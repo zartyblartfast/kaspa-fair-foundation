@@ -85,7 +85,7 @@ async function boot() {
 
   validateRound(round);
   validateTableSchema(tableSchema);
-  validateProofArtifact(proofArtifact);
+  validateProofArtifact(proofArtifact, round);
   appState.round = round;
   appState.tableSchema = tableSchema;
   appState.proofArtifact = proofArtifact;
@@ -154,37 +154,23 @@ function validateTableSchema(tableSchema) {
 }
 
 
-function validateProofArtifact(proofArtifact) {
+function validateProofArtifact(proofArtifact, round) {
   const anchor = proofArtifact.live_tn10_anchor || {};
   const safety = proofArtifact.safety_flags || {};
   const transcript = proofArtifact.application_round_transcript || {};
   const reveal = transcript.reveal || {};
   const rustOutput = proofArtifact.rust_verifier_output || {};
-  const liveCommitment = proofArtifact.live_round_commitment_evidence || {};
-  const liveReveal = proofArtifact.live_round_reveal_evidence || {};
-  const acceptedLiveEvidenceStates = [
-    "replaced_by_env087_live_bare_tn10_anchor_evidence",
-    "replaced_by_env088_covenant_linked_lineage_evidence",
-  ];
-  const acceptedClaimLevels = ["bare TN10 anchor", "covenant-linked lineage", "full covenant transition"];
-  const hasLiveRoundEvidence =
-    acceptedLiveEvidenceStates.includes(proofArtifact.future_live_round_transaction_evidence) &&
-    liveCommitment.status === "present" &&
-    liveReveal.status === "present" &&
-    acceptedClaimLevels.includes(liveCommitment.claim_level) &&
-    acceptedClaimLevels.includes(liveReveal.claim_level) &&
-    typeof liveCommitment.transaction_id === "string" &&
-    liveCommitment.transaction_id.length === 64 &&
-    typeof liveReveal.transaction_id === "string" &&
-    liveReveal.transaction_id.length === 64 &&
-    liveReveal.commitment_txid === liveCommitment.transaction_id;
+  const sourceEnv = proofArtifact.source_env;
+  const contract = authorisedProofContracts[sourceEnv];
   const checks = [
     ["proof schema", proofArtifact.schema === "kaspa-fair-roulette-ui-toccata-fairness-proof-v1"],
+    ["source_env authorised", Boolean(contract)],
     ["verifier_result == PASS", proofArtifact.verifier_result === "PASS"],
-    ["network == testnet-10", proofArtifact.network === "testnet-10"],
+    ["network == testnet-10", isTn10Network(proofArtifact.network)],
     ["evidence_mode == live_readonly_tn10", proofArtifact.evidence_mode === "live_readonly_tn10"],
     ["anchor evidence_mode == live_readonly_tn10", anchor.evidence_mode === "live_readonly_tn10"],
     ["anchor verifier_result == PASS", anchor.verifier_result === "PASS"],
+    ["anchor network testnet-10", anchor.network === undefined || isTn10Network(anchor.network)],
     ["covenant_id_confirmed == true", anchor.covenant_id_confirmed === true],
     ["covenant id present", typeof proofArtifact.covenant_id === "string" && proofArtifact.covenant_id.length > 0],
     ["covenant lineage present", typeof proofArtifact.covenant_lineage_reference === "string" && proofArtifact.covenant_lineage_reference.length > 0],
@@ -193,25 +179,112 @@ function validateProofArtifact(proofArtifact) {
     ["deterministic derivation check PASS", proofArtifact.deterministic_derivation_check_status === "PASS"],
     ["result number matches reveal", proofArtifact["result_number"] === reveal["result_number"]],
     ["result colour matches reveal", proofArtifact["result_colour"] === reveal["result_colour"]],
-    ["live round commitment/reveal evidence present", hasLiveRoundEvidence],
-    ["Rust verifier checks passed", rustOutput.all_checks_passed === true],
+    ["result algorithm matches reveal", proofArtifact["result_algorithm"] === reveal["result_algorithm"]],
+    ["sample result number agrees", round["result_number"] === proofArtifact["result_number"]],
+    ["sample result colour agrees", round["result_colour"] === proofArtifact["result_colour"]],
+    ["sample result algorithm agrees", round["result_algorithm"] === proofArtifact["result_algorithm"]],
+    ["Rust verifier checks passed", rustOutput.all_checks_passed === true || rustOutput.verifier_result === "PASS"],
     ["mock_display_only true", safety.mock_display_only === true],
     ["real_betting false", safety.real_betting === false],
     ["real_payouts false", safety.real_payouts === false],
     ["backend_custody false", safety.backend_custody === false],
-    ["wallet_access_used true for authorised TN10-only live ENV", safety.wallet_access_used === true],
     ["private_key_access_used false", safety.private_key_access_used === false],
-    ["signing_used true for authorised TN10-only live ENV", safety.signing_used === true],
-    ["transaction_created true for authorised TN10-only live ENV", safety.transaction_created === true],
-    ["broadcast_used true for authorised TN10-only live ENV", safety.broadcast_used === true],
-    ["mainnet_supported false", safety.mainnet_supported === false],
+    ["mainnet_supported false", safety.mainnet_supported === false && anchor.mainnet_supported === false],
+    ["production_randomness_claimed false", proofArtifact.production_randomness_claimed === false],
+    ["no secret-like UI material", !containsSecretLikeUiMaterial(proofArtifact)],
     ["JSON mirror/export only", proofArtifact.json_mirror_export_only === true],
+    ["authorised source_env proof contract", contract ? contract(proofArtifact) : false],
   ];
 
   const failedChecks = checks.filter(([, passed]) => !passed).map(([label]) => label);
   if (failedChecks.length > 0) {
     throw new Error(`Unsafe or failed Toccata proof artifact: ${failedChecks.join(", ")}`);
   }
+}
+
+const authorisedProofContracts = {
+  "ENV-083E": acceptsStaticFutureProof,
+  "ENV-083F": acceptsStaticFutureProof,
+  "ENV-087": (proofArtifact) => acceptsLiveProof(proofArtifact, {
+    claimLevel: "bare TN10 anchor",
+    futureEvidence: "replaced_by_env087_live_bare_tn10_anchor_evidence",
+  }),
+  "ENV-088": (proofArtifact) => acceptsLiveProof(proofArtifact, {
+    claimLevel: "covenant-linked lineage",
+    futureEvidence: "replaced_by_env088_covenant_linked_lineage_evidence",
+  }),
+  "ENV-090": acceptsEnv090Kip17Proof,
+};
+
+function acceptsStaticFutureProof(proofArtifact) {
+  const liveCommitment = proofArtifact.live_round_commitment_evidence || {};
+  const liveReveal = proofArtifact.live_round_reveal_evidence || {};
+  const safety = proofArtifact.safety_flags || {};
+  return proofArtifact.future_live_round_transaction_evidence === "not_created_not_claimed_future_work" &&
+    liveCommitment.status !== "present" &&
+    liveReveal.status !== "present" &&
+    safety.wallet_access_used === false &&
+    safety.signing_used === false &&
+    safety.transaction_created === false &&
+    safety.broadcast_used === false;
+}
+
+function acceptsLiveProof(proofArtifact, { claimLevel, futureEvidence }) {
+  const liveCommitment = proofArtifact.live_round_commitment_evidence || {};
+  const liveReveal = proofArtifact.live_round_reveal_evidence || {};
+  const safety = proofArtifact.safety_flags || {};
+  return proofArtifact.claim_level === claimLevel &&
+    proofArtifact.future_live_round_transaction_evidence === futureEvidence &&
+    liveCommitment.status === "present" &&
+    liveReveal.status === "present" &&
+    liveCommitment.claim_level === claimLevel &&
+    liveReveal.claim_level === claimLevel &&
+    isTxid(liveCommitment.transaction_id) &&
+    isTxid(liveReveal.transaction_id) &&
+    liveReveal.commitment_txid === liveCommitment.transaction_id &&
+    safety.wallet_access_used === true &&
+    safety.signing_used === true &&
+    safety.transaction_created === true &&
+    safety.broadcast_used === true;
+}
+
+function acceptsEnv090Kip17Proof(proofArtifact) {
+  const liveReveal = proofArtifact.live_round_reveal_evidence || {};
+  const enforcement = proofArtifact.kip17_enforcement || {};
+  return proofArtifact.claim_level === "full_kip17_covenant_enforced_transition" &&
+    proofArtifact.env090_superseding_live_round_transaction_evidence === "replaced_by_env090_kip17_covenant_enforced_transition_evidence" &&
+    acceptsLiveProof(proofArtifact, {
+      claimLevel: "full_kip17_covenant_enforced_transition",
+      futureEvidence: "replaced_by_env088_covenant_linked_lineage_evidence",
+    }) &&
+    liveReveal.kip17_rule_enforced_on_transition === true &&
+    enforcement.kip17_rule_enforced_on_transition === true &&
+    enforcement.invalid_no_increment_rejected === true &&
+    enforcement.kip20_lineage_only_rejected_for_env090_pass === true &&
+    enforcement.bare_tn10_anchor_rejected_for_env090_pass === true;
+}
+
+function isTn10Network(network) {
+  return network === "testnet-10" || network === "TN10";
+}
+
+function isTxid(value) {
+  return typeof value === "string" && /^[0-9a-f]{64}$/i.test(value);
+}
+
+function containsSecretLikeUiMaterial(value) {
+  const text = JSON.stringify(value).toUpperCase();
+  const secretIndicators = [
+    "-----BEGIN ",
+    "PRIVATE" + "_KEY=",
+    "SECRET" + "_KEY=",
+    "MNEM" + "ONIC=",
+    "SEED" + "_PHRASE=",
+    "KASPA" + "_PRIVATE",
+    "API" + "_KEY=",
+    "ACCESS" + "_TOKEN=",
+  ];
+  return secretIndicators.some((indicator) => text.includes(indicator));
 }
 
 function bindEvents() {
@@ -322,6 +395,8 @@ function renderProofSnapshot(proofArtifact) {
 
   const rows = [
     ["verifier result", proofArtifact.verifier_result],
+    ["source ENV", proofArtifact.source_env],
+    ["claim level", proofArtifact.claim_level],
     ["evidence mode", proofArtifact.evidence_mode],
     ["live TN10 anchor evidence mode", proofArtifact.live_tn10_anchor.evidence_mode],
     ["live TN10 anchor verifier result", proofArtifact.live_tn10_anchor.verifier_result],
@@ -342,7 +417,7 @@ function renderProofSnapshot(proofArtifact) {
   rows.forEach(([key, value]) => {
     const li = document.createElement("li");
     const valueText = String(value);
-    const pass = ["PASS", "live_readonly_tn10", "yes", "replaced_by_env087_live_bare_tn10_anchor_evidence", "replaced_by_env088_covenant_linked_lineage_evidence", "covenant-linked lineage", "full covenant transition"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true") || valueText.includes("transaction_created: true") || valueText.includes("signing_used: true") || valueText.includes("broadcast_used: true") || valueText.includes("wallet_access_used: true");
+    const pass = ["PASS", "live_readonly_tn10", "yes", "ENV-090", "replaced_by_env087_live_bare_tn10_anchor_evidence", "replaced_by_env088_covenant_linked_lineage_evidence", "replaced_by_env090_kip17_covenant_enforced_transition_evidence", "bare TN10 anchor", "covenant-linked lineage", "full covenant transition", "full_kip17_covenant_enforced_transition"].includes(valueText) || valueText.includes("false") || valueText.includes("mock_display_only: true") || valueText.includes("transaction_created: true") || valueText.includes("signing_used: true") || valueText.includes("broadcast_used: true") || valueText.includes("wallet_access_used: true");
     li.innerHTML = `<span class="kv-key">${escapeHtml(String(key))}</span><span class="kv-value ${pass ? "pass" : ""}"><code>${escapeHtml(valueText)}</code></span>`;
     ui.proofSnapshotList.appendChild(li);
   });

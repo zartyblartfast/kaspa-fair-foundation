@@ -1,0 +1,35 @@
+ENV-090-UI-FIX command results
+
+Pre-check:
+- git status --short: PASS (clean before edits)
+- git log --oneline -n 10: PASS (latest commit ee82cb7 Add KIP-17 covenant-enforced state transition)
+
+Implementation verification:
+- browser load before fix: identified prior failure: Unsafe or failed Toccata proof artifact: live round commitment/reveal evidence present
+- browser load after fix: PASS (failure panel absent; roulette table rendered)
+- scripts/env090-ui-accepts-kip17-proof-smoke.sh: PASS (UI_ACCEPTS_KIP17_PROOF_READY=PASS)
+
+Required checks:
+- cargo fmt --check: PASS
+- cargo check -p kaspa-foundation: PASS
+- cargo check -p kaspa-fair-cli: PASS
+- cargo test -p kaspa-foundation: PASS
+- cargo test -p kaspa-fair-cli: PASS
+- node --check examples/roulette-poc/ui/app.js: PASS
+- node --check examples/roulette-poc/ui/roulette-table-renderer.js: PASS
+- git diff --check: PASS
+- scripts/env082-roulette-ui-workflow-rebuild-smoke.sh: PASS (ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS)
+- scripts/env083a-roulette-randomness-source-audit.sh: PASS (ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS)
+- scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh: PASS (USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS)
+- scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh: PASS (APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS)
+- scripts/env083f-round-proof-consistency-smoke.sh: PASS (ROUND_PROOF_CONSISTENCY_READY=PASS)
+- scripts/env084-verifiable-demo-round-generator-smoke.sh: PASS (VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS)
+- scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh: PASS (STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS)
+- scripts/env086-live-toccata-workaround-inventory-smoke.sh: PASS (LIVE_TOCCATA_WORKAROUND_INVENTORY_READY=PASS)
+- scripts/env087-tn10-round-commit-reveal-spike-smoke.sh: PASS (TN10_ROUND_COMMIT_REVEAL_SPIKE_READY=PASS)
+- scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh: PASS (TN10_COVENANT_LINEAGE_COMMIT_REVEAL_READY=PASS)
+- scripts/env089-live-toccata-covenant-lineage-milestone-smoke.sh: PASS (LIVE_TOCCATA_COVENANT_LINEAGE_MILESTONE_READY=PASS)
+- scripts/env090-kip17-covenant-enforced-transition-smoke.sh: PASS (KIP17_COVENANT_ENFORCED_TRANSITION_READY=PASS)
+- scripts/env090-ui-accepts-kip17-proof-smoke.sh: PASS (UI_ACCEPTS_KIP17_PROOF_READY=PASS)
+
+No live broadcast command was run.
