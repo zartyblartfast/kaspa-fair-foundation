@@ -1,0 +1,58 @@
+ENV-094 required command results
+
+Pre-check:
+- git status --short: PASS (clean before edits)
+- git log --oneline -n 12: PASS (latest commits included ee37d9a and c30435a)
+
+Required checks:
+- cargo fmt --check: PASS
+- cargo check -p kaspa-foundation: PASS
+  output: Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+- cargo check -p kaspa-fair-cli: PASS
+  output: Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.29s
+- cargo test -p kaspa-foundation: PASS
+  output: 30 passed; 0 failed; 1 ignored; doc-tests 0 passed
+- cargo test -p kaspa-fair-cli: PASS
+  output: 18 passed; 0 failed
+- node --check examples/roulette-poc/ui/app.js: PASS
+- node --check examples/roulette-poc/ui/roulette-table-renderer.js: PASS
+- git diff --check: PASS
+- scripts/env082-roulette-ui-workflow-rebuild-smoke.sh: PASS
+  readiness: ROULETTE_UI_WORKFLOW_REBUILD_READY=PASS
+- scripts/env083a-roulette-randomness-source-audit.sh: PASS
+  readiness: ROULETTE_RANDOMNESS_SOURCE_AUDIT_READY=PASS
+- scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh: PASS
+  readiness: USER_FACING_FAIRNESS_PROOF_EXPLANATION_READY=PASS
+- scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh: PASS
+  readiness: APP_FACING_FAIRNESS_PROOF_ARTIFACT_READY=PASS
+- scripts/env083f-round-proof-consistency-smoke.sh: PASS
+  readiness: ROUND_PROOF_CONSISTENCY_READY=PASS
+- scripts/env084-verifiable-demo-round-generator-smoke.sh: PASS
+  readiness: VERIFIABLE_DEMO_ROUND_GENERATOR_READY=PASS
+- scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh: PASS
+  readiness: STATIC_MOCK_VERIFIABLE_DEMO_MILESTONE_READY=PASS
+- scripts/env086-live-toccata-workaround-inventory-smoke.sh: PASS
+  readiness: LIVE_TOCCATA_WORKAROUND_INVENTORY_READY=PASS
+- scripts/env087-tn10-round-commit-reveal-spike-smoke.sh: PASS
+  readiness: TN10_ROUND_COMMIT_REVEAL_SPIKE_READY=PASS
+- scripts/env088-tn10-covenant-lineage-commit-reveal-smoke.sh: PASS
+  readiness: TN10_COVENANT_LINEAGE_COMMIT_REVEAL_READY=PASS
+- scripts/env089-live-toccata-covenant-lineage-milestone-smoke.sh: PASS
+  readiness: LIVE_TOCCATA_COVENANT_LINEAGE_MILESTONE_READY=PASS
+- scripts/env090-kip17-covenant-enforced-transition-smoke.sh: PASS
+  readiness: KIP17_COVENANT_ENFORCED_TRANSITION_READY=PASS
+- scripts/env090-ui-accepts-kip17-proof-smoke.sh: PASS
+  readiness: UI_ACCEPTS_KIP17_PROOF_READY=PASS
+- scripts/env091-full-kip17-toccata-milestone-smoke.sh: PASS
+  readiness: FULL_KIP17_TOCCATA_MILESTONE_READY=PASS
+- scripts/env092-tn10-verifiable-entropy-round-smoke.sh: PASS
+  readiness: TN10_VERIFIABLE_ENTROPY_ROUND_READY=PASS
+- scripts/env093-verifiable-tn10-entropy-milestone-smoke.sh: PASS
+  readiness: VERIFIABLE_TN10_ENTROPY_MILESTONE_READY=PASS
+- scripts/env094-roulette-ui-loading-order-smoke.sh: PASS
+  readiness: ROULETTE_UI_LOADING_ORDER_READY=PASS
+
+Post-legacy-smoke reconciliation:
+- Older ENV artifact rewrites caused by required legacy smoke scripts were restored.
+- Re-run git diff --check after restore: PASS
+- Re-run scripts/env094-roulette-ui-loading-order-smoke.sh after restore: PASS, ROULETTE_UI_LOADING_ORDER_READY=PASS

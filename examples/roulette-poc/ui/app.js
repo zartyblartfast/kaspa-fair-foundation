@@ -66,6 +66,9 @@ const appState = {
   round: null,
   tableSchema: null,
   proofArtifact: null,
+  proofLoadState: "idle",
+  proofLoadError: null,
+  eventsBound: false,
   uiState: "BetsOpen",
   uiMockBets: [],
   nextMockBetId: 1,
@@ -73,25 +76,52 @@ const appState = {
 };
 
 boot().catch((error) => {
-  showFailure(`Failed to load deterministic round, roulette table schema, or Toccata proof artifact: ${error.message}`);
+  showFailure(`Failed to load roulette table schema safely: ${error.message}`);
 });
 
 async function boot() {
-  const [round, tableSchema, proofArtifact] = await Promise.all([
-    fetchJson("sample-round.json"),
-    fetchJson("roulette-table-schema.json"),
-    fetchJson("toccata-fairness-proof.json"),
-  ]);
-
-  validateRound(round);
+  const tableSchema = await fetchJson("roulette-table-schema.json");
   validateTableSchema(tableSchema);
-  validateProofArtifact(proofArtifact, round);
-  appState.round = round;
   appState.tableSchema = tableSchema;
-  appState.proofArtifact = proofArtifact;
+
   bindEvents();
-  renderStaticPanels(round);
-  resetRoundFlow();
+  initialiseTableFirstLayout();
+  void loadRoundAndProofArtifacts();
+}
+
+function initialiseTableFirstLayout() {
+  appState.proofLoadState = "loading";
+  setOverallStatus("Table ready — loading Toccata proof…", true);
+  renderProofLoadingState();
+  renderFlow();
+}
+
+async function loadRoundAndProofArtifacts() {
+  appState.proofLoadState = "loading";
+  appState.proofLoadError = null;
+  renderProofLoadingState();
+
+  try {
+    const [round, proofArtifact] = await Promise.all([
+      fetchJson("sample-round.json"),
+      fetchJson("toccata-fairness-proof.json"),
+    ]);
+
+    validateRound(round);
+    validateProofArtifact(proofArtifact, round);
+    appState.round = round;
+    appState.proofArtifact = proofArtifact;
+    appState.proofLoadState = "validated";
+    renderStaticPanels(round);
+    resetRoundFlow();
+  } catch (error) {
+    appState.round = null;
+    appState.proofArtifact = null;
+    appState.proofLoadState = "failed";
+    appState.proofLoadError = error;
+    renderProofFailure(error);
+    renderFlow();
+  }
 }
 
 async function fetchJson(path) {
@@ -314,12 +344,16 @@ function containsSecretLikeUiMaterial(value) {
 }
 
 function bindEvents() {
+  if (appState.eventsBound) {
+    return;
+  }
   ui.startWheelButton.addEventListener("click", startWheelFlow);
   ui.resetRoundButton.addEventListener("click", resetRoundFlow);
+  appState.eventsBound = true;
 }
 
 function startWheelFlow() {
-  if (appState.uiState !== "BetsOpen") {
+  if (appState.uiState !== "BetsOpen" || !artifactsAreValidated()) {
     return;
   }
   clearFlowTimers();
@@ -356,7 +390,7 @@ function renderStaticPanels(round) {
   renderProofSnapshot(appState.proofArtifact);
   renderDeterministicSettlementInput(round);
   ui.resultAlgorithm.textContent = round.result_algorithm;
-  setOverallStatus("PASS — sample round, schema-driven SVG roulette table, and static Toccata proof artifact loaded", true);
+  setOverallStatus("PASS — roulette table rendered before proof validation; Toccata proof artifact validated", true);
 }
 
 function resetRoundFlow() {
@@ -371,16 +405,18 @@ function resetRoundFlow() {
 function renderFlow() {
   const round = appState.round;
   const uiState = appState.uiState;
-  const resultVisible = hasReachedState("ResultFinalised");
-  const settlementVisible = hasReachedState("Settled");
-  const proofVisible = hasReachedState("ProofPublished");
+  const hasValidatedArtifacts = artifactsAreValidated();
+  const resultVisible = hasValidatedArtifacts && hasReachedState("ResultFinalised");
+  const settlementVisible = hasValidatedArtifacts && hasReachedState("Settled");
+  const proofVisible = hasValidatedArtifacts && hasReachedState("ProofPublished");
   const canPlaceMockBets = canPlaceBetsForState(uiState);
 
   ui.roundStatusLabel.textContent = ROUND_STATUS_LABELS[uiState];
   ui.roundStatusLabel.className = `round-status-label ${canPlaceMockBets ? "round-status-open" : "round-status-closed"}`;
   ui.stateDescription.textContent = ROUND_DESCRIPTIONS[uiState];
 
-  ui.startWheelButton.disabled = uiState !== "BetsOpen";
+  ui.startWheelButton.disabled = uiState !== "BetsOpen" || !hasValidatedArtifacts;
+  ui.resetRoundButton.disabled = false;
   ui.betStakeInput.disabled = !canPlaceMockBets;
 
   ui.betStatus.textContent = buildBetStatusText(uiState);
@@ -403,6 +439,31 @@ function renderFlow() {
   renderProof(round, proofVisible);
 }
 
+function artifactsAreValidated() {
+  return Boolean(appState.round && appState.proofArtifact && appState.proofLoadState === "validated");
+}
+
+function renderProofLoadingState() {
+  ui.proofSnapshotList.innerHTML = `<li><span class="kv-key">proof status</span><span class="kv-value"><code>Loading Toccata proof…</code></span></li>`;
+  ui.trustList.innerHTML = `<li><span class="kv-key">verifier details</span><span class="kv-value"><code>Loading Toccata proof…</code></span></li>`;
+  ui.safetyFlagsList.innerHTML = `<li><span class="kv-key">safety flags</span><span class="kv-value"><code>Loading Toccata proof…</code></span></li>`;
+  ui.proofStatus.textContent = "Loading Toccata proof…";
+  ui.proofStatus.className = "proof-status status-loading";
+  ui.proofList.innerHTML = "";
+  ui.resultAlgorithm.textContent = "Loading validated round artifact…";
+}
+
+function renderProofFailure(error) {
+  const message = `Toccata proof validation failed: ${error.message}`;
+  ui.proofSnapshotList.innerHTML = `<li><span class="kv-key">proof error</span><span class="kv-value fail"><code>${escapeHtml(message)}</code></span></li>`;
+  ui.trustList.innerHTML = `<li><span class="kv-key">proof error</span><span class="kv-value fail"><code>${escapeHtml(message)}</code></span></li>`;
+  ui.safetyFlagsList.innerHTML = `<li><span class="kv-key">proof error</span><span class="kv-value fail"><code>${escapeHtml(message)}</code></span></li>`;
+  ui.proofStatus.textContent = message;
+  ui.proofStatus.className = "proof-status status-fail";
+  ui.proofList.innerHTML = "";
+  ui.resultAlgorithm.textContent = "Unavailable until proof validation succeeds";
+  setOverallStatus("FAIL — roulette table remains available; Toccata proof validation failed", false);
+}
 
 function renderProofSnapshot(proofArtifact) {
   const safety = proofArtifact.safety_flags;
@@ -572,6 +633,17 @@ function renderSettlement(round, visible) {
 function renderProof(round, visible) {
   const proofArtifact = appState.proofArtifact;
   ui.proofList.innerHTML = "";
+  if (appState.proofLoadState === "loading") {
+    ui.proofStatus.textContent = "Loading Toccata proof…";
+    ui.proofStatus.className = "proof-status status-loading";
+    return;
+  }
+  if (appState.proofLoadState === "failed") {
+    const message = `Toccata proof validation failed: ${appState.proofLoadError?.message || "unknown proof error"}`;
+    ui.proofStatus.textContent = message;
+    ui.proofStatus.className = "proof-status status-fail";
+    return;
+  }
   if (!visible) {
     ui.proofStatus.textContent = "Proof published automatically after settlement display.";
     ui.proofStatus.className = "proof-status proof-hidden";

@@ -1,0 +1,21 @@
+ENV-094 roulette UI loading evidence
+
+Static/source evidence:
+- `boot()` now fetches `roulette-table-schema.json` first.
+- `validateTableSchema(tableSchema)` runs before table-first layout initialization.
+- `initialiseTableFirstLayout()` sets `proofLoadState = "loading"`, shows `Table ready — loading Toccata proof…`, calls `renderProofLoadingState()`, then calls `renderFlow()`.
+- `loadRoundAndProofArtifacts()` asynchronously fetches `sample-round.json` and `toccata-fairness-proof.json` after the table-first path starts.
+- `validateProofArtifact(proofArtifact, round)` remains required before appState receives validated proof data.
+- `artifactsAreValidated()` gates result reveal, settlement display, and proof publication display.
+- `renderProofFailure(error)` writes `Toccata proof validation failed: ...` into proof/verifier areas, then `renderFlow()` keeps the roulette table render path active.
+
+Browser evidence from local static server at `http://127.0.0.1:8877/`:
+- `document.querySelectorAll('#roulette-table-svg-host [role="button"]').length` = 151
+- `document.getElementById('overall-status').textContent` = `PASS — roulette table rendered before proof validation; Toccata proof artifact validated`
+- `document.getElementById('proof-status').textContent` = `Proof published automatically after settlement display.`
+- `document.getElementById('result-number').textContent` = `--`
+- `document.getElementById('start-wheel-button').disabled` = false
+
+Smoke evidence:
+- `scripts/env094-roulette-ui-loading-order-smoke.sh` exit status 0
+- readiness line: `ROULETTE_UI_LOADING_ORDER_READY=PASS`
