@@ -1,0 +1,19 @@
+{
+  "commitment_domain": "kaspa-fair:env083c:roulette-commitment:v1",
+  "commitment_hash": "6150ee385d41ba31f18acea0f7688511d04e3f1f26d48cc21745f955cc458058",
+  "kip17_enforced_rule": "commitment covenant script requires exactly one authorized continuation output whose P2SH redeem-script state counter increments from 0 to 1",
+  "next_state": "reveal_counter_1",
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "round_id": "env-090-kip17-round-0001",
+  "rule_version": "env-084-rust-owned-demo-round-rules-v1",
+  "safety_flags": {
+    "backend_custody": false,
+    "mainnet_supported": false,
+    "network": "testnet-10",
+    "production_randomness_claimed": false,
+    "real_betting": false,
+    "real_payouts": false
+  },
+  "schema": "kaspa-fair-env090-kip17-commitment-payload-v1",
+  "state": "commitment_counter_0"
+}

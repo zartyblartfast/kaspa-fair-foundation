@@ -65,14 +65,14 @@
   "private_key_access_used": false,
   "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
   "result_colour": "black",
-  "result_number": 26,
+  "result_number": 24,
   "roulette_variant": "european",
-  "round_id": "env-088-covenant-round-0001",
+  "round_id": "env-090-kip17-round-0001",
   "round_state": "ProofPublished",
   "rule_version": "env-084-rust-owned-demo-round-rules-v1",
   "schema": "kaspa-fair-roulette-engine-round-v1",
   "seed_material_description": "explicit demo seed material supplied to Rust ENV-084 generator; demo-only, not production randomness",
-  "seed_material_hex": "656e763038382d64656d6f2d736565642d30303031",
+  "seed_material_hex": "656e763039302d64656d6f2d736565642d30303031",
   "settlement": [
     {
       "bet_id": "bet-001",
@@ -81,7 +81,7 @@
       "payout_multiplier": 35,
       "payout_units": 0,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "17",
       "stake_units": 10,
       "won": false
@@ -93,7 +93,7 @@
       "payout_multiplier": 1,
       "payout_units": 0,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "red",
       "stake_units": 5,
       "won": false
@@ -105,7 +105,7 @@
       "payout_multiplier": 1,
       "payout_units": 8,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "black",
       "stake_units": 4,
       "won": true
@@ -117,7 +117,7 @@
       "payout_multiplier": 1,
       "payout_units": 0,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "odd",
       "stake_units": 7,
       "won": false
@@ -129,7 +129,7 @@
       "payout_multiplier": 1,
       "payout_units": 12,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "even",
       "stake_units": 6,
       "won": true
@@ -141,7 +141,7 @@
       "payout_multiplier": 1,
       "payout_units": 18,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "high",
       "stake_units": 9,
       "won": true
@@ -153,7 +153,7 @@
       "payout_multiplier": 1,
       "payout_units": 0,
       "result_colour": "black",
-      "result_number": 26,
+      "result_number": 24,
       "selection_value": "low",
       "stake_units": 8,
       "won": false

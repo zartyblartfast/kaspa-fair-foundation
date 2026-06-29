@@ -1,0 +1,5 @@
+local_valid_transition_vm=PASS
+invalid_no_increment_transition_rejected=true
+invalid_reuse_previous_state_rejected=true
+invalid_skip_state_rejected=true
+evidence_source=kaspa_txscript VM with covenants_enabled=true and CovenantsContext from populated transaction

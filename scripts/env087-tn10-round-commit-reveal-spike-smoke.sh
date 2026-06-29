@@ -71,8 +71,9 @@ require('commitment hash matches reveal material', commit_payload.get('commitmen
 require('reveal payload hash matches Rust transcript', reveal_payload.get('reveal_payload_hash') == expected_reveal.get('reveal_payload_hash'))
 require('result number derives from reveal material', reveal_payload.get('result_number') == expected_reveal.get('result_number'))
 require('result colour derives from reveal material', reveal_payload.get('result_colour') == expected_reveal.get('result_colour'))
-if proof.get('source_env') == 'ENV-088':
-    require('app-facing artifacts advanced to authorised ENV-088', proof.get('claim_level') in ('covenant-linked lineage', 'full covenant transition'))
+if proof.get('source_env') in ('ENV-088', 'ENV-090'):
+    # Later authorised milestones replace the app-facing proof txids while ENV-087 artifacts remain valid.
+    require('app-facing artifacts advanced to authorised later live milestone', proof.get('claim_level') in ('covenant-linked lineage', 'full covenant transition', 'full_kip17_covenant_enforced_transition'))
 else:
     require('sample result number agrees', sample.get('result_number') == reveal_payload.get('result_number'))
     require('sample result colour agrees', sample.get('result_colour') == reveal_payload.get('result_colour'))

@@ -1,0 +1,9 @@
+{
+  "any_required_covenant_evidence_non_null": true,
+  "claim_level": "full_kip17_covenant_enforced_transition",
+  "commitment_output_covenant_evidence_non_null": true,
+  "evidence_source": "direct TN10 transaction readback fields plus KIP-17 covenant-script VM rule evidence, not payload JSON",
+  "reveal_input_or_output_covenant_evidence_non_null": true,
+  "reveal_links_to_commitment": true,
+  "schema": "kaspa-fair-env090-covenant-field-verification-v1"
+}

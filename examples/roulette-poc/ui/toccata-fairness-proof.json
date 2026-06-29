@@ -4,11 +4,11 @@
     "commitment": {
       "anchor_covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
       "commitment_domain": "kaspa-fair:env083c:roulette-commitment:v1",
-      "commitment_hash": "2ceb4da7d96972d4b2a50ce1cbc414c9f427f39b3a46d2c3b07554f66bbd60e4",
+      "commitment_hash": "6150ee385d41ba31f18acea0f7688511d04e3f1f26d48cc21745f955cc458058",
       "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
       "evidence_mode": "live_readonly_tn10",
       "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
-      "round_id": "env-088-covenant-round-0001",
+      "round_id": "env-090-kip17-round-0001",
       "rule_version": "env-084-rust-owned-demo-round-rules-v1"
     },
     "reveal": {
@@ -17,34 +17,52 @@
       "evidence_mode": "live_readonly_tn10",
       "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
       "result_colour": "black",
-      "result_number": 26,
-      "reveal_payload_hash": "2c09fae68ffd9041ac2a82c36028e163f912d35f4ffcf112b235aae7fb9f9e5d",
-      "revealed_seed_material": "env088-demo-seed-0001",
-      "round_id": "env-088-covenant-round-0001"
+      "result_number": 24,
+      "reveal_payload_hash": "11469b02faa9078647942d33053d2ee2df4033b74140a4717ff0de749d3e7806",
+      "revealed_seed_material": "env090-demo-seed-0001",
+      "round_id": "env-090-kip17-round-0001"
     }
   },
-  "claim_level": "covenant-linked lineage",
-  "claim_tier": "live_tn10_covenant_linked_lineage",
+  "claim_level": "full_kip17_covenant_enforced_transition",
+  "claim_tier": "live_tn10_kip17_covenant_enforced_transition",
   "commitment_reveal_check_status": "PASS",
   "covenant_id": "e2bdd874add81ebcdba4d0f9ef650967ddadf1085ce4ab15f5eb29fddbf79ff7",
   "covenant_lineage_reference": "tn10-env063-env064-canonical-covenant-lineage",
   "deterministic_derivation_check_status": "PASS",
+  "env090_superseding_live_round_transaction_evidence": "replaced_by_env090_kip17_covenant_enforced_transition_evidence",
   "evidence_mode": "live_readonly_tn10",
   "explicit_demo_seed_material_used": true,
   "future_live_round_transaction_evidence": "replaced_by_env088_covenant_linked_lineage_evidence",
   "json_mirror_export_only": true,
+  "kip17_enforcement": {
+    "bare_tn10_anchor_rejected_for_env090_pass": true,
+    "claim_level": "full_kip17_covenant_enforced_transition",
+    "enforced_rule": "commitment output P2SH redeem script counter must increment by exactly one and authorized output SPK must match reconstructed next-state P2SH script",
+    "evidence_source": "live TN10 accepted transaction plus kaspa_txscript VM covenant/introspection path; not payload JSON only",
+    "invalid_no_increment_rejected": true,
+    "invalid_reuse_previous_state_rejected": true,
+    "invalid_skip_state_rejected": true,
+    "kip17_rule_enforced_on_transition": true,
+    "kip20_lineage_only_rejected_for_env090_pass": true,
+    "payload_only_state_claim_rejected": true,
+    "schema": "kaspa-fair-env090-kip17-enforcement-verification-v1",
+    "valid_increment_transition_passed": true
+  },
   "live_round_commitment_evidence": {
-    "claim_level": "covenant-linked lineage",
+    "claim_level": "full_kip17_covenant_enforced_transition",
     "covenant_evidence_non_null": true,
+    "kip17_state_counter": 0,
     "status": "present",
-    "transaction_id": "ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65"
+    "transaction_id": "050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26"
   },
   "live_round_reveal_evidence": {
-    "claim_level": "covenant-linked lineage",
-    "commitment_txid": "ebb28c6b34532cb97ae3a0a135fda74a0566b336df4dbf248283c5cad8c9ff65",
+    "claim_level": "full_kip17_covenant_enforced_transition",
+    "commitment_txid": "050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26",
     "covenant_evidence_non_null": true,
+    "kip17_rule_enforced_on_transition": true,
+    "kip17_state_counter": 1,
     "status": "present",
-    "transaction_id": "f8fe14932071ac49cdac9e4f3df1177b9655dffbd0ad66b0e7491d6f78e5654b"
+    "transaction_id": "269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620"
   },
   "live_tn10_anchor": {
     "accepting_block_hash": "e0d62ead241a5217769266dc96e8055c5893c29074ed2c50ba23de1a9ba75190",
@@ -78,8 +96,8 @@
   "production_randomness_claimed": false,
   "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
   "result_colour": "black",
-  "result_number": 26,
-  "round_id": "env-088-covenant-round-0001",
+  "result_number": 24,
+  "round_id": "env-090-kip17-round-0001",
   "rust_owned_generation": true,
   "rust_verifier_output": {
     "all_checks_passed": true,
@@ -99,7 +117,7 @@
       "result_colour_verifies": "PASS",
       "result_number_verifies": "PASS"
     },
-    "round_id": "env-088-covenant-round-0001",
+    "round_id": "env-090-kip17-round-0001",
     "schema": "kaspa-fair-env083c-verifier-output-v1",
     "verifier_result": "PASS"
   },
@@ -116,7 +134,7 @@
     "wallet_access_used": true
   },
   "schema": "kaspa-fair-roulette-ui-toccata-fairness-proof-v1",
-  "source_env": "ENV-088",
+  "source_env": "ENV-090",
   "source_schema": "kaspa-fair-env084-rust-owned-verifiable-demo-round-v1",
   "ui_contract": "static_readonly_export_for_roulette_poc",
   "ui_does_not_choose_result": true,

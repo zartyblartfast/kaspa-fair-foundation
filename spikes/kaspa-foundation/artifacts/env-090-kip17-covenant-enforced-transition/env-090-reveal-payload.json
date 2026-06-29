@@ -1,0 +1,20 @@
+{
+  "commitment_txid": "050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26",
+  "kip17_enforced_rule": "spend of commitment output required covenant script to authorize exactly one next-state continuation output",
+  "result_algorithm": "blake3-domain-separated-rejection-sampling-v1",
+  "result_colour": "black",
+  "result_number": 24,
+  "reveal_payload_hash": "11469b02faa9078647942d33053d2ee2df4033b74140a4717ff0de749d3e7806",
+  "revealed_seed_material": "env090-demo-seed-0001",
+  "round_id": "env-090-kip17-round-0001",
+  "safety_flags": {
+    "backend_custody": false,
+    "mainnet_supported": false,
+    "network": "testnet-10",
+    "production_randomness_claimed": false,
+    "real_betting": false,
+    "real_payouts": false
+  },
+  "schema": "kaspa-fair-env090-kip17-reveal-payload-v1",
+  "state": "reveal_counter_1"
+}

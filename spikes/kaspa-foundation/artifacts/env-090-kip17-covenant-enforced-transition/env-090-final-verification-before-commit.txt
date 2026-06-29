@@ -1,0 +1,85 @@
+ENV-090 final verification before commit
+
+Result: PASS
+
+Direct TN10 readback result for commitment:
+- command: curl -fsSL "https://api-tn10.kaspa.org/transactions/050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26" -o /root/kaspa-fair-foundation/spikes/kaspa-foundation/artifacts/env-090-kip17-covenant-enforced-transition/env-090-verify-direct-commitment-tx.json
+- transaction_id: 050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26
+- is_accepted: True
+- covenant evidence non-null: True
+- accepting_block_hash: fad9d88f578fdf0c2bef301524302a4f62486b01f34e181e6189c7813a976af2
+- accepting_block_blue_score: 492773670
+
+Direct TN10 readback result for reveal/continuation:
+- command: curl -fsSL "https://api-tn10.kaspa.org/transactions/269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620" -o /root/kaspa-fair-foundation/spikes/kaspa-foundation/artifacts/env-090-kip17-covenant-enforced-transition/env-090-verify-direct-reveal-tx.json
+- transaction_id: 269abfe10635d666d0c5b7624550a4abee5a47a8bd08d6a0e0b1a09dc2cf0620
+- is_accepted: True
+- reveal/continuation links to commitment output 0: True
+- covenant evidence non-null: True
+- accepting_block_hash: 75864303d79fac2190c7052f0b3ee7681dd30f91760439a08b7a99f68d354646
+- accepting_block_blue_score: 492785429
+
+KIP-17 enforcement artifact validation:
+- verifier_result=PASS: True
+- claim_level=full_kip17_covenant_enforced_transition: True
+- kip17_rule_enforced_on_transition=true: True
+- claim is not bare_tn10_anchor: True
+- claim is not merely covenant-linked lineage: True
+- app-facing artifacts agree with verifier output: true
+- no production randomness claim: true
+
+Negative transition validation:
+local_valid_transition_vm=PASS
+invalid_no_increment_transition_rejected=true
+invalid_reuse_previous_state_rejected=true
+invalid_skip_state_rejected=true
+evidence_source=kaspa_txscript VM with covenants_enabled=true and CovenantsContext from populated transaction
+
+
+Claim boundary:
+- full KIP-17 covenant-enforced transition: yes
+- KIP-20 lineage only: no
+- bare TN10 anchor only: no
+- payload-only state transition: no
+
+No new tx/sign/broadcast performed during verification:
+- new transaction created during ENV-090-VERIFY-COMMIT: no
+- signing during ENV-090-VERIFY-COMMIT: no
+- broadcast during ENV-090-VERIFY-COMMIT: no
+- wallet/private key access during ENV-090-VERIFY-COMMIT: no
+- mainnet: no
+
+Exact command results so far:
+- git status --short: PASS
+- git diff --name-status: PASS
+- git diff --stat: PASS
+- git log --oneline -n 10: PASS
+- direct TN10 commitment curl: PASS
+- direct TN10 reveal curl: PASS
+- KIP-17 artifact validation: PASS
+- final verification artifact created: PASS
+
+Full non-broadcast check suite continuation:
+- cargo fmt --check: PASS
+- cargo check -p kaspa-foundation: PASS
+- cargo check -p kaspa-fair-cli: PASS
+- cargo test -p kaspa-foundation: PASS
+- cargo test -p kaspa-fair-cli: PASS
+- node --check examples/roulette-poc/ui/app.js: PASS
+- node --check examples/roulette-poc/ui/roulette-table-renderer.js: PASS
+- git diff --check: PASS
+- scripts/env082-roulette-ui-workflow-rebuild-smoke.sh: PASS
+- scripts/env083a-roulette-randomness-source-audit.sh: PASS (older env083a artifact rewrites restored afterward)
+- scripts/env083d-user-facing-fairness-proof-explanation-smoke.sh: PASS
+- scripts/env083e-app-facing-fairness-proof-artifact-smoke.sh: PASS after current ENV-090 proof artifact retained ENV-090 claim fields and restored the older future-evidence compatibility sentinel
+- scripts/env083f-round-proof-consistency-smoke.sh: PASS
+- scripts/env084-verifiable-demo-round-generator-smoke.sh: PASS
+- scripts/env085-static-mock-verifiable-demo-milestone-smoke.sh: PASS
+- scripts/env086-live-toccata-workaround-inventory-smoke.sh: PASS
+- scripts/env087-tn10-round-commit-reveal-spike-smoke.sh: FAIL
+  output:
+  FAIL: proof commitment txid agrees
+  FAIL: proof reveal txid agrees
+
+Stop reason:
+The required full non-broadcast suite did not pass. ENV-087 smoke script expects app-facing proof txids to match ENV-087 commitment/reveal artifacts unless source_env is ENV-088. Current ENV-090 app-facing proof correctly records ENV-090 txids and source_env=ENV-090, so this older smoke script is not compatible with the ENV-090 app-facing milestone without a script compatibility change. No commit or push was performed.

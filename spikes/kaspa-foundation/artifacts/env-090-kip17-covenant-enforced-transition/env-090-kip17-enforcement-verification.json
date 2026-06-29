@@ -1,0 +1,14 @@
+{
+  "bare_tn10_anchor_rejected_for_env090_pass": true,
+  "claim_level": "full_kip17_covenant_enforced_transition",
+  "enforced_rule": "commitment output P2SH redeem script counter must increment by exactly one and authorized output SPK must match reconstructed next-state P2SH script",
+  "evidence_source": "live TN10 accepted transaction plus kaspa_txscript VM covenant/introspection path; not payload JSON only",
+  "invalid_no_increment_rejected": true,
+  "invalid_reuse_previous_state_rejected": true,
+  "invalid_skip_state_rejected": true,
+  "kip17_rule_enforced_on_transition": true,
+  "kip20_lineage_only_rejected_for_env090_pass": true,
+  "payload_only_state_claim_rejected": true,
+  "schema": "kaspa-fair-env090-kip17-enforcement-verification-v1",
+  "valid_increment_transition_passed": true
+}

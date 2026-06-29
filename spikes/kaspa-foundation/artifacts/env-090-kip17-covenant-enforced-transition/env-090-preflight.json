@@ -1,0 +1,40 @@
+{
+  "broadcast_readback_path_identified": true,
+  "broadcast_requested": true,
+  "claim_level": "preflight only; PASS requires live accepted TN10 KIP-17 script-enforced transition",
+  "commitment_payload_hash": "d479bc6ab1797a20e366590827ee5e25188649ead1b1d326a172f5b2a4f979ad",
+  "construction_path_can_set_covenant_script_constraints": true,
+  "kip17_construction_tooling_available": true,
+  "kip17_construction_types_identified": [
+    "kaspa_txscript::script_builder::ScriptBuilder",
+    "kaspa_txscript::opcodes::codes::{OpAuthOutputCount,OpAuthOutputIdx,OpTxInputScriptSigSubstr,OpTxOutputSpkSubstr,OpBlake2b,OpCat}",
+    "kaspa_txscript::covenants::CovenantsContext",
+    "kaspa_txscript::EngineFlags { covenants_enabled: true }",
+    "kaspa_consensus_core::tx::{CovenantBinding,TransactionOutput::with_covenant,UtxoEntry::covenant_id}"
+  ],
+  "local_negative_transition_check": {
+    "invalid_no_increment_rejected": true,
+    "invalid_reuse_previous_state_rejected": true,
+    "invalid_skip_state_rejected": true,
+    "valid_increment_transition_passed": true
+  },
+  "mainnet_excluded": true,
+  "mainnet_supported": false,
+  "negative_transition_check_defined": true,
+  "network": "testnet-10",
+  "private_key_material_written_to_artifacts": false,
+  "result": "READY",
+  "round_id": "env-090-kip17-round-0001",
+  "safe_testnet_key_path_available": true,
+  "schema": "kaspa-fair-env090-preflight-v1",
+  "secret_key_path_outside_repo": true,
+  "server_preflight": {
+    "checked": true,
+    "has_utxo_index": true,
+    "network": "testnet-10",
+    "synced": true
+  },
+  "testnet_only_funds_utxo_available": false,
+  "tn10_testnet_confirmed": true,
+  "transaction_version": 1
+}

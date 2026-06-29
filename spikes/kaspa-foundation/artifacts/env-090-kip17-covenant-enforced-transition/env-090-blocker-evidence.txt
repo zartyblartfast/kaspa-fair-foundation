@@ -1,0 +1,19 @@
+ENV-090 blocker evidence
+
+Result: BLOCKED
+
+Live command submitted a TN10 commitment transaction candidate, but direct TN10 readback did not find/accept it within the command window.
+
+Submitted/local commitment txid reported by CLI wait loop:
+050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26
+
+Direct TN10 readback endpoint checked:
+https://api-tn10.kaspa.org/transactions/050bbe398ff7e8f7511697c65b511ab23bf1548bcba1ed0fb29380d1e582ec26?inputs=true&outputs=true&resolve_previous_outpoints=light
+
+Direct readback result after command failure:
+HTTP 404 {"detail":"Transaction not found"}
+
+No reveal/continuation transaction was constructed or broadcast after the commitment readback blocker.
+
+Minimum unblock action:
+Use tooling/node support that returns a concrete submit/reject reason for the KIP-17 P2SH covenant commitment candidate, or adapt the KIP-17 script/covenant transaction construction to the exact TN10 mempool/consensus acceptance rules. Do not use bare-anchor, KIP-20 lineage-only, payload-only, local-only, model-only, or simulated evidence as ENV-090 PASS.
